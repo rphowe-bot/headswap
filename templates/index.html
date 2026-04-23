@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HeadSwap Tracking MVP</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(52,211,153,.18), transparent 30%),
+        radial-gradient(circle at 90% 20%, rgba(56,189,248,.13), transparent 35%),
+        #07080d;
+      color: white;
+      min-height: 100vh;
+      padding: 28px;
+    }
+    .wrap { max-width: 1180px; margin: 0 auto; }
+    .badge {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(52,211,153,.12);
+      border: 1px solid rgba(52,211,153,.25);
+      color: #bfffe4;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 50px; margin: 0; letter-spacing: -2px; }
+    .sub { color: rgba(255,255,255,.66); max-width: 760px; font-size: 18px; line-height: 1.55; margin: 12px 0 24px; }
+    .grid { display: grid; grid-template-columns: .95fr 1.05fr; gap: 18px; }
+    .card {
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.055);
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: 0 30px 90px rgba(0,0,0,.25);
+    }
+    .step { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-weight: 900; }
+    .num { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: white; color: black; }
+    .hint { color: rgba(255,255,255,.56); font-size: 14px; line-height: 1.45; margin: 0 0 14px; }
+    .uploadBox {
+      display: block;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 14px;
+      cursor: pointer;
+      background: rgba(0,0,0,.22);
+      transition: .25s;
+    }
+    .uploadBox.complete { border-color: rgba(52,211,153,.8); background: rgba(52,211,153,.11); }
+    .uploadBox input { display: none; }
+    .uploadTop { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 8px; font-weight: 900; }
+    .fileName { color: rgba(255,255,255,.55); font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .check { color: #34d399; display: none; }
+    .complete .check { display: inline; }
+    .legal {
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 20px;
+      padding: 16px;
+      background: rgba(0,0,0,.22);
+      font-size: 14px;
+      line-height: 1.4;
+      color: rgba(255,255,255,.72);
+      margin-bottom: 14px;
+    }
+    .status {
+      border-radius: 18px;
+      padding: 14px 16px;
+      background: rgba(52,211,153,.1);
+      border: 1px solid rgba(52,211,153,.22);
+      color: #dfffee;
+      font-weight: 800;
+      margin-bottom: 14px;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+    }
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 18px;
+      padding: 16px 20px;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: .25s;
+      margin-bottom: 12px;
+      background: white;
+      color: black;
+    }
+    button:disabled { opacity: .42; cursor: not-allowed; }
+    .processing { background: #fde047 !important; color: black; animation: pulse 1s infinite; }
+    .done { background: #34d399 !important; color: black; }
+    @keyframes pulse { 50% { opacity: .65; transform: scale(.99); } }
+    .preview {
+      min-height: 620px;
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(0,0,0,.22);
+      padding: 18px;
+      overflow: hidden;
+    }
+    .preview img {
+      width: 100%;
+      max-height: 420px;
+      object-fit: contain;
+      border-radius: 20px;
+      background: black;
+      border: 1px solid rgba(255,255,255,.1);
+      margin-bottom: 14px;
+    }
+    .faces {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+    }
+    .faceChoice {
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,.05);
+    }
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.45);
+      color: white;
+      border: 1px solid rgba(255,255,255,.16);
+      margin-top: 8px;
+    }
+    .download {
+      display: none;
+      text-decoration: none;
+      text-align: center;
+      background: #22c55e;
+      color: black;
+      border-radius: 18px;
+      padding: 16px 20px;
+      font-weight: 900;
+      margin-top: 12px;
+    }
+    .outputVideo {
+      width: 100%;
+      display: none;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: black;
+      margin-top: 14px;
+    }
+    .circle { color: #7dd3fc; font-weight: 900; }
+    .square { color: #f0abfc; font-weight: 900; }
+    @media (max-width: 900px) {
+      body { padding: 18px; }
+      h1 { font-size: 40px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="badge">Tracking MVP • Sticker-style meme swap</div>
+    <h1>HeadSwap</h1>
+    <p class="sub">Upload a short clip, choose which video face gets replaced, then generate a ripped-edge tracked meme video. Circle is Person 1. Square is Person 2.</p>
+
+    <div class="grid">
+      <div class="card">
+        <form id="uploadForm">
+          <div class="step"><span class="num">1</span> Upload a short video</div>
+          <p class="hint">Use MP4 or iPhone MOV. Keep it 20 seconds or less for this MVP.</p>
+
+          <label class="uploadBox" id="videoBox">
+            <input type="file" id="video" name="video" accept="video/mp4,video/quicktime,video/*" required>
+            <div class="uploadTop"><span>Video clip</span><span class="check">✓ Ready</span></div>
+            <div class="fileName" id="videoName">Choose video</div>
+          </label>
+
+          <div class="step"><span class="num">2</span> Upload replacement faces</div>
+          <p class="hint">Face 1 is required. Face 2 is optional for two-person clips.</p>
+
+          <label class="uploadBox" id="face1Box">
+            <input type="file" id="face1" name="face1" accept="image/jpeg,image/png,image/webp,image/heic,image/*" required>
+            <div class="uploadTop"><span><span class="circle">Circle</span> Face 1 image</span><span class="check">✓ Ready</span></div>
+            <div class="fileName" id="face1Name">Choose Face 1</div>
+          </label>
+
+          <label class="uploadBox" id="face2Box">
+            <input type="file" id="face2" name="face2" accept="image/jpeg,image/png,image/webp,image/heic,image/*">
+            <div class="uploadTop"><span><span class="square">Square</span> Face 2 image optional</span><span class="check">✓ Ready</span></div>
+            <div class="fileName" id="face2Name">Choose Face 2 if needed</div>
+          </label>
+
+          <div class="legal">
+            <label>
+              <input type="checkbox" id="agree" required>
+              I have rights or permission to use this clip and all uploaded faces.
+            </label>
+          </div>
+
+          <div class="status" id="status">Upload your video and Face 1 to begin.</div>
+          <button id="analyzeBtn" type="submit" disabled>Analyze Video</button>
+        </form>
+
+        <div id="targetControls" style="display:none;">
+          <div class="step"><span class="num">3</span> Choose who gets replaced</div>
+          <p class="hint">Pick the detected video face that should receive each uploaded face.</p>
+
+          <div class="faceChoice">
+            <label><span class="circle">Circle</span> Face 1 replaces:</label>
+            <select id="target1"></select>
+          </div>
+
+          <div class="faceChoice" id="target2Wrap" style="margin-top:12px;">
+            <label><span class="square">Square</span> Face 2 replaces:</label>
+            <select id="target2"></select>
+          </div>
+
+          <button id="generateBtn">Generate Tracked Meme</button>
+          <a id="downloadLink" class="download" href="#" download>Download MP4</a>
+        </div>
+      </div>
+
+      <div class="preview">
+        <div class="step"><span class="num">4</span> Preview / output</div>
+        <p class="hint" id="previewHint">After analysis, the first frame appears here with detected faces labeled.</p>
+        <img id="firstFrame" alt="First frame preview" style="display:none;">
+        <video id="outputVideo" class="outputVideo" controls></video>
+      </div>
+    </div>
+  </div>
+
+<script>
+  let sessionId = null;
+  let hasFace2 = false;
+
+  const form = document.getElementById("uploadForm");
+  const analyzeBtn = document.getElementById("analyzeBtn");
+  const generateBtn = document.getElementById("generateBtn");
+  const statusEl = document.getElementById("status");
+
+  function fileName(id) {
+    const input = document.getElementById(id);
+    return input.files && input.files[0] ? input.files[0].name : "";
+  }
+
+  function setBox(inputId, boxId, nameId, fallback) {
+    const name = fileName(inputId);
+    document.getElementById(nameId).textContent = name || fallback;
+    document.getElementById(boxId).classList.toggle("complete", !!name);
+  }
+
+  function updateReady() {
+    setBox("video", "videoBox", "videoName", "Choose video");
+    setBox("face1", "face1Box", "face1Name", "Choose Face 1");
+    setBox("face2", "face2Box", "face2Name", "Choose Face 2 if needed");
+
+    const ready = fileName("video") && fileName("face1") && document.getElementById("agree").checked;
+    analyzeBtn.disabled = !ready;
+    statusEl.textContent = ready ? "Ready. Analyze the video to find faces." : "Upload video, Face 1, and confirm permission.";
+  }
+
+  ["video", "face1", "face2", "agree"].forEach(id => document.getElementById(id).addEventListener("change", updateReady));
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    analyzeBtn.className = "processing";
+    analyzeBtn.textContent = "Analyzing faces...";
+    analyzeBtn.disabled = true;
+    statusEl.textContent = "Finding faces in the first frame...";
+
+    const fd = new FormData(form);
+
+    try {
+      const res = await fetch("/analyze", { method: "POST", body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Analyze failed.");
+
+      sessionId = data.session_id;
+      hasFace2 = data.has_face2;
+
+      document.getElementById("firstFrame").src = data.first_frame_url + "?t=" + Date.now();
+      document.getElementById("firstFrame").style.display = "block";
+      document.getElementById("previewHint").textContent = "Detected faces are labeled. Now assign Circle and Square targets.";
+
+      populateTargets(data.faces);
+      document.getElementById("targetControls").style.display = "block";
+      document.getElementById("target2Wrap").style.display = hasFace2 ? "block" : "none";
+
+      analyzeBtn.className = "done";
+      analyzeBtn.textContent = "Faces Found";
+      statusEl.textContent = "Faces detected. Choose your replacement targets.";
+    } catch (err) {
+      analyzeBtn.className = "";
+      analyzeBtn.textContent = "Analyze Video";
+      analyzeBtn.disabled = false;
+      statusEl.textContent = err.message;
+      alert(err.message);
+    }
+  });
+
+  function populateTargets(faces) {
+    const t1 = document.getElementById("target1");
+    const t2 = document.getElementById("target2");
+    t1.innerHTML = "";
+    t2.innerHTML = "";
+
+    faces.forEach(f => {
+      const opt1 = document.createElement("option");
+      opt1.value = f.index;
+      opt1.textContent = `${f.label} detected`;
+      t1.appendChild(opt1);
+
+      const opt2 = document.createElement("option");
+      opt2.value = f.index;
+      opt2.textContent = `${f.label} detected`;
+      t2.appendChild(opt2);
+    });
+
+    if (faces.length > 1) t2.selectedIndex = 1;
+  }
+
+  generateBtn.addEventListener("click", async () => {
+    if (!sessionId) return;
+
+    generateBtn.className = "processing";
+    generateBtn.textContent = "Tracking and rendering...";
+    generateBtn.disabled = true;
+    statusEl.textContent = "Working. The sticker face is following the selected target through the video.";
+
+    const payload = {
+      session_id: sessionId,
+      target1: document.getElementById("target1").value,
+      target2: hasFace2 ? document.getElementById("target2").value : null
+    };
+
+    try {
+      const res = await fetch("/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Generate failed.");
+
+      const video = document.getElementById("outputVideo");
+      video.src = data.output_url + "?t=" + Date.now();
+      video.style.display = "block";
+
+      const link = document.getElementById("downloadLink");
+      link.href = data.output_url;
+      link.style.display = "block";
+
+      generateBtn.className = "done";
+      generateBtn.textContent = "Meme Complete";
+      statusEl.textContent = "Done. Preview or download your tracked meme video.";
+    } catch (err) {
+      generateBtn.className = "";
+      generateBtn.textContent = "Generate Tracked Meme";
+      generateBtn.disabled = false;
+      statusEl.textContent = err.message;
+      alert(err.message);
+    }
+  });
+
+  updateReady();
+</script>
+</body>
+</html>

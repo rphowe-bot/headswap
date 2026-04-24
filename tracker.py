@@ -68,8 +68,16 @@ def draw_first_frame(frame, faces, out_path):
         x, y, w, h = f["x"], f["y"], f["w"], f["h"]
         color = (255, 200, 50) if i == 0 else (200, 80, 255)
         cv2.rectangle(draw, (x, y), (x + w, y + h), color, 3)
-        cv2.putText(draw, f"Face {i + 1}", (x, max(30, y - 10)),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2, cv2.LINE_AA)
+        cv2.putText(
+            draw,
+            f"Face {i + 1}",
+            (x, max(30, y - 10)),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.9,
+            color,
+            2,
+            cv2.LINE_AA,
+        )
     cv2.imwrite(out_path, draw)
 
 
@@ -122,6 +130,7 @@ def analyze_first_frame(video_path, output_dir):
 
 def make_ripped_mask(w, h):
     mask = np.zeros((h, w), dtype=np.uint8)
+
     center = (w // 2, h // 2)
     axes = (int(w * 0.42), int(h * 0.48))
 
@@ -156,18 +165,18 @@ def prepare_face_sticker(face_path, target_w, target_h):
     bgr = cv2.resize(bgr, (out_w, out_h), interpolation=cv2.INTER_AREA)
     alpha = cv2.resize(alpha, (out_w, out_h), interpolation=cv2.INTER_AREA)
 
-    ripped = make_ripped_mask(out_w, out_h)
+    mask = make_ripped_mask(out_w, out_h)
 
-    if len(ripped.shape) == 3:
-        ripped = cv2.cvtColor(ripped, cv2.COLOR_BGR2GRAY)
+    if len(mask.shape) == 3:
+        mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
 
     alpha = alpha.astype(np.uint8)
-    ripped = ripped.astype(np.uint8)
+    mask = mask.astype(np.uint8)
 
-    if ripped.shape != alpha.shape:
-        ripped = cv2.resize(ripped, (alpha.shape[1], alpha.shape[0]))
+    if mask.shape != alpha.shape:
+        mask = cv2.resize(mask, (alpha.shape[1], alpha.shape[0]))
 
-    alpha = cv2.bitwise_and(alpha, ripped)
+    alpha = cv2.bitwise_and(alpha, mask)
 
     sticker = np.dstack([bgr, alpha])
     return sticker, None
@@ -266,15 +275,29 @@ def match_faces_to_initial(current_faces, initial_faces):
     return matches
 
 
-def smooth_face_size(face):
+def smooth_face(face):
     if "prev_w" not in face:
         face["prev_w"] = face["w"]
         face["prev_h"] = face["h"]
+        face["prev_cx"] = face["cx"]
+        face["prev_cy"] = face["cy"]
 
-    face["prev_w"] = face["prev_w"] * 0.7 + face["w"] * 0.3
-    face["prev_h"] = face["prev_h"] * 0.7 + face["h"] * 0.3
+    face["prev_w"] = face["prev_w"] * 0.85 + face["w"] * 0.15
+    face["prev_h"] = face["prev_h"] * 0.85 + face["h"] * 0.15
+    face["prev_cx"] = face["prev_cx"] * 0.82 + face["cx"] * 0.18
+    face["prev_cy"] = face["prev_cy"] * 0.82 + face["cy"] * 0.18
 
-    return face["prev_w"], face["prev_h"]
+    return face["prev_cx"], face["prev_cy"], face["prev_w"], face["prev_h"]
+
+
+def adaptive_scale_for_face(face):
+    face_size = max(face["w"], face["h"], 1)
+
+    size_factor = min(1.0, 130 / face_size)
+
+    adaptive_scale = 0.82 + 0.23 * size_factor
+
+    return adaptive_scale
 
 
 def render_tracking_video(video_path, face1_path, face2_path, initial_faces, target1_index, target2_index, output_path, max_seconds=20):
@@ -328,6 +351,12 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
                         best = f
 
                 if best and best_dist < 50:
+                    if "prev_w" in prev_face:
+                        best["prev_w"] = prev_face["prev_w"]
+                        best["prev_h"] = prev_face["prev_h"]
+                        best["prev_cx"] = prev_face.get("prev_cx", prev_face["cx"])
+                        best["prev_cy"] = prev_face.get("prev_cy", prev_face["cy"])
+
                     locked_matches[k] = best
 
             matches = locked_matches
@@ -338,44 +367,29 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
 
         if target1_index in matches:
             f = matches[target1_index]
-            smooth_w, smooth_h = smooth_face_size(f)
+            smooth_cx, smooth_cy, smooth_w, smooth_h = smooth_face(f)
 
-            scale_w = smooth_w * 1.24
-            scale_h = smooth_h * 1.34
+            scale = adaptive_scale_for_face(f)
+            scale_w = smooth_w * scale
+            scale_h = smooth_h * (scale + 0.08)
 
             sticker, _ = prepare_face_sticker(face1_path, scale_w, scale_h)
             roll = estimate_roll(f)
             sticker = rotate_rgba(sticker, roll)
-            frame = overlay_rgba(frame, sticker, f["cx"], f["cy"])
-
-            cv2.circle(
-                frame,
-                (int(f["cx"]), int(f["cy"])),
-                int(max(f["w"], f["h"]) * 0.72),
-                (255, 180, 60),
-                2,
-            )
+            frame = overlay_rgba(frame, sticker, smooth_cx, smooth_cy)
 
         if face2_path and target2_index is not None and target2_index in matches:
             f = matches[target2_index]
-            smooth_w, smooth_h = smooth_face_size(f)
+            smooth_cx, smooth_cy, smooth_w, smooth_h = smooth_face(f)
 
-            scale_w = smooth_w * 1.24
-            scale_h = smooth_h * 1.34
+            scale = adaptive_scale_for_face(f)
+            scale_w = smooth_w * scale
+            scale_h = smooth_h * (scale + 0.08)
 
             sticker, _ = prepare_face_sticker(face2_path, scale_w, scale_h)
             roll = estimate_roll(f)
             sticker = rotate_rgba(sticker, roll)
-            frame = overlay_rgba(frame, sticker, f["cx"], f["cy"])
-
-            pad = int(max(f["w"], f["h"]) * 0.18)
-            cv2.rectangle(
-                frame,
-                (int(f["x"] - pad), int(f["y"] - pad)),
-                (int(f["x"] + f["w"] + pad), int(f["y"] + f["h"] + pad)),
-                (230, 90, 255),
-                2,
-            )
+            frame = overlay_rgba(frame, sticker, smooth_cx, smooth_cy)
 
         writer.write(frame)
         frame_idx += 1

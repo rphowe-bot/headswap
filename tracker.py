@@ -188,8 +188,8 @@ if ripped.shape != alpha.shape:
 
 alpha = cv2.bitwise_and(alpha, ripped)
 
-    sticker = np.dstack([bgr, alpha])
-    return sticker, None
+sticker = np.dstack([bgr, alpha])
+return sticker, None
 
 
 def rotate_rgba(img, angle_degrees):

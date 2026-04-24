@@ -44,7 +44,7 @@ def detect_faces_bgr(frame_bgr, min_confidence=0.45):
         for kp in det.location_data.relative_keypoints:
             kps.append((int(kp.x * w), int(kp.y * h)))
 
-        if bw > 45 and bh > 45:
+        if bw > 65 and bh > 65:
             faces.append({
                 "x": x,
                 "y": y,

@@ -318,8 +318,6 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
 
                 if best and best_dist < 80:
                     locked_matches[k] = best
-                else:
-                    locked_matches[k] = prev_face
 
             matches = locked_matches
         else:

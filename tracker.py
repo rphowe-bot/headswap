@@ -289,7 +289,7 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
 
     last_target_faces = {}
 
-        frame_idx = 0
+    frame_idx = 0
 
     while frame_idx < max_frames:
         ok, frame = cap.read()
@@ -354,7 +354,7 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
         writer.write(frame)
         frame_idx += 1
 
-cap.release()
+    cap.release()
     writer.release()
 
     # Try to preserve audio from original with ffmpeg. If it fails, keep silent MP4.

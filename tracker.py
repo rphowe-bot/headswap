@@ -67,6 +67,7 @@ def draw_first_frame(frame, faces, out_path):
     for i, f in enumerate(faces):
         x, y, w, h = f["x"], f["y"], f["w"], f["h"]
         color = (255, 200, 50) if i == 0 else (200, 80, 255)
+
         cv2.rectangle(draw, (x, y), (x + w, y + h), color, 3)
         cv2.putText(
             draw,
@@ -78,6 +79,7 @@ def draw_first_frame(frame, faces, out_path):
             2,
             cv2.LINE_AA,
         )
+
     cv2.imwrite(out_path, draw)
 
 
@@ -130,6 +132,7 @@ def analyze_first_frame(video_path, output_dir):
 
 def make_soft_oval_mask(w, h):
     mask = np.zeros((h, w), dtype=np.uint8)
+
     center = (w // 2, h // 2)
     axes = (int(w * 0.42), int(h * 0.50))
 
@@ -140,10 +143,6 @@ def make_soft_oval_mask(w, h):
 
 
 def auto_crop_face_from_upload(face_bgr):
-    """
-    Finds the main face in the uploaded image and crops around it.
-    If no face is found, it falls back to a center crop.
-    """
     if face_bgr is None:
         raise RuntimeError("Could not read uploaded face image.")
 
@@ -290,11 +289,26 @@ def overlay_rgba(frame, sticker, cx, cy):
     if crop.size == 0:
         return frame
 
-    rgb = crop[:, :, :3].astype(np.float32)
-    alpha = crop[:, :, 3:4].astype(np.float32) / 255.0
+    fg_rgb = crop[:, :, :3].astype(np.float32)
+    alpha = crop[:, :, 3].astype(np.float32) / 255.0
+    alpha = cv2.GaussianBlur(alpha, (11, 11), 0)
+    alpha = alpha[:, :, None]
 
     roi = frame[fy0:fy1, fx0:fx1].astype(np.float32)
-    frame[fy0:fy1, fx0:fx1] = (roi * (1 - alpha) + rgb * alpha).astype(np.uint8)
+
+    fg_mean = np.mean(fg_rgb, axis=(0, 1))
+    bg_mean = np.mean(roi, axis=(0, 1))
+
+    fg_std = np.std(fg_rgb, axis=(0, 1))
+    bg_std = np.std(roi, axis=(0, 1))
+
+    fg_std = np.where(fg_std < 1, 1, fg_std)
+
+    fg_rgb = (fg_rgb - fg_mean) / fg_std * bg_std + bg_mean
+    fg_rgb = np.clip(fg_rgb, 0, 255)
+
+    blended = roi * (1 - alpha) + fg_rgb * alpha
+    frame[fy0:fy1, fx0:fx1] = blended.astype(np.uint8)
 
     return frame
 

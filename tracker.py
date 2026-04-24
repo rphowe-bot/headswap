@@ -121,26 +121,19 @@ def analyze_first_frame(video_path, output_dir):
 
 
 def make_ripped_mask(w, h):
+    """
+    Creates a soft oval mask instead of a ripped sticker edge.
+    This makes the overlay look cleaner and less like a magazine cutout.
+    """
     mask = np.zeros((h, w), dtype=np.uint8)
 
     center = (w // 2, h // 2)
-    rx = int(w * 0.46)
-    ry = int(h * 0.48)
+    axes = (int(w * 0.42), int(h * 0.48))
 
-    points = []
-    rng = np.random.default_rng(12345)
+    cv2.ellipse(mask, center, axes, 0, 0, 360, 255, -1)
 
-    for a in np.linspace(0, 2 * math.pi, 90, endpoint=False):
-        noise = 1.0 + rng.uniform(-0.085, 0.085)
-        px = int(center[0] + math.cos(a) * rx * noise)
-        py = int(center[1] + math.sin(a) * ry * noise)
-        points.append([px, py])
-
-    pts = np.array(points, dtype=np.int32)
-    cv2.fillPoly(mask, [pts], 255)
-    mask = cv2.GaussianBlur(mask, (7, 7), 0)
-    return mask
-
+    # Feather edges for smoother blending
+    mask = cv2.GaussianBlur(mask, (21, 21), 0)
 
 def prepare_face_sticker(face_path, target_w, target_h):
     face = read_image_cv(face_path)

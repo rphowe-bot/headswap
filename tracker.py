@@ -11,6 +11,7 @@ from PIL import Image
 
 
 mp_face = mp.solutions.face_detection
+mp_mesh = mp.solutions.face_mesh
 
 
 def read_image_cv(path):
@@ -19,6 +20,52 @@ def read_image_cv(path):
         pil = Image.open(path).convert("RGBA")
         img = cv2.cvtColor(np.array(pil), cv2.COLOR_RGBA2BGRA)
     return img
+
+
+def get_face_mesh_landmarks(frame_bgr):
+    h, w = frame_bgr.shape[:2]
+    rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
+
+    with mp_mesh.FaceMesh(
+        static_image_mode=False,
+        max_num_faces=5,
+        refine_landmarks=True,
+        min_detection_confidence=0.35,
+        min_tracking_confidence=0.35,
+    ) as mesh:
+        result = mesh.process(rgb)
+
+    if not result.multi_face_landmarks:
+        return []
+
+    faces = []
+    for lm_set in result.multi_face_landmarks:
+        pts = []
+        for lm in lm_set.landmark:
+            pts.append((int(lm.x * w), int(lm.y * h)))
+
+        xs = [p[0] for p in pts]
+        ys = [p[1] for p in pts]
+
+        x = max(0, min(xs))
+        y = max(0, min(ys))
+        bw = min(w - x, max(xs) - x)
+        bh = min(h - y, max(ys) - y)
+
+        if bw > 20 and bh > 20:
+            faces.append({
+                "x": x,
+                "y": y,
+                "w": bw,
+                "h": bh,
+                "cx": x + bw / 2,
+                "cy": y + bh / 2,
+                "score": 1.0,
+                "mesh": pts,
+            })
+
+    faces.sort(key=lambda f: f["cx"])
+    return faces
 
 
 def detect_faces_bgr(frame_bgr, min_confidence=0.45):
@@ -62,6 +109,23 @@ def detect_faces_bgr(frame_bgr, min_confidence=0.45):
     return faces
 
 
+def merge_mesh_into_faces(detected_faces, mesh_faces):
+    for face in detected_faces:
+        best_mesh = None
+        best_dist = 999999
+
+        for mesh in mesh_faces:
+            dist = math.hypot(face["cx"] - mesh["cx"], face["cy"] - mesh["cy"])
+            if dist < best_dist:
+                best_dist = dist
+                best_mesh = mesh
+
+        if best_mesh and best_dist < max(face["w"], face["h"]) * 0.8:
+            face["mesh"] = best_mesh["mesh"]
+
+    return detected_faces
+
+
 def draw_first_frame(frame, faces, out_path):
     draw = frame.copy()
     for i, f in enumerate(faces):
@@ -103,6 +167,8 @@ def analyze_first_frame(video_path, output_dir):
         return {"error": "Could not read first frame."}
 
     faces = detect_faces_bgr(frame)
+    mesh_faces = get_face_mesh_landmarks(frame)
+    faces = merge_mesh_into_faces(faces, mesh_faces)
 
     if not faces:
         return {"error": "No faces detected on the first frame. Try a clearer starting frame."}
@@ -228,6 +294,49 @@ def prepare_face_sticker(face_path, target_w, target_h):
     return sticker, None
 
 
+def estimate_roll(face):
+    if "mesh" in face and face["mesh"]:
+        pts = face["mesh"]
+
+        try:
+            left_eye = pts[33]
+            right_eye = pts[263]
+            dx = right_eye[0] - left_eye[0]
+            dy = right_eye[1] - left_eye[1]
+            return math.degrees(math.atan2(dy, dx))
+        except Exception:
+            pass
+
+    kps = face.get("keypoints") or []
+    if len(kps) >= 2:
+        right_eye = kps[0]
+        left_eye = kps[1]
+        dx = left_eye[0] - right_eye[0]
+        dy = left_eye[1] - right_eye[1]
+        return math.degrees(math.atan2(dy, dx))
+
+    return 0.0
+
+
+def get_mesh_anchor(face):
+    if "mesh" not in face or not face["mesh"]:
+        return face["cx"], face["cy"]
+
+    pts = face["mesh"]
+
+    try:
+        left_eye = pts[33]
+        right_eye = pts[263]
+        nose = pts[1]
+
+        cx = (left_eye[0] + right_eye[0] + nose[0]) / 3
+        cy = (left_eye[1] + right_eye[1] + nose[1]) / 3
+
+        return cx, cy
+    except Exception:
+        return face["cx"], face["cy"]
+
+
 def rotate_rgba(img, angle_degrees):
     h, w = img.shape[:2]
     center = (w / 2, h / 2)
@@ -250,17 +359,6 @@ def rotate_rgba(img, angle_degrees):
         borderMode=cv2.BORDER_CONSTANT,
         borderValue=(0, 0, 0, 0),
     )
-
-
-def estimate_roll(face):
-    kps = face.get("keypoints") or []
-    if len(kps) >= 2:
-        right_eye = kps[0]
-        left_eye = kps[1]
-        dx = left_eye[0] - right_eye[0]
-        dy = left_eye[1] - right_eye[1]
-        return math.degrees(math.atan2(dy, dx))
-    return 0.0
 
 
 def overlay_rgba(frame, sticker, cx, cy):
@@ -337,16 +435,18 @@ def match_faces_to_initial(current_faces, initial_faces):
 
 
 def smooth_face(face):
+    anchor_cx, anchor_cy = get_mesh_anchor(face)
+
     if "prev_w" not in face:
         face["prev_w"] = face["w"]
         face["prev_h"] = face["h"]
-        face["prev_cx"] = face["cx"]
-        face["prev_cy"] = face["cy"]
+        face["prev_cx"] = anchor_cx
+        face["prev_cy"] = anchor_cy
 
     face["prev_w"] = face["prev_w"] * 0.85 + face["w"] * 0.15
     face["prev_h"] = face["prev_h"] * 0.85 + face["h"] * 0.15
-    face["prev_cx"] = face["prev_cx"] * 0.82 + face["cx"] * 0.18
-    face["prev_cy"] = face["prev_cy"] * 0.82 + face["cy"] * 0.18
+    face["prev_cx"] = face["prev_cx"] * 0.82 + anchor_cx * 0.18
+    face["prev_cy"] = face["prev_cy"] * 0.82 + anchor_cy * 0.18
 
     return face["prev_cx"], face["prev_cy"], face["prev_w"], face["prev_h"]
 
@@ -389,6 +489,9 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
             break
 
         faces = detect_faces_bgr(frame, min_confidence=0.35)
+        mesh_faces = get_face_mesh_landmarks(frame)
+        faces = merge_mesh_into_faces(faces, mesh_faces)
+
         new_matches = match_faces_to_initial(faces, initial)
 
         if last_target_faces:
@@ -434,10 +537,8 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
             roll = estimate_roll(f)
             sticker = rotate_rgba(sticker, roll)
 
-            x_offset = smooth_w * 0.02
-            y_offset = smooth_h * 0.08
-
-            frame = overlay_rgba(frame, sticker, smooth_cx + x_offset, smooth_cy + y_offset)
+            y_offset = smooth_h * 0.12
+            frame = overlay_rgba(frame, sticker, smooth_cx, smooth_cy + y_offset)
 
         if face2_path and target2_index is not None and target2_index in matches:
             f = matches[target2_index]
@@ -451,10 +552,8 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
             roll = estimate_roll(f)
             sticker = rotate_rgba(sticker, roll)
 
-            x_offset = smooth_w * 0.02
-            y_offset = smooth_h * 0.08
-
-            frame = overlay_rgba(frame, sticker, smooth_cx + x_offset, smooth_cy + y_offset)
+            y_offset = smooth_h * 0.12
+            frame = overlay_rgba(frame, sticker, smooth_cx, smooth_cy + y_offset)
 
         writer.write(frame)
         frame_idx += 1

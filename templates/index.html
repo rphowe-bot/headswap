@@ -206,7 +206,19 @@
         </form>
 
         <div id="targetControls" style="display:none;">
-          <div class="step"><span class="num">3</span> Choose who gets replaced</div>
+          <p style="margin-top:10px; font-weight:700;">Scrub Video Frames</p>  
+          
+          <input 
+            type="range"
+            id="frameSlider"
+            min="0"
+            max="300"
+            value="0"
+            style="width:100%; margin-top:10px;">
+           
+  
+          
+        <div class="step"><span class="num">3</span> Choose who gets replaced</div>
           <p class="hint">Pick the detected video face that should receive each uploaded face.</p>
 
           <div class="faceChoice">
@@ -287,6 +299,31 @@
       document.getElementById("previewHint").textContent = "Detected faces are labeled. Now assign Circle and Square targets.";
 
       populateTargets(data.faces);
+
+      const slider = document.getElementById("frameSlider");
+slider.style.display = "block";
+
+slider.addEventListener("input", async () => {
+  const frame = slider.value;
+
+  const res = await fetch("/frame", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      video: data.video_path,
+      frame: frame
+    })
+  });
+
+  const result = await res.json();
+
+  if (result.frame_url) {
+    document.getElementById("firstFrame").src = result.frame_url;
+  }
+});
+      
       document.getElementById("targetControls").style.display = "block";
       document.getElementById("target2Wrap").style.display = hasFace2 ? "block" : "none";
 

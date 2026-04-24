@@ -289,43 +289,43 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
 
     last_target_faces = {}
 
-    frame_idx = 0
+        frame_idx = 0
 
-while frame_idx < max_frames:
-    ok, frame = cap.read()
-    if not ok:
-        break
+    while frame_idx < max_frames:
+        ok, frame = cap.read()
+        if not ok:
+            break
 
-    faces = detect_faces_bgr(frame, min_confidence=0.35)
+        faces = detect_faces_bgr(frame, min_confidence=0.35)
 
-    new_matches = match_faces_to_initial(faces, initial)
+        new_matches = match_faces_to_initial(faces, initial)
 
-    if last_target_faces:
-        locked_matches = {}
+        if last_target_faces:
+            locked_matches = {}
 
-        for k, prev_face in last_target_faces.items():
-            best = None
-            best_dist = 99999
+            for k, prev_face in last_target_faces.items():
+                best = None
+                best_dist = 99999
 
-            for f in faces:
-                dx = f["cx"] - prev_face["cx"]
-                dy = f["cy"] - prev_face["cy"]
-                dist = (dx * dx + dy * dy) ** 0.5
+                for f in faces:
+                    dx = f["cx"] - prev_face["cx"]
+                    dy = f["cy"] - prev_face["cy"]
+                    dist = (dx * dx + dy * dy) ** 0.5
 
-                if dist < best_dist:
-                    best_dist = dist
-                    best = f
+                    if dist < best_dist:
+                        best_dist = dist
+                        best = f
 
-            if best and best_dist < 80:
-                locked_matches[k] = best
-            else:
-                locked_matches[k] = prev_face
+                if best and best_dist < 80:
+                    locked_matches[k] = best
+                else:
+                    locked_matches[k] = prev_face
 
-        matches = locked_matches
-    else:
-        matches = new_matches
+            matches = locked_matches
+        else:
+            matches = new_matches
 
-    last_target_faces.update(matches)
+        last_target_faces.update(matches)
 
         # Person 1 circle marker style
         if target1_index in matches:
@@ -336,8 +336,6 @@ while frame_idx < max_frames:
             roll = estimate_roll(f)
             sticker = rotate_rgba(sticker, roll)
             frame = overlay_rgba(frame, sticker, f["cx"], f["cy"])
-
-            # blue circle marker accent, subtle
             cv2.circle(frame, (int(f["cx"]), int(f["cy"])), int(max(f["w"], f["h"]) * 0.72), (255, 180, 60), 2)
 
         # Person 2 square marker style
@@ -350,14 +348,13 @@ while frame_idx < max_frames:
             sticker = rotate_rgba(sticker, roll)
             frame = overlay_rgba(frame, sticker, f["cx"], f["cy"])
 
-            # purple square marker accent, subtle
             pad = int(max(f["w"], f["h"]) * 0.18)
             cv2.rectangle(frame, (int(f["x"]-pad), int(f["y"]-pad)), (int(f["x"]+f["w"]+pad), int(f["y"]+f["h"]+pad)), (230, 90, 255), 2)
 
         writer.write(frame)
         frame_idx += 1
 
-    cap.release()
+cap.release()
     writer.release()
 
     # Try to preserve audio from original with ffmpeg. If it fails, keep silent MP4.

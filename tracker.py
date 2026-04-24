@@ -316,7 +316,7 @@ while frame_idx < max_frames:
                     best_dist = dist
                     best = f
 
-            if best and best_dist < 120:
+            if best and best_dist < 80:
                 locked_matches[k] = best
             else:
                 locked_matches[k] = prev_face

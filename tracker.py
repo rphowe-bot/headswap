@@ -128,36 +128,83 @@ def analyze_first_frame(video_path, output_dir):
     }
 
 
-def make_ripped_mask(w, h):
+def make_soft_oval_mask(w, h):
     mask = np.zeros((h, w), dtype=np.uint8)
-
     center = (w // 2, h // 2)
-    axes = (int(w * 0.42), int(h * 0.48))
+    axes = (int(w * 0.42), int(h * 0.50))
 
     cv2.ellipse(mask, center, axes, 0, 0, 360, 255, -1)
-    mask = cv2.GaussianBlur(mask, (21, 21), 0)
+    mask = cv2.GaussianBlur(mask, (31, 31), 0)
 
     return mask
+
+
+def auto_crop_face_from_upload(face_bgr):
+    """
+    Finds the main face in the uploaded image and crops around it.
+    If no face is found, it falls back to a center crop.
+    """
+    if face_bgr is None:
+        raise RuntimeError("Could not read uploaded face image.")
+
+    if face_bgr.shape[2] == 4:
+        bgr = face_bgr[:, :, :3]
+        alpha = face_bgr[:, :, 3]
+    else:
+        bgr = face_bgr[:, :, :3]
+        alpha = np.full(face_bgr.shape[:2], 255, dtype=np.uint8)
+
+    gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
+
+    cascade = cv2.CascadeClassifier(
+        cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
+    )
+
+    detected = cascade.detectMultiScale(
+        gray,
+        scaleFactor=1.15,
+        minNeighbors=4,
+        minSize=(60, 60),
+    )
+
+    h, w = bgr.shape[:2]
+
+    if len(detected) > 0:
+        detected = sorted(detected, key=lambda r: r[2] * r[3], reverse=True)
+        x, y, fw, fh = detected[0]
+
+        pad_x = int(fw * 0.32)
+        pad_top = int(fh * 0.45)
+        pad_bottom = int(fh * 0.35)
+
+        x1 = max(0, x - pad_x)
+        y1 = max(0, y - pad_top)
+        x2 = min(w, x + fw + pad_x)
+        y2 = min(h, y + fh + pad_bottom)
+    else:
+        side = min(w, h)
+        x1 = (w - side) // 2
+        y1 = (h - side) // 2
+        x2 = x1 + side
+        y2 = y1 + side
+
+    crop_bgr = bgr[y1:y2, x1:x2]
+    crop_alpha = alpha[y1:y2, x1:x2]
+
+    if crop_bgr.size == 0:
+        side = min(w, h)
+        x1 = (w - side) // 2
+        y1 = (h - side) // 2
+        crop_bgr = bgr[y1:y1 + side, x1:x1 + side]
+        crop_alpha = alpha[y1:y1 + side, x1:x1 + side]
+
+    return crop_bgr, crop_alpha
 
 
 def prepare_face_sticker(face_path, target_w, target_h):
     face = read_image_cv(face_path)
 
-    if face.shape[2] == 4:
-        bgr = face[:, :, :3]
-        alpha = face[:, :, 3]
-    else:
-        bgr = face[:, :, :3]
-        alpha = np.full(face.shape[:2], 255, dtype=np.uint8)
-
-    h, w = bgr.shape[:2]
-    side = min(w, h)
-
-    x0 = (w - side) // 2
-    y0 = (h - side) // 2
-
-    bgr = bgr[y0:y0 + side, x0:x0 + side]
-    alpha = alpha[y0:y0 + side, x0:x0 + side]
+    bgr, alpha = auto_crop_face_from_upload(face)
 
     out_w = max(40, int(target_w))
     out_h = max(40, int(target_h))
@@ -165,7 +212,7 @@ def prepare_face_sticker(face_path, target_w, target_h):
     bgr = cv2.resize(bgr, (out_w, out_h), interpolation=cv2.INTER_AREA)
     alpha = cv2.resize(alpha, (out_w, out_h), interpolation=cv2.INTER_AREA)
 
-    mask = make_ripped_mask(out_w, out_h)
+    mask = make_soft_oval_mask(out_w, out_h)
 
     if len(mask.shape) == 3:
         mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
@@ -292,12 +339,8 @@ def smooth_face(face):
 
 def adaptive_scale_for_face(face):
     face_size = max(face["w"], face["h"], 1)
-
     size_factor = min(1.0, 130 / face_size)
-
-    adaptive_scale = 0.82 + 0.23 * size_factor
-
-    return adaptive_scale
+    return 0.82 + 0.23 * size_factor
 
 
 def render_tracking_video(video_path, face1_path, face2_path, initial_faces, target1_index, target2_index, output_path, max_seconds=20):
@@ -376,7 +419,11 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
             sticker, _ = prepare_face_sticker(face1_path, scale_w, scale_h)
             roll = estimate_roll(f)
             sticker = rotate_rgba(sticker, roll)
-            frame = overlay_rgba(frame, sticker, smooth_cx, smooth_cy)
+
+            x_offset = smooth_w * 0.02
+            y_offset = smooth_h * 0.08
+
+            frame = overlay_rgba(frame, sticker, smooth_cx + x_offset, smooth_cy + y_offset)
 
         if face2_path and target2_index is not None and target2_index in matches:
             f = matches[target2_index]
@@ -389,7 +436,11 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
             sticker, _ = prepare_face_sticker(face2_path, scale_w, scale_h)
             roll = estimate_roll(f)
             sticker = rotate_rgba(sticker, roll)
-            frame = overlay_rgba(frame, sticker, smooth_cx, smooth_cy)
+
+            x_offset = smooth_w * 0.02
+            y_offset = smooth_h * 0.08
+
+            frame = overlay_rgba(frame, sticker, smooth_cx + x_offset, smooth_cy + y_offset)
 
         writer.write(frame)
         frame_idx += 1

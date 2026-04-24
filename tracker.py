@@ -68,7 +68,7 @@ def draw_first_frame(frame, faces, out_path):
         x, y, w, h = f["x"], f["y"], f["w"], f["h"]
         color = (255, 200, 50) if i == 0 else (200, 80, 255)
         cv2.rectangle(draw, (x, y), (x + w, y + h), color, 3)
-        cv2.putText(draw, f"Face {i+1}", (x, max(30, y - 10)),
+        cv2.putText(draw, f"Face {i + 1}", (x, max(30, y - 10)),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2, cv2.LINE_AA)
     cv2.imwrite(out_path, draw)
 
@@ -109,7 +109,7 @@ def analyze_first_frame(video_path, output_dir):
             "y": f["y"],
             "w": f["w"],
             "h": f["h"],
-            "label": f"Face {i+1}",
+            "label": f"Face {i + 1}",
             "score": round(f["score"], 3),
         })
 
@@ -121,19 +121,15 @@ def analyze_first_frame(video_path, output_dir):
 
 
 def make_ripped_mask(w, h):
-    """
-    Creates a soft oval mask instead of a ripped sticker edge.
-    This makes the overlay look cleaner and less like a magazine cutout.
-    """
     mask = np.zeros((h, w), dtype=np.uint8)
-
     center = (w // 2, h // 2)
     axes = (int(w * 0.42), int(h * 0.48))
 
     cv2.ellipse(mask, center, axes, 0, 0, 360, 255, -1)
-
-    # Feather edges for smoother blending
     mask = cv2.GaussianBlur(mask, (21, 21), 0)
+
+    return mask
+
 
 def prepare_face_sticker(face_path, target_w, target_h):
     face = read_image_cv(face_path)
@@ -147,10 +143,12 @@ def prepare_face_sticker(face_path, target_w, target_h):
 
     h, w = bgr.shape[:2]
     side = min(w, h)
+
     x0 = (w - side) // 2
     y0 = (h - side) // 2
-    bgr = bgr[y0:y0+side, x0:x0+side]
-    alpha = alpha[y0:y0+side, x0:x0+side]
+
+    bgr = bgr[y0:y0 + side, x0:x0 + side]
+    alpha = alpha[y0:y0 + side, x0:x0 + side]
 
     out_w = max(40, int(target_w))
     out_h = max(40, int(target_h))
@@ -160,36 +158,19 @@ def prepare_face_sticker(face_path, target_w, target_h):
 
     ripped = make_ripped_mask(out_w, out_h)
 
-# Ensure ripped is single channel
-if len(ripped.shape) == 3:
-    ripped = cv2.cvtColor(ripped, cv2.COLOR_BGR2GRAY)
+    if len(ripped.shape) == 3:
+        ripped = cv2.cvtColor(ripped, cv2.COLOR_BGR2GRAY)
 
-# Ensure both are uint8
-alpha = alpha.astype(np.uint8)
-ripped = ripped.astype(np.uint8)
+    alpha = alpha.astype(np.uint8)
+    ripped = ripped.astype(np.uint8)
 
-# Final resize (ONLY once)
-if ripped.shape != alpha.shape:
-    ripped = cv2.resize(ripped, (alpha.shape[1], alpha.shape[0]))
+    if ripped.shape != alpha.shape:
+        ripped = cv2.resize(ripped, (alpha.shape[1], alpha.shape[0]))
 
-alpha = cv2.bitwise_and(alpha, ripped)
+    alpha = cv2.bitwise_and(alpha, ripped)
 
-# Ensure ripped is single channel
-if len(ripped.shape) == 3:
-    ripped = cv2.cvtColor(ripped, cv2.COLOR_BGR2GRAY)
-
-# Ensure both are uint8
-alpha = alpha.astype(np.uint8)
-ripped = ripped.astype(np.uint8)
-
-# Final resize (ONLY once, here)
-if ripped.shape != alpha.shape:
-    ripped = cv2.resize(ripped, (alpha.shape[1], alpha.shape[0]))
-
-alpha = cv2.bitwise_and(alpha, ripped)
-
-sticker = np.dstack([bgr, alpha])
-return sticker, None
+    sticker = np.dstack([bgr, alpha])
+    return sticker, None
 
 
 def rotate_rgba(img, angle_degrees):

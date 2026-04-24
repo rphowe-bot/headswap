@@ -159,7 +159,10 @@ def prepare_face_sticker(face_path, target_w, target_h):
     alpha = cv2.resize(alpha, (out_w, out_h), interpolation=cv2.INTER_AREA)
 
     ripped = make_ripped_mask(out_w, out_h)
-    alpha = cv2.bitwise_and(alpha, ripped)
+    if ripped.shape != alpha.shape:
+    ripped = cv2.resize(ripped, (alpha.shape[1], alpha.shape[0]), interpolation=cv2.INTER_AREA)
+
+alpha = cv2.bitwise_and(alpha.astype(np.uint8), ripped.astype(np.uint8))
 
     sticker = np.dstack([bgr, alpha])
     return sticker, None

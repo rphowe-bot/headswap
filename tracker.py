@@ -22,13 +22,32 @@ def read_image_cv(path):
     return img
 
 
+def clamp(v, lo, hi):
+    return max(lo, min(hi, v))
+
+
+def frame_difference_score(prev_frame, frame):
+    if prev_frame is None or frame is None:
+        return 0.0
+
+    small_a = cv2.resize(prev_frame, (96, 54), interpolation=cv2.INTER_AREA)
+    small_b = cv2.resize(frame, (96, 54), interpolation=cv2.INTER_AREA)
+
+    gray_a = cv2.cvtColor(small_a, cv2.COLOR_BGR2GRAY)
+    gray_b = cv2.cvtColor(small_b, cv2.COLOR_BGR2GRAY)
+
+    diff = cv2.absdiff(gray_a, gray_b)
+    return float(np.mean(diff))
+
+
 def get_face_mesh_landmarks(frame_bgr):
     h, w = frame_bgr.shape[:2]
     rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
 
+    faces = []
     with mp_mesh.FaceMesh(
         static_image_mode=False,
-        max_num_faces=5,
+        max_num_faces=6,
         refine_landmarks=True,
         min_detection_confidence=0.35,
         min_tracking_confidence=0.35,
@@ -36,9 +55,8 @@ def get_face_mesh_landmarks(frame_bgr):
         result = mesh.process(rgb)
 
     if not result.multi_face_landmarks:
-        return []
+        return faces
 
-    faces = []
     for lm_set in result.multi_face_landmarks:
         pts = []
         for lm in lm_set.landmark:
@@ -47,12 +65,17 @@ def get_face_mesh_landmarks(frame_bgr):
         xs = [p[0] for p in pts]
         ys = [p[1] for p in pts]
 
-        x = max(0, min(xs))
-        y = max(0, min(ys))
-        bw = min(w - x, max(xs) - x)
-        bh = min(h - y, max(ys) - y)
+        x = clamp(min(xs), 0, w - 1)
+        y = clamp(min(ys), 0, h - 1)
+        x2 = clamp(max(xs), 0, w - 1)
+        y2 = clamp(max(ys), 0, h - 1)
 
-        if bw > 20 and bh > 20:
+        bw = x2 - x
+        bh = y2 - y
+
+        min_face_size = max(28, int(min(w, h) * 0.028))
+
+        if bw > min_face_size and bh > min_face_size:
             faces.append({
                 "x": x,
                 "y": y,
@@ -62,6 +85,7 @@ def get_face_mesh_landmarks(frame_bgr):
                 "cy": y + bh / 2,
                 "score": 1.0,
                 "mesh": pts,
+                "source": "mesh",
             })
 
     faces.sort(key=lambda f: f["cx"])
@@ -91,7 +115,7 @@ def detect_faces_bgr(frame_bgr, min_confidence=0.45):
         for kp in det.location_data.relative_keypoints:
             kps.append((int(kp.x * w), int(kp.y * h)))
 
-        min_face_size = max(35, int(min(w, h) * 0.035))
+        min_face_size = max(32, int(min(w, h) * 0.032))
 
         if bw > min_face_size and bh > min_face_size:
             faces.append({
@@ -103,6 +127,7 @@ def detect_faces_bgr(frame_bgr, min_confidence=0.45):
                 "cy": y + bh / 2,
                 "score": score,
                 "keypoints": kps,
+                "source": "detector",
             })
 
     faces.sort(key=lambda f: f["cx"])
@@ -120,10 +145,24 @@ def merge_mesh_into_faces(detected_faces, mesh_faces):
                 best_dist = dist
                 best_mesh = mesh
 
-        if best_mesh and best_dist < max(face["w"], face["h"]) * 0.8:
+        if best_mesh and best_dist < max(face["w"], face["h"]) * 0.85:
             face["mesh"] = best_mesh["mesh"]
+            face["source"] = "detector+mesh"
 
     return detected_faces
+
+
+def detect_faces_cascade(frame_bgr):
+    detected = detect_faces_bgr(frame_bgr, min_confidence=0.38)
+    mesh_faces = get_face_mesh_landmarks(frame_bgr)
+
+    if detected:
+        return merge_mesh_into_faces(detected, mesh_faces)
+
+    if mesh_faces:
+        return mesh_faces
+
+    return []
 
 
 def draw_first_frame(frame, faces, out_path):
@@ -166,9 +205,7 @@ def analyze_first_frame(video_path, output_dir):
     if not ok:
         return {"error": "Could not read first frame."}
 
-    faces = detect_faces_bgr(frame)
-    mesh_faces = get_face_mesh_landmarks(frame)
-    faces = merge_mesh_into_faces(faces, mesh_faces)
+    faces = detect_faces_cascade(frame)
 
     if not faces:
         return {"error": "No faces detected on the first frame. Try a clearer starting frame."}
@@ -186,7 +223,7 @@ def analyze_first_frame(video_path, output_dir):
             "w": f["w"],
             "h": f["h"],
             "label": f"Face {i + 1}",
-            "score": round(f["score"], 3),
+            "score": round(f.get("score", 1.0), 3),
         })
 
     return {
@@ -198,7 +235,6 @@ def analyze_first_frame(video_path, output_dir):
 
 def make_soft_oval_mask(w, h):
     mask = np.zeros((h, w), dtype=np.uint8)
-
     center = (w // 2, h // 2)
     axes = (int(w * 0.42), int(h * 0.50))
 
@@ -238,9 +274,9 @@ def auto_crop_face_from_upload(face_bgr):
         detected = sorted(detected, key=lambda r: r[2] * r[3], reverse=True)
         x, y, fw, fh = detected[0]
 
-        pad_x = int(fw * 0.32)
-        pad_top = int(fh * 0.45)
-        pad_bottom = int(fh * 0.35)
+        pad_x = int(fw * 0.34)
+        pad_top = int(fh * 0.46)
+        pad_bottom = int(fh * 0.36)
 
         x1 = max(0, x - pad_x)
         y1 = max(0, y - pad_top)
@@ -268,7 +304,6 @@ def auto_crop_face_from_upload(face_bgr):
 
 def prepare_face_sticker(face_path, target_w, target_h):
     face = read_image_cv(face_path)
-
     bgr, alpha = auto_crop_face_from_upload(face)
 
     out_w = max(40, int(target_w))
@@ -297,7 +332,6 @@ def prepare_face_sticker(face_path, target_w, target_h):
 def estimate_roll(face):
     if "mesh" in face and face["mesh"]:
         pts = face["mesh"]
-
         try:
             left_eye = pts[33]
             right_eye = pts[263]
@@ -323,7 +357,6 @@ def get_mesh_anchor(face):
         return face["cx"], face["cy"]
 
     pts = face["mesh"]
-
     try:
         left_eye = pts[33]
         right_eye = pts[263]
@@ -443,10 +476,10 @@ def smooth_face(face):
         face["prev_cx"] = anchor_cx
         face["prev_cy"] = anchor_cy
 
-    face["prev_w"] = face["prev_w"] * 0.85 + face["w"] * 0.15
-    face["prev_h"] = face["prev_h"] * 0.85 + face["h"] * 0.15
-    face["prev_cx"] = face["prev_cx"] * 0.82 + anchor_cx * 0.18
-    face["prev_cy"] = face["prev_cy"] * 0.82 + anchor_cy * 0.18
+    face["prev_w"] = face["prev_w"] * 0.86 + face["w"] * 0.14
+    face["prev_h"] = face["prev_h"] * 0.86 + face["h"] * 0.14
+    face["prev_cx"] = face["prev_cx"] * 0.84 + anchor_cx * 0.16
+    face["prev_cy"] = face["prev_cy"] * 0.84 + anchor_cy * 0.16
 
     return face["prev_cx"], face["prev_cy"], face["prev_w"], face["prev_h"]
 
@@ -454,7 +487,17 @@ def smooth_face(face):
 def adaptive_scale_for_face(face):
     face_size = max(face["w"], face["h"], 1)
     size_factor = min(1.0, 130 / face_size)
+
     return 0.82 + 0.23 * size_factor
+
+
+def copy_smoothing_state(prev_face, new_face):
+    if "prev_w" in prev_face:
+        new_face["prev_w"] = prev_face["prev_w"]
+        new_face["prev_h"] = prev_face["prev_h"]
+        new_face["prev_cx"] = prev_face.get("prev_cx", prev_face["cx"])
+        new_face["prev_cy"] = prev_face.get("prev_cy", prev_face["cy"])
+    return new_face
 
 
 def render_tracking_video(video_path, face1_path, face2_path, initial_faces, target1_index, target2_index, output_path, max_seconds=20):
@@ -481,6 +524,7 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
         initial.append(f2)
 
     last_target_faces = {}
+    previous_frame = None
     frame_idx = 0
 
     while frame_idx < max_frames:
@@ -488,35 +532,38 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
         if not ok:
             break
 
-        faces = detect_faces_bgr(frame, min_confidence=0.35)
-        mesh_faces = get_face_mesh_landmarks(frame)
-        faces = merge_mesh_into_faces(faces, mesh_faces)
+        scene_score = frame_difference_score(previous_frame, frame)
+        scene_changed = scene_score > 38.0
 
+        faces = detect_faces_cascade(frame)
         new_matches = match_faces_to_initial(faces, initial)
 
-        if last_target_faces:
+        if scene_changed:
+            last_target_faces = {}
+            matches = new_matches
+        elif last_target_faces:
             locked_matches = {}
 
             for k, prev_face in last_target_faces.items():
                 best = None
-                best_dist = 99999
+                best_dist = 999999
 
                 for f in faces:
                     dx = f["cx"] - prev_face["cx"]
                     dy = f["cy"] - prev_face["cy"]
                     dist = (dx * dx + dy * dy) ** 0.5
 
-                    if dist < best_dist:
+                    prev_size = max(prev_face["w"], prev_face["h"], 1)
+                    new_size = max(f["w"], f["h"], 1)
+                    size_ratio = new_size / prev_size
+                    size_ok = 0.55 <= size_ratio <= 1.85
+
+                    if size_ok and dist < best_dist:
                         best_dist = dist
                         best = f
 
-                if best and best_dist < 50:
-                    if "prev_w" in prev_face:
-                        best["prev_w"] = prev_face["prev_w"]
-                        best["prev_h"] = prev_face["prev_h"]
-                        best["prev_cx"] = prev_face.get("prev_cx", prev_face["cx"])
-                        best["prev_cy"] = prev_face.get("prev_cy", prev_face["cy"])
-
+                if best and best_dist < 56:
+                    best = copy_smoothing_state(prev_face, best)
                     locked_matches[k] = best
 
             matches = locked_matches
@@ -556,6 +603,7 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
             frame = overlay_rgba(frame, sticker, smooth_cx, smooth_cy + y_offset)
 
         writer.write(frame)
+        previous_frame = frame.copy()
         frame_idx += 1
 
     cap.release()

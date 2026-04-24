@@ -375,11 +375,23 @@ slider.addEventListener("input", () => {
     generateBtn.disabled = true;
     statusEl.textContent = "Working. The sticker face is following the selected target through the video.";
 
-    const payload = {
-      session_id: sessionId,
-      target1: document.getElementById("target1").value,
-      target2: hasFace2 ? document.getElementById("target2").value : null
-    };
+    const t1 = document.getElementById("target1").value;
+const t2 = hasFace2 ? document.getElementById("target2").value : null;
+
+// 🚫 prevent both faces selecting same person
+if (hasFace2 && t1 === t2) {
+  alert("Face 1 and Face 2 must be assigned to different people.");
+  generateBtn.className = "";
+  generateBtn.textContent = "Generate Tracked Meme";
+  generateBtn.disabled = false;
+  return;
+}
+
+const payload = {
+  session_id: sessionId,
+  target1: t1,
+  target2: t2
+};
 
     try {
       const res = await fetch("/generate", {

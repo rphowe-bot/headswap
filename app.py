@@ -111,6 +111,7 @@ def analyze():
         "session_id": session_id,
         "first_frame_url": url_for("static", filename=f"outputs/{Path(analysis['first_frame']).name}"),
         "faces": analysis["faces"],
+        "video_path": str(video_path),
         "has_face2": bool(face2_path),
     })
 

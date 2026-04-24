@@ -40,6 +40,31 @@ def save_file(file, prefix):
 def index():
     return render_template("index.html")
 
+@app.route("/frame", methods=["POST"])
+def get_frame():
+    data = request.get_json()
+    video_path = data.get("video")
+    frame_num = int(data.get("frame"))
+
+    import cv2
+    cap = cv2.VideoCapture(video_path)
+    cap.set(cv2.CAP_PROP_POS_FRAMES, frame_num)
+
+    success, frame = cap.read()
+    cap.release()
+
+    if not success:
+        return jsonify({"error": "Could not read frame"}), 400
+
+    import uuid
+    filename = f"frame_{uuid.uuid4().hex}.jpg"
+    output_path = OUTPUT_DIR / filename
+
+    cv2.imwrite(str(output_path), frame)
+
+    return jsonify({
+        "frame_url": url_for("static", filename=f"outputs/{filename}")
+    })
 
 @app.route("/analyze", methods=["POST"])
 def analyze():

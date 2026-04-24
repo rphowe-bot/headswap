@@ -160,9 +160,6 @@ def prepare_face_sticker(face_path, target_w, target_h):
 
     ripped = make_ripped_mask(out_w, out_h)
 
-if ripped.shape != alpha.shape:
-    ripped = cv2.resize(ripped, (alpha.shape[1], alpha.shape[0]), interpolation=cv2.INTER_AREA)
-
 # Ensure ripped is single channel
 if len(ripped.shape) == 3:
     ripped = cv2.cvtColor(ripped, cv2.COLOR_BGR2GRAY)
@@ -171,7 +168,7 @@ if len(ripped.shape) == 3:
 alpha = alpha.astype(np.uint8)
 ripped = ripped.astype(np.uint8)
 
-# Final safety resize (just in case)
+# Final resize (ONLY once, here)
 if ripped.shape != alpha.shape:
     ripped = cv2.resize(ripped, (alpha.shape[1], alpha.shape[0]))
 

@@ -168,6 +168,20 @@ if len(ripped.shape) == 3:
 alpha = alpha.astype(np.uint8)
 ripped = ripped.astype(np.uint8)
 
+# Final resize (ONLY once)
+if ripped.shape != alpha.shape:
+    ripped = cv2.resize(ripped, (alpha.shape[1], alpha.shape[0]))
+
+alpha = cv2.bitwise_and(alpha, ripped)
+
+# Ensure ripped is single channel
+if len(ripped.shape) == 3:
+    ripped = cv2.cvtColor(ripped, cv2.COLOR_BGR2GRAY)
+
+# Ensure both are uint8
+alpha = alpha.astype(np.uint8)
+ripped = ripped.astype(np.uint8)
+
 # Final resize (ONLY once, here)
 if ripped.shape != alpha.shape:
     ripped = cv2.resize(ripped, (alpha.shape[1], alpha.shape[0]))

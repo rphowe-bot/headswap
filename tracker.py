@@ -46,7 +46,7 @@ def detect_faces_bgr(frame_bgr, min_confidence=0.45):
 
         min_face_size = max(35, int(min(w, h) * 0.035))
 
-if bw > min_face_size and bh > min_face_size:
+        if bw > min_face_size and bh > min_face_size:
             faces.append({
                 "x": x,
                 "y": y,

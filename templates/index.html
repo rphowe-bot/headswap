@@ -303,25 +303,32 @@
       const slider = document.getElementById("frameSlider");
 slider.style.display = "block";
 
-slider.addEventListener("input", async () => {
-  const frame = slider.value;
+let sliderTimer = null;
 
-  const res = await fetch("/frame", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      video: data.video_path,
-      frame: frame
-    })
-  });
+slider.addEventListener("input", () => {
+  clearTimeout(sliderTimer);
 
-  const result = await res.json();
+  sliderTimer = setTimeout(async () => {
+    const frame = slider.value;
 
-  if (result.frame_url) {
-    document.getElementById("firstFrame").src = result.frame_url;
-  }
+    const res = await fetch("/frame", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        video: data.video_path,
+        frame: frame
+      })
+    });
+
+    const result = await res.json();
+
+    if (result.frame_url) {
+      document.getElementById("firstFrame").src =
+        result.frame_url + "?t=" + Date.now();
+    }
+  }, 500);
 });
       
       document.getElementById("targetControls").style.display = "block";

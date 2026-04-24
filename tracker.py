@@ -290,17 +290,42 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
     last_target_faces = {}
 
     frame_idx = 0
-    while frame_idx < max_frames:
-        ok, frame = cap.read()
-        if not ok:
-            break
 
-        faces = detect_faces_bgr(frame, min_confidence=0.35)
-        if faces:
-            matches = match_faces_to_initial(faces, initial)
-            last_target_faces.update(matches)
-        else:
-            matches = last_target_faces
+while frame_idx < max_frames:
+    ok, frame = cap.read()
+    if not ok:
+        break
+
+    faces = detect_faces_bgr(frame, min_confidence=0.35)
+
+    new_matches = match_faces_to_initial(faces, initial)
+
+    if last_target_faces:
+        locked_matches = {}
+
+        for k, prev_face in last_target_faces.items():
+            best = None
+            best_dist = 99999
+
+            for f in faces:
+                dx = f["cx"] - prev_face["cx"]
+                dy = f["cy"] - prev_face["cy"]
+                dist = (dx * dx + dy * dy) ** 0.5
+
+                if dist < best_dist:
+                    best_dist = dist
+                    best = f
+
+            if best and best_dist < 120:
+                locked_matches[k] = best
+            else:
+                locked_matches[k] = prev_face
+
+        matches = locked_matches
+    else:
+        matches = new_matches
+
+    last_target_faces.update(matches)
 
         # Person 1 circle marker style
         if target1_index in matches:

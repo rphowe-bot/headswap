@@ -14,13 +14,8 @@ mp_face = mp.solutions.face_detection
 
 
 def read_image_cv(path):
-    """
-    Reads JPG/PNG/WEBP. HEIC support depends on your local image libraries.
-    If HEIC fails, convert it to JPG first on iPhone or Mac Photos export.
-    """
     img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
     if img is None:
-        # fallback via PIL
         pil = Image.open(path).convert("RGBA")
         img = cv2.cvtColor(np.array(pil), cv2.COLOR_RGBA2BGRA)
     return img
@@ -45,20 +40,22 @@ def detect_faces_bgr(frame_bgr, min_confidence=0.45):
         bh = int(min(h - y, box.height * h))
         score = float(det.score[0]) if det.score else 0.0
 
-        # Keypoints: right eye, left eye, nose tip, mouth center, right ear, left ear
         kps = []
         for kp in det.location_data.relative_keypoints:
             kps.append((int(kp.x * w), int(kp.y * h)))
 
         if bw > 20 and bh > 20:
             faces.append({
-                "x": x, "y": y, "w": bw, "h": bh,
-                "cx": x + bw / 2, "cy": y + bh / 2,
+                "x": x,
+                "y": y,
+                "w": bw,
+                "h": bh,
+                "cx": x + bw / 2,
+                "cy": y + bh / 2,
                 "score": score,
                 "keypoints": kps,
             })
 
-    # Sort left to right for predictable target selection
     faces.sort(key=lambda f: f["cx"])
     return faces
 
@@ -122,10 +119,6 @@ def analyze_first_frame(video_path, output_dir):
 
 
 def make_ripped_mask(w, h):
-    """
-    Creates an intentionally imperfect torn-edge alpha mask.
-    This is what makes the overlay feel meme/sticker-like instead of cheap deepfake.
-    """
     mask = np.zeros((h, w), dtype=np.uint8)
 
     center = (w // 2, h // 2)
@@ -143,8 +136,6 @@ def make_ripped_mask(w, h):
 
     pts = np.array(points, dtype=np.int32)
     cv2.fillPoly(mask, [pts], 255)
-
-    # Soft torn edge
     mask = cv2.GaussianBlur(mask, (7, 7), 0)
     return mask
 
@@ -159,7 +150,6 @@ def prepare_face_sticker(face_path, target_w, target_h):
         bgr = face[:, :, :3]
         alpha = np.full(face.shape[:2], 255, dtype=np.uint8)
 
-    # Center crop square-ish face image
     h, w = bgr.shape[:2]
     side = min(w, h)
     x0 = (w - side) // 2
@@ -176,25 +166,32 @@ def prepare_face_sticker(face_path, target_w, target_h):
     ripped = make_ripped_mask(out_w, out_h)
     alpha = cv2.bitwise_and(alpha, ripped)
 
-    # Add thin white sticker border by dilating alpha
-    border = cv2.dilate(alpha, np.ones((7, 7), np.uint8), iterations=1)
-    border_only = cv2.subtract(border, alpha)
-
     sticker = np.dstack([bgr, alpha])
-    return sticker, border_only
+    return sticker, None
 
 
 def rotate_rgba(img, angle_degrees):
     h, w = img.shape[:2]
     center = (w / 2, h / 2)
+
     matrix = cv2.getRotationMatrix2D(center, angle_degrees, 1.0)
     cos = abs(matrix[0, 0])
     sin = abs(matrix[0, 1])
+
     nw = int((h * sin) + (w * cos))
     nh = int((h * cos) + (w * sin))
+
     matrix[0, 2] += (nw / 2) - center[0]
     matrix[1, 2] += (nh / 2) - center[1]
-    return cv2.warpAffine(img, matrix, (nw, nh), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=(0,0,0,0))
+
+    return cv2.warpAffine(
+        img,
+        matrix,
+        (nw, nh),
+        flags=cv2.INTER_LINEAR,
+        borderMode=cv2.BORDER_CONSTANT,
+        borderValue=(0, 0, 0, 0),
+    )
 
 
 def estimate_roll(face):
@@ -238,29 +235,43 @@ def overlay_rgba(frame, sticker, cx, cy):
     alpha = crop[:, :, 3:4].astype(np.float32) / 255.0
 
     roi = frame[fy0:fy1, fx0:fx1].astype(np.float32)
-
-    # subtle shadow
     frame[fy0:fy1, fx0:fx1] = (roi * (1 - alpha) + rgb * alpha).astype(np.uint8)
+
     return frame
 
 
 def match_faces_to_initial(current_faces, initial_faces):
-    """
-    Matches current detections to the selected first-frame faces by nearest center.
-    Good enough for MVP clips where faces do not cross heavily.
-    """
     matches = {}
+
     for init in initial_faces:
         best_i = None
         best_d = float("inf")
+
         for i, cur in enumerate(current_faces):
-            d = math.hypot(cur["cx"] - (init["x"] + init["w"]/2), cur["cy"] - (init["y"] + init["h"]/2))
+            d = math.hypot(
+                cur["cx"] - (init["x"] + init["w"] / 2),
+                cur["cy"] - (init["y"] + init["h"] / 2),
+            )
+
             if d < best_d:
                 best_d = d
                 best_i = i
+
         if best_i is not None:
             matches[init["index"]] = current_faces[best_i]
+
     return matches
+
+
+def smooth_face_size(face):
+    if "prev_w" not in face:
+        face["prev_w"] = face["w"]
+        face["prev_h"] = face["h"]
+
+    face["prev_w"] = face["prev_w"] * 0.7 + face["w"] * 0.3
+    face["prev_h"] = face["prev_h"] * 0.7 + face["h"] * 0.3
+
+    return face["prev_w"], face["prev_h"]
 
 
 def render_tracking_video(video_path, face1_path, face2_path, initial_faces, target1_index, target2_index, output_path, max_seconds=20):
@@ -274,7 +285,6 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT) or 1280)
 
     max_frames = int(min(total_frames, fps * max_seconds))
-
     temp_no_audio = str(Path(output_path).with_suffix(".silent.mp4"))
 
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
@@ -288,7 +298,6 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
         initial.append(f2)
 
     last_target_faces = {}
-
     frame_idx = 0
 
     while frame_idx < max_frames:
@@ -297,7 +306,6 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
             break
 
         faces = detect_faces_bgr(frame, min_confidence=0.35)
-
         new_matches = match_faces_to_initial(faces, initial)
 
         if last_target_faces:
@@ -325,29 +333,46 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
 
         last_target_faces.update(matches)
 
-        # Person 1 circle marker style
         if target1_index in matches:
             f = matches[target1_index]
-            scale_w = f["w"] * 1.24
-            scale_h = f["h"] * 1.34
+            smooth_w, smooth_h = smooth_face_size(f)
+
+            scale_w = smooth_w * 1.24
+            scale_h = smooth_h * 1.34
+
             sticker, _ = prepare_face_sticker(face1_path, scale_w, scale_h)
             roll = estimate_roll(f)
             sticker = rotate_rgba(sticker, roll)
             frame = overlay_rgba(frame, sticker, f["cx"], f["cy"])
-            cv2.circle(frame, (int(f["cx"]), int(f["cy"])), int(max(f["w"], f["h"]) * 0.72), (255, 180, 60), 2)
 
-        # Person 2 square marker style
+            cv2.circle(
+                frame,
+                (int(f["cx"]), int(f["cy"])),
+                int(max(f["w"], f["h"]) * 0.72),
+                (255, 180, 60),
+                2,
+            )
+
         if face2_path and target2_index is not None and target2_index in matches:
             f = matches[target2_index]
-            scale_w = f["w"] * 1.24
-            scale_h = f["h"] * 1.34
+            smooth_w, smooth_h = smooth_face_size(f)
+
+            scale_w = smooth_w * 1.24
+            scale_h = smooth_h * 1.34
+
             sticker, _ = prepare_face_sticker(face2_path, scale_w, scale_h)
             roll = estimate_roll(f)
             sticker = rotate_rgba(sticker, roll)
             frame = overlay_rgba(frame, sticker, f["cx"], f["cy"])
 
             pad = int(max(f["w"], f["h"]) * 0.18)
-            cv2.rectangle(frame, (int(f["x"]-pad), int(f["y"]-pad)), (int(f["x"]+f["w"]+pad), int(f["y"]+f["h"]+pad)), (230, 90, 255), 2)
+            cv2.rectangle(
+                frame,
+                (int(f["x"] - pad), int(f["y"] - pad)),
+                (int(f["x"] + f["w"] + pad), int(f["y"] + f["h"] + pad)),
+                (230, 90, 255),
+                2,
+            )
 
         writer.write(frame)
         frame_idx += 1
@@ -355,7 +380,6 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
     cap.release()
     writer.release()
 
-    # Try to preserve audio from original with ffmpeg. If it fails, keep silent MP4.
     cmd = [
         "ffmpeg", "-y",
         "-i", temp_no_audio,
@@ -367,7 +391,7 @@ def render_tracking_video(video_path, face1_path, face2_path, initial_faces, tar
         "-pix_fmt", "yuv420p",
         "-c:a", "aac",
         "-shortest",
-        output_path
+        output_path,
     ]
 
     try:

@@ -213,13 +213,12 @@
   }
 
   .player-placeholder {
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    inset: 0;
     background: linear-gradient(135deg, #0d0720 0%, #1a0d2e 30%, #0d1a2e 70%, #050311 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
   }
 
   .scene-bg {
@@ -243,6 +242,7 @@
     font-size: 12px; font-weight: 600; letter-spacing: 0.1em;
     color: var(--text); white-space: nowrap;
     backdrop-filter: blur(8px);
+    z-index: 10;
   }
 
   .player-controls {
@@ -695,16 +695,16 @@
 
 <script>
   // === STATE ===
-  let sessionId     = null;
-  let faces         = [];
-  let manualBoxes   = {};
-  let selected      = null;
-  let activeMode    = 1;
+  let sessionId      = null;
+  let faces          = [];
+  let manualBoxes    = {};
+  let selected       = null;
+  let activeMode     = 1;
   let resultVideoUrl = null;
-  let isPlaying     = false;
-  let playInterval  = null;
-  let currentTime   = 0;
-  const duration    = 10;
+  let isPlaying      = false;
+  let playInterval   = null;
+  let currentTime    = 0;
+  const duration     = 10;
 
   // === PLAYER CONTROLS ===
   function togglePlay() {
@@ -759,7 +759,7 @@
       const isSel = selected == f.index;
 
       const div = document.createElement('div');
-      div.style.cssText = 'position:absolute;border-radius:4px;transition:opacity 0.2s,box-shadow 0.2s;';
+      div.style.cssText   = 'position:absolute;border-radius:4px;transition:opacity 0.2s,box-shadow 0.2s;';
       div.style.left      = box.x + 'px';
       div.style.top       = box.y + 'px';
       div.style.width     = box.w + 'px';
@@ -770,12 +770,11 @@
       div.style.cursor    = isSel ? 'move' : 'pointer';
 
       const badge = document.createElement('div');
-      badge.textContent  = 'Face ' + (f.index + 1);
+      badge.textContent   = 'Face ' + (f.index + 1);
       badge.style.cssText = 'position:absolute;top:-22px;left:0;font-size:11px;font-weight:700;letter-spacing:0.05em;white-space:nowrap;color:#fff;font-family:Barlow Condensed,sans-serif;';
       badge.style.opacity = isSel ? '1' : '0.4';
       div.appendChild(badge);
 
-      // Only selected box is draggable
       if (isSel) {
         let dragging = false, startX, startY, origX, origY;
         div.onmousedown = e => {
@@ -813,8 +812,8 @@
   function handleVideoUpload(e) {
     const f = e.target.files[0];
     if (!f) return;
-    document.getElementById('videoStatus').style.display = 'flex';
-    document.getElementById('videoName').textContent     = f.name;
+    document.getElementById('videoStatus').style.display   = 'flex';
+    document.getElementById('videoName').textContent       = f.name;
     document.getElementById('videoZone').style.borderColor = 'var(--cyan)';
     showToast('Video loaded: ' + f.name);
   }
@@ -824,8 +823,8 @@
     if (!f) return;
     const reader = new FileReader();
     reader.onload = ev => {
-      document.getElementById('face' + slot + 'Preview').src          = ev.target.result;
-      document.getElementById('face' + slot + 'Preview').style.display = 'block';
+      document.getElementById('face' + slot + 'Preview').src              = ev.target.result;
+      document.getElementById('face' + slot + 'Preview').style.display    = 'block';
       document.getElementById('face' + slot + 'Placeholder').style.display = 'none';
       document.getElementById('face' + slot + 'Name').querySelector('span').textContent = f.name;
     };
@@ -853,17 +852,22 @@
         selected    = null;
 
         const placeholder = document.getElementById('playerPlaceholder');
-        placeholder.innerHTML    = '';
+        placeholder.innerHTML        = '';
         placeholder.style.background = '#000';
 
-        const img = document.createElement('img');
-        img.src           = data.first_frame_url;
-        img.style.cssText = 'width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;display:block;';
+        const img         = document.createElement('img');
+        img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;display:block;';
         img.ondragstart   = () => false;
+
+        // Diagnostic: tells us if the image URL is reachable and what size it renders
+        img.onerror = () => showToast('Frame failed to load: ' + img.src);
+        img.onload  = () => showToast('Frame loaded: ' + img.naturalWidth + 'x' + img.naturalHeight);
+
+        img.src = data.first_frame_url;
         placeholder.appendChild(img);
 
-        const overlayDiv = document.createElement('div');
-        overlayDiv.id         = 'overlay';
+        const overlayDiv         = document.createElement('div');
+        overlayDiv.id            = 'overlay';
         overlayDiv.style.cssText = 'position:absolute;inset:0;';
         placeholder.appendChild(overlayDiv);
 
@@ -877,8 +881,8 @@
   }
 
   // === COORDINATE CONVERSION ===
-  // Converts display/CSS pixel coordinates back to original video frame pixel coordinates
-  // Required because face boxes are drawn over a scaled object-fit:contain image
+  // Converts CSS/display pixel coordinates → original video frame pixel coordinates
+  // Needed because the frame image is scaled via object-fit:contain inside the player
   function toFrameCoords() {
     const img = document.querySelector('#playerPlaceholder img');
     if (!img) return manualBoxes;
@@ -928,7 +932,7 @@
   // Result video plays in big hero player; result card becomes download-only
   // Sends toFrameCoords() so dragged boxes are in real frame pixel coordinates
   function generate() {
-    if (!sessionId)      { showToast('Run Analyze first'); return; }
+    if (!sessionId)        { showToast('Run Analyze first'); return; }
     if (selected === null) { showToast('Click a face to select a target'); return; }
 
     const btn     = document.getElementById('genLabel');
@@ -937,12 +941,12 @@
     spinner.style.display = 'block';
 
     fetch('/generate', {
-      method: 'POST',
+      method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         session_id: sessionId,
         target1:    selected,
-        boxes:      toFrameCoords()   // converted from display px to frame px
+        boxes:      toFrameCoords()   // converted display px → frame px
       })
     })
     .then(r => r.json())
@@ -955,9 +959,8 @@
         resultVideoUrl = videoUrl;
 
         // Play result in big hero player
-        const placeholder = document.getElementById('playerPlaceholder');
-        placeholder.innerHTML =
-          '<video src="' + videoUrl + '" style="width:100%;height:100%;object-fit:contain;" autoplay controls></video>';
+        const placeholder    = document.getElementById('playerPlaceholder');
+        placeholder.innerHTML = '<video src="' + videoUrl + '" style="width:100%;height:100%;object-fit:contain;" autoplay controls></video>';
 
         // Result card becomes READY download indicator
         document.getElementById('resultThumb').innerHTML =
@@ -982,9 +985,9 @@
   // === DOWNLOAD ===
   function downloadResult() {
     if (!resultVideoUrl) return;
-    const a      = document.createElement('a');
-    a.href       = resultVideoUrl;
-    a.download   = 'headswap_result.mp4';
+    const a    = document.createElement('a');
+    a.href     = resultVideoUrl;
+    a.download = 'headswap_result.mp4';
     a.click();
   }
 

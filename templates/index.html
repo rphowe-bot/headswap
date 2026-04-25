@@ -164,12 +164,7 @@
     max-width: 360px;
   }
 
-  .feature-pills {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    margin-bottom: 36px;
-  }
+  .feature-pills { display: flex; flex-direction: column; gap: 18px; margin-bottom: 36px; }
   .feat { display: flex; align-items: flex-start; gap: 14px; }
   .feat-icon {
     width: 40px; height: 40px;
@@ -236,12 +231,7 @@
       radial-gradient(ellipse at 60% 70%, rgba(255,47,168,0.15) 0%, transparent 40%);
   }
 
-  .bokeh {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(3px);
-    opacity: 0.6;
-  }
+  .bokeh { position: absolute; border-radius: 50%; filter: blur(3px); opacity: 0.6; }
 
   .player-instruction {
     position: absolute;
@@ -278,53 +268,28 @@
   .play-btn svg { width: 20px; height: 20px; }
 
   .progress-wrap {
-    flex: 1;
-    position: relative;
-    height: 4px;
-    background: #2a2240;
-    border-radius: 2px;
-    cursor: pointer;
+    flex: 1; position: relative; height: 4px;
+    background: #2a2240; border-radius: 2px; cursor: pointer;
   }
   .progress-fill {
     height: 100%;
     background: linear-gradient(90deg, var(--pink), var(--cyan));
-    border-radius: 2px;
-    width: 0%;
+    border-radius: 2px; width: 0%;
   }
   .progress-dot {
-    width: 12px; height: 12px;
-    background: #fff;
-    border-radius: 50%;
-    position: absolute;
+    width: 12px; height: 12px; background: #fff;
+    border-radius: 50%; position: absolute;
     top: 50%; left: 0%;
     transform: translate(-50%, -50%);
     box-shadow: 0 0 8px rgba(255,255,255,0.5);
   }
 
-  .time-display {
-    font-size: 12px;
-    color: var(--muted);
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-  }
+  .time-display { font-size: 12px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .fullscreen-btn { background: none; border: none; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-  .fullscreen-btn {
-    background: none; border: none;
-    color: var(--muted); cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-  }
+  .workflow { padding: 0 40px 40px; max-width: 1400px; margin: 0 auto; }
 
-  .workflow {
-    padding: 0 40px 40px;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-
-  .steps-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-  }
+  .steps-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
 
   .step-card {
     background: var(--card);
@@ -334,46 +299,27 @@
     transition: border-color 0.2s;
   }
   .step-card:hover { border-color: var(--border-bright); }
-  .step-card.result-card {
-    border-color: var(--cyan);
-    box-shadow: 0 0 20px rgba(22,221,255,0.1);
-  }
+  .step-card.result-card { border-color: var(--cyan); box-shadow: 0 0 20px rgba(22,221,255,0.1); }
 
   .step-num {
-    width: 26px; height: 26px;
-    border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     border: 1.5px solid var(--border-bright);
     display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 700; color: var(--muted);
-    margin-bottom: 10px;
+    font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 10px;
   }
-  .step-title {
-    font-size: 11px; font-weight: 700;
-    letter-spacing: 0.12em; color: var(--muted);
-    margin-bottom: 14px;
-  }
+  .step-title { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 14px; }
 
   .upload-zone {
     border: 1.5px dashed var(--border-bright);
-    border-radius: 8px;
-    padding: 20px 12px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-    background: transparent;
-    position: relative;
+    border-radius: 8px; padding: 20px 12px; text-align: center;
+    cursor: pointer; transition: border-color 0.2s, background 0.2s;
+    background: transparent; position: relative;
   }
   .upload-zone:hover { border-color: var(--cyan); background: rgba(22,221,255,0.03); }
-  .upload-zone input[type="file"] {
-    position: absolute; inset: 0; opacity: 0;
-    cursor: pointer; width: 100%; height: 100%;
-  }
-
+  .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
   .upload-icon {
-    width: 36px; height: 36px;
-    border: 2px solid var(--border-bright);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border: 2px solid var(--border-bright);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
     margin: 0 auto 10px; color: var(--muted);
   }
   .upload-icon svg { width: 16px; height: 16px; }
@@ -382,8 +328,7 @@
 
   .file-status {
     display: flex; align-items: center; gap: 8px;
-    background: rgba(22,221,255,0.06);
-    border: 1px solid rgba(22,221,255,0.2);
+    background: rgba(22,221,255,0.06); border: 1px solid rgba(22,221,255,0.2);
     border-radius: 6px; padding: 8px 12px; margin-top: 10px;
   }
   .file-status svg { width: 14px; height: 14px; color: var(--muted); flex-shrink: 0; }
@@ -391,60 +336,35 @@
   .file-status .check { color: #22c55e; }
 
   .face-uploads { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-  .face-label {
-    font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
-    color: var(--muted); margin-bottom: 8px;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .face-label .optional {
-    font-weight: 400; color: #3d2f60; font-size: 9px;
-    border: 1px solid var(--border); border-radius: 3px; padding: 1px 4px;
-  }
+  .face-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .face-label .optional { font-weight: 400; color: #3d2f60; font-size: 9px; border: 1px solid var(--border); border-radius: 3px; padding: 1px 4px; }
 
   .face-thumb-wrap {
-    position: relative;
-    border: 1px solid var(--border-bright);
-    border-radius: 8px; aspect-ratio: 1;
-    overflow: hidden; background: var(--bg3);
-    cursor: pointer; transition: border-color 0.2s;
+    position: relative; border: 1px solid var(--border-bright);
+    border-radius: 8px; aspect-ratio: 1; overflow: hidden;
+    background: var(--bg3); cursor: pointer; transition: border-color 0.2s;
   }
   .face-thumb-wrap:hover { border-color: var(--pink); }
-  .face-thumb-wrap input[type="file"] {
-    position: absolute; inset: 0; opacity: 0;
-    cursor: pointer; width: 100%; height: 100%;
-  }
+  .face-thumb-wrap input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
   .face-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; }
-  .face-thumb-placeholder {
-    width: 100%; height: 100%;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--border-bright);
-  }
+  .face-thumb-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--border-bright); }
   .face-thumb-placeholder svg { width: 28px; height: 28px; }
-
-  .face-filename {
-    font-size: 10px; color: var(--text); margin-top: 6px;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    display: flex; align-items: center; gap: 4px;
-  }
+  .face-filename { font-size: 10px; color: var(--text); margin-top: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 4px; }
   .face-filename .check { color: #22c55e; }
 
   .add-face-btn {
-    width: 100%; padding: 8px;
-    background: transparent;
-    border: 1px dashed var(--border-bright);
-    color: var(--muted); border-radius: 6px;
-    font-size: 11px; cursor: pointer; margin-top: 10px;
+    width: 100%; padding: 8px; background: transparent;
+    border: 1px dashed var(--border-bright); color: var(--muted);
+    border-radius: 6px; font-size: 11px; cursor: pointer; margin-top: 10px;
     transition: border-color 0.2s, color 0.2s;
     display: flex; align-items: center; justify-content: center; gap: 6px;
   }
   .add-face-btn:hover { border-color: var(--pink); color: var(--text); }
 
   .mode-btn {
-    display: block; width: 100%; padding: 12px;
-    border-radius: 8px; border: 2px solid transparent;
-    text-align: center; cursor: pointer; margin-bottom: 8px;
-    transition: all 0.2s;
+    display: block; width: 100%; padding: 12px; border-radius: 8px;
+    border: 2px solid transparent; text-align: center; cursor: pointer;
+    margin-bottom: 8px; transition: all 0.2s;
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700; letter-spacing: 0.06em; font-size: 14px;
   }
@@ -452,128 +372,63 @@
   .mode-btn.cyan:hover, .mode-btn.cyan.active { background: rgba(22,221,255,0.2); box-shadow: 0 0 16px rgba(22,221,255,0.2); }
   .mode-btn.pink { background: rgba(255,47,168,0.12); border-color: var(--pink); color: var(--pink); }
   .mode-btn.pink:hover, .mode-btn.pink.active { background: rgba(255,47,168,0.2); box-shadow: 0 0 16px rgba(255,47,168,0.2); }
-  .mode-btn .sub {
-    display: block; font-size: 10px; font-weight: 400;
-    opacity: 0.75; letter-spacing: 0.02em; margin-top: 2px;
-    font-family: 'Barlow', sans-serif;
-  }
-
+  .mode-btn .sub { display: block; font-size: 10px; font-weight: 400; opacity: 0.75; letter-spacing: 0.02em; margin-top: 2px; font-family: 'Barlow', sans-serif; }
   .mode-hint { font-size: 11px; color: var(--muted); text-align: center; line-height: 1.5; margin-top: 8px; }
 
   .analyze-btn, .generate-btn {
     width: 100%; padding: 14px; border: none; border-radius: 8px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 15px; font-weight: 700; letter-spacing: 0.08em;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    gap: 8px; transition: all 0.2s; margin-bottom: 10px;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700;
+    letter-spacing: 0.08em; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; gap: 8px; transition: all 0.2s; margin-bottom: 10px;
   }
-  .analyze-btn {
-    background: transparent;
-    border: 1.5px solid var(--border-bright);
-    color: var(--muted);
-  }
+  .analyze-btn { background: transparent; border: 1.5px solid var(--border-bright); color: var(--muted); }
   .analyze-btn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(22,221,255,0.05); }
-  .generate-btn {
-    background: linear-gradient(135deg, #c41a7a 0%, #8f1fc7 100%);
-    color: #fff;
-    box-shadow: 0 4px 20px rgba(196,26,122,0.4);
-  }
+  .generate-btn { background: linear-gradient(135deg, #c41a7a 0%, #8f1fc7 100%); color: #fff; box-shadow: 0 4px 20px rgba(196,26,122,0.4); }
   .generate-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(196,26,122,0.55); }
   .generate-btn svg { width: 18px; height: 18px; }
 
   .gen-info { font-size: 11px; color: var(--muted); text-align: center; line-height: 1.6; margin-top: 10px; }
-  .gen-info .secure {
-    display: flex; align-items: center; justify-content: center;
-    gap: 4px; margin-top: 4px; font-size: 10px;
-  }
+  .gen-info .secure { display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 4px; font-size: 10px; }
   .gen-info .secure svg { width: 12px; height: 12px; }
 
-  .result-header {
-    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
-    color: var(--cyan); text-align: center; margin-bottom: 14px;
-    padding-bottom: 10px; border-bottom: 1px solid rgba(22,221,255,0.2);
-  }
+  .result-header { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: var(--cyan); text-align: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid rgba(22,221,255,0.2); }
 
-  .result-thumb {
-    border-radius: 8px; overflow: hidden;
-    aspect-ratio: 16/9; background: var(--bg3);
-    position: relative; margin-bottom: 12px;
-  }
+  .result-thumb { border-radius: 8px; overflow: hidden; aspect-ratio: 16/9; background: var(--bg3); position: relative; margin-bottom: 12px; }
   .result-thumb-placeholder {
     width: 100%; height: 100%;
     background: linear-gradient(135deg, #0d0720 0%, #1a0d2e 50%, #0d1a2e 100%);
     display: flex; align-items: center; justify-content: center; position: relative;
   }
-  .result-thumb-placeholder .mini-scene {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse at 35% 50%, rgba(84,60,180,0.5) 0%, transparent 55%),
-      radial-gradient(ellipse at 65% 40%, rgba(22,100,200,0.3) 0%, transparent 45%);
-  }
-  .play-overlay {
-    width: 40px; height: 40px;
-    background: rgba(255,255,255,0.15);
-    border: 2px solid rgba(255,255,255,0.4);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    backdrop-filter: blur(4px); position: relative; z-index: 1;
-  }
+  .result-thumb-placeholder .mini-scene { position: absolute; inset: 0; background: radial-gradient(ellipse at 35% 50%, rgba(84,60,180,0.5) 0%, transparent 55%), radial-gradient(ellipse at 65% 40%, rgba(22,100,200,0.3) 0%, transparent 45%); }
+  .play-overlay { width: 40px; height: 40px; background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); position: relative; z-index: 1; }
   .play-overlay svg { width: 16px; height: 16px; margin-left: 2px; }
 
   .download-btn {
-    width: 100%; padding: 13px;
-    background: transparent; border: 1.5px solid var(--cyan);
-    border-radius: 8px; color: var(--text);
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 15px; font-weight: 700; letter-spacing: 0.08em;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    gap: 8px; transition: all 0.2s;
-    box-shadow: 0 0 16px rgba(22,221,255,0.1);
+    width: 100%; padding: 13px; background: transparent; border: 1.5px solid var(--cyan);
+    border-radius: 8px; color: var(--text); font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px; font-weight: 700; letter-spacing: 0.08em; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: all 0.2s; box-shadow: 0 0 16px rgba(22,221,255,0.1);
   }
   .download-btn:hover { background: rgba(22,221,255,0.1); box-shadow: 0 0 24px rgba(22,221,255,0.25); }
   .download-btn svg { width: 16px; height: 16px; }
   .download-sub { text-align: center; font-size: 10px; color: var(--muted); margin-top: 6px; }
 
-  .footer-bar {
-    border-top: 1px solid var(--border);
-    padding: 14px 40px;
-    display: flex; align-items: center; justify-content: center; gap: 40px;
-    background: var(--bg2); margin-top: 8px;
-  }
+  .footer-bar { border-top: 1px solid var(--border); padding: 14px 40px; display: flex; align-items: center; justify-content: center; gap: 40px; background: var(--bg2); margin-top: 8px; }
   .footer-feat { display: flex; align-items: center; gap: 10px; }
   .footer-feat-icon { color: var(--pink); display: flex; align-items: center; justify-content: center; }
   .footer-feat-icon svg { width: 18px; height: 18px; }
   .footer-feat-icon.cyan-icon { color: var(--cyan); }
-  .footer-feat-icon .hd {
-    font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 900;
-    background: rgba(22,221,255,0.15); border: 1px solid rgba(22,221,255,0.3);
-    color: var(--cyan); padding: 2px 6px; border-radius: 3px;
-  }
+  .footer-feat-icon .hd { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 900; background: rgba(22,221,255,0.15); border: 1px solid rgba(22,221,255,0.3); color: var(--cyan); padding: 2px 6px; border-radius: 3px; }
   .footer-feat-text strong { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: var(--text); }
   .footer-feat-text span { font-size: 11px; color: var(--muted); }
 
-  .help-icon {
-    width: 18px; height: 18px; border: 1px solid var(--border-bright);
-    border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
-    font-size: 10px; color: var(--muted); cursor: help; vertical-align: middle; margin-left: 4px;
-  }
+  .help-icon { width: 18px; height: 18px; border: 1px solid var(--border-bright); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; color: var(--muted); cursor: help; vertical-align: middle; margin-left: 4px; }
 
   @keyframes spin { to { transform: rotate(360deg); } }
-  .spinner {
-    width: 16px; height: 16px;
-    border: 2px solid rgba(255,255,255,0.2);
-    border-top-color: #fff; border-radius: 50%;
-    animation: spin 0.7s linear infinite; display: none;
-  }
+  .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.2); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
 
-  #toast {
-    position: fixed; bottom: 24px; left: 50%;
-    transform: translateX(-50%) translateY(60px);
-    background: #1a1030; border: 1px solid var(--border-bright);
-    border-radius: 8px; padding: 12px 24px;
-    font-size: 13px; color: var(--text);
-    opacity: 0; transition: all 0.3s; z-index: 999; white-space: nowrap;
-  }
+  #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px); background: #1a1030; border: 1px solid var(--border-bright); border-radius: 8px; padding: 12px 24px; font-size: 13px; color: var(--text); opacity: 0; transition: all 0.3s; z-index: 999; white-space: nowrap; }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
@@ -670,12 +525,9 @@
             <ellipse cx="540" cy="160" rx="65" ry="80" fill="rgba(60,80,140,0.35)"/>
             <ellipse cx="540" cy="240" rx="85" ry="110" fill="rgba(40,60,110,0.4)"/>
             <g stroke="rgba(22,221,255,0.08)" stroke-width="0.5">
-              <line x1="100" y1="0" x2="80" y2="450"/>
-              <line x1="200" y1="0" x2="180" y2="450"/>
-              <line x1="350" y1="0" x2="330" y2="450"/>
-              <line x1="480" y1="0" x2="460" y2="450"/>
-              <line x1="600" y1="0" x2="580" y2="450"/>
-              <line x1="720" y1="0" x2="700" y2="450"/>
+              <line x1="100" y1="0" x2="80" y2="450"/><line x1="200" y1="0" x2="180" y2="450"/>
+              <line x1="350" y1="0" x2="330" y2="450"/><line x1="480" y1="0" x2="460" y2="450"/>
+              <line x1="600" y1="0" x2="580" y2="450"/><line x1="720" y1="0" x2="700" y2="450"/>
             </g>
             <rect x="0" y="280" width="800" height="170" fill="url(#cityGrad)" opacity="0.5"/>
             <defs>
@@ -741,9 +593,7 @@
           <div class="face-thumb-wrap">
             <input type="file" id="face1Input" accept="image/*" onchange="handleFaceUpload(event, 1)">
             <div class="face-thumb-placeholder" id="face1Placeholder">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-              </svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
             </div>
             <img id="face1Preview" style="display:none">
           </div>
@@ -754,9 +604,7 @@
           <div class="face-thumb-wrap">
             <input type="file" id="face2Input" accept="image/*" onchange="handleFaceUpload(event, 2)">
             <div class="face-thumb-placeholder" id="face2Placeholder">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-              </svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
             </div>
             <img id="face2Preview" style="display:none">
           </div>
@@ -791,18 +639,14 @@
         ANALYZE FACES
       </button>
       <button class="generate-btn" onclick="generate()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         <span id="genLabel">GENERATE SCENE</span>
         <div class="spinner" id="genSpinner"></div>
       </button>
       <div class="gen-info">
         $0.99 will be charged<br>for this generation
         <div class="secure">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           Secure checkout
         </div>
       </div>
@@ -834,9 +678,7 @@
 <div class="footer-bar">
   <div class="footer-feat">
     <div class="footer-feat-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-      </svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
     </div>
     <div class="footer-feat-text">
       <strong>FAST PROCESSING</strong>
@@ -854,9 +696,7 @@
   </div>
   <div class="footer-feat">
     <div class="footer-feat-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-      </svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
     </div>
     <div class="footer-feat-text">
       <strong>PRIVATE & SECURE</strong>
@@ -917,7 +757,9 @@
     document.getElementById('timeDisplay').textContent = fmt(currentTime) + ' / ' + fmt(duration);
   }
 
-  // === DRAW REAL DETECTED FACE BOXES ===
+  // === DRAW DETECTED FACE BOXES ===
+  // Labels show f.index+1 (Face 1, Face 2) — backend still receives f.index
+  // Unselected boxes faded to 0.35 opacity, only selected is draggable
   function draw() {
     const overlay = document.getElementById('overlay');
     if (!overlay) return;
@@ -926,44 +768,46 @@
       if (!manualBoxes[f.index]) {
         manualBoxes[f.index] = { x: f.x, y: f.y, w: f.w, h: f.h };
       }
-      let box = manualBoxes[f.index]; // snap-back fix
+      const box = manualBoxes[f.index];
+      const isSel = selected == f.index;
 
-      let div = document.createElement('div');
-      div.style.cssText = 'position:absolute;border-radius:4px;cursor:move;';
+      const div = document.createElement('div');
+      div.style.cssText = 'position:absolute;border-radius:4px;transition:opacity 0.2s,box-shadow 0.2s;';
       div.style.left = box.x + 'px';
       div.style.top = box.y + 'px';
       div.style.width = box.w + 'px';
       div.style.height = box.h + 'px';
-      div.style.border = '2px solid ' + (selected == f.index ? '#ff2fa8' : '#16ddff');
-      div.style.boxShadow = selected == f.index
-        ? '0 0 12px rgba(255,47,168,0.5)'
-        : '0 0 12px rgba(22,221,255,0.3)';
+      div.style.border = '2px solid ' + (isSel ? '#ff2fa8' : '#16ddff');
+      div.style.boxShadow = isSel ? '0 0 14px rgba(255,47,168,0.6)' : '0 0 6px rgba(22,221,255,0.2)';
+      div.style.opacity = isSel ? '1' : '0.35';
+      div.style.cursor = isSel ? 'move' : 'pointer';
 
       const badge = document.createElement('div');
-      badge.textContent = 'Face ' + f.index;
+      badge.textContent = 'Face ' + (f.index + 1);
       badge.style.cssText = 'position:absolute;top:-22px;left:0;font-size:11px;font-weight:700;letter-spacing:0.05em;white-space:nowrap;color:#fff;font-family:Barlow Condensed,sans-serif;';
+      badge.style.opacity = isSel ? '1' : '0.4';
       div.appendChild(badge);
 
-      let dragging = false, startX, startY, origX, origY;
-      div.onmousedown = e => {
-        e.preventDefault();
-        dragging = true;
-        startX = e.clientX; startY = e.clientY;
-        origX = box.x; origY = box.y;
-        document.onmousemove = ev => {
-          if (!dragging) return;
-          let nx = origX + (ev.clientX - startX);
-          let ny = origY + (ev.clientY - startY);
-          const pw = overlay.offsetWidth;
-          const ph = overlay.offsetHeight;
-          nx = Math.max(0, Math.min(nx, pw - box.w));
-          ny = Math.max(0, Math.min(ny, ph - box.h));
-          div.style.left = nx + 'px';
-          div.style.top = ny + 'px';
-          manualBoxes[f.index] = { x: nx, y: ny, w: box.w, h: box.h };
+      if (isSel) {
+        let dragging = false, startX, startY, origX, origY;
+        div.onmousedown = e => {
+          e.preventDefault();
+          dragging = true;
+          startX = e.clientX; startY = e.clientY;
+          origX = box.x; origY = box.y;
+          document.onmousemove = ev => {
+            if (!dragging) return;
+            let nx = origX + (ev.clientX - startX);
+            let ny = origY + (ev.clientY - startY);
+            nx = Math.max(0, Math.min(nx, overlay.offsetWidth - box.w));
+            ny = Math.max(0, Math.min(ny, overlay.offsetHeight - box.h));
+            div.style.left = nx + 'px';
+            div.style.top = ny + 'px';
+            manualBoxes[f.index] = { x: nx, y: ny, w: box.w, h: box.h };
+          };
+          document.onmouseup = () => { dragging = false; };
         };
-        document.onmouseup = () => { dragging = false; };
-      };
+      }
 
       div.onclick = () => { selected = f.index; draw(); };
       overlay.appendChild(div);
@@ -1018,8 +862,8 @@
         sessionId = data.session_id;
         faces = data.faces;
         manualBoxes = {};
+        selected = null;
 
-        // Replace placeholder with real extracted video frame
         const placeholder = document.getElementById('playerPlaceholder');
         placeholder.innerHTML = '';
         placeholder.style.background = '#000';
@@ -1045,8 +889,7 @@
   }
 
   // === GENERATE ===
-  // FIX 1: supports both output_url (original backend) and result_url as fallback
-  // FIX 2: sends manualBoxes so dragged box positions reach the backend
+  // Result video plays in big hero player; result card becomes download-only
   function generate() {
     if (!sessionId) { showToast('Run Analyze first'); return; }
     if (selected === null) { showToast('Click a face to select a target'); return; }
@@ -1059,29 +902,32 @@
     fetch('/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        session_id: sessionId,
-        target1: selected,
-        boxes: manualBoxes        // dragged positions sent to backend
-      })
+      body: JSON.stringify({ session_id: sessionId, target1: selected, boxes: manualBoxes })
     })
     .then(r => r.json())
     .then(d => {
       btn.style.display = '';
       spinner.style.display = 'none';
 
-      // FIX 1: try output_url first (original backend key), fall back to result_url
       const videoUrl = d.output_url || d.result_url;
       if (videoUrl) {
         resultVideoUrl = videoUrl;
+
+        // Play result in big hero player
+        const placeholder = document.getElementById('playerPlaceholder');
+        placeholder.innerHTML = '<video src="' + videoUrl + '" style="width:100%;height:100%;object-fit:contain;" autoplay controls></video>';
+
+        // Result card becomes a READY download indicator
         document.getElementById('resultThumb').innerHTML =
-          '<video src="' + videoUrl + '" style="width:100%;height:100%;object-fit:contain;" controls></video>';
-        // Unlock the download button
+          '<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">' +
+            '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16ddff" stroke-width="1.5"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>' +
+            '<span style="font-size:11px;color:#16ddff;font-weight:700;letter-spacing:0.08em;font-family:Barlow Condensed,sans-serif;">READY</span>' +
+          '</div>';
+
         const dlBtn = document.getElementById('downloadBtn');
-        dlBtn.style.opacity = '1';
-        dlBtn.style.pointerEvents = 'auto';
+        if (dlBtn) { dlBtn.style.opacity = '1'; dlBtn.style.pointerEvents = 'auto'; }
       }
-      showToast('✓ Generation complete! Download ready.');
+      showToast('✓ Done! Playing result in preview.');
     })
     .catch(err => {
       btn.style.display = '';

@@ -1,21 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HeadSwap</title>
 
 <style>
-* { box-sizing: border-box; }
-
-body {
+body{
   margin:0;
-  font-family: Arial;
+  font-family:Arial;
   background:#05030a;
   color:white;
 }
 
-.brand {
+.brand{
   padding:20px;
   font-size:26px;
   font-weight:900;
@@ -23,116 +20,64 @@ body {
 .brand span:nth-child(1){color:#ff2fa8;}
 .brand span:nth-child(2){color:#16ddff;}
 
-/* HERO */
-.scene {
+.scene{
   height:420px;
   position:relative;
-  background: radial-gradient(circle,#140a1f,#06030a);
+  background:#06030a;
   overflow:hidden;
 }
 
-.target {
-  position:absolute;
-  width:200px;
-  height:260px;
-  border:2px dashed rgba(255,255,255,.4);
-  border-radius:50%;
-}
-
-.target.left {
-  left:15%;
-  top:60px;
-  border-color:#16ddff;
-  box-shadow:0 0 20px #16ddff;
-}
-
-.target.right {
-  right:15%;
-  top:60px;
-  border-color:#ff2fa8;
-  box-shadow:0 0 20px #ff2fa8;
-}
-
-.frameWrap {
+.frameWrap{
   position:absolute;
   inset:0;
   display:none;
 }
 
-#frame {
+#frame{
   width:100%;
   height:100%;
   object-fit:contain;
+  pointer-events:none;
   user-select:none;
   -webkit-user-drag:none;
-  pointer-events:none;
 }
 
-#overlay {
+#overlay{
   position:absolute;
   inset:0;
-  pointer-events:none;
 }
 
-/* UI */
-.container {
+.container{
   padding:20px;
   display:grid;
   grid-template-columns:repeat(5,1fr);
   gap:10px;
 }
 
-.card {
+.card{
   background:#0c0714;
   padding:15px;
   border-radius:10px;
   border:1px solid #333;
 }
 
-.active { border-color:#16ddff; }
-.complete { border-color:#39ea91; }
-
-button {
+button{
   width:100%;
-  padding:12px;
+  padding:10px;
   background:#ff2fa8;
   border:none;
   color:white;
-  font-weight:bold;
   cursor:pointer;
 }
 
-button:disabled { opacity:.4; }
-
-#status {
-  padding:10px 20px;
-  color:#aaa;
-}
-
-/* FACE BOX */
-.faceBox {
+.faceBox{
   position:absolute;
   border:2px solid #16ddff;
   cursor:move;
-  pointer-events:auto;
-  user-select:none;
 }
 
-.faceBox.selected1 { border-color:#16ddff; }
-.faceBox.selected2 { border-color:#ff2fa8; }
-
-.faceTag {
-  position:absolute;
-  top:-10px;
-  left:-10px;
-  width:24px;
-  height:24px;
-  border-radius:50%;
-  background:#16ddff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:12px;
+.faceBox.selected{
+  border-color:#ff2fa8;
 }
 </style>
 </head>
@@ -144,125 +89,109 @@ button:disabled { opacity:.4; }
 </div>
 
 <div class="scene">
-  <div class="target left"></div>
-  <div class="target right"></div>
-
   <div class="frameWrap" id="frameWrap">
     <img id="frame">
     <div id="overlay"></div>
   </div>
 </div>
 
-<div id="status">Upload video + face</div>
-
 <div class="container">
 
-<div class="card active">
-<h3>1 Upload Video</h3>
+<div class="card">
 <input type="file" id="video">
-</div>
-
-<div class="card">
-<h3>2 Upload Face</h3>
 <input type="file" id="face1">
-<input type="file" id="face2">
+<button onclick="analyze()">Analyze</button>
 </div>
 
 <div class="card">
-<h3>3 Select</h3>
-<select id="target1"></select>
-<select id="target2"></select>
-</div>
-
-<div class="card">
-<h3>4 Generate</h3>
-<button id="analyze">Analyze</button>
-<button id="generate">Generate</button>
-</div>
-
-<div class="card">
-<h3>Result</h3>
-<video id="result" controls></video>
+<button onclick="generate()">Generate</button>
 </div>
 
 </div>
 
 <script>
+
 let faces=[]
-let selected1=null
-let selected2=null
+let manualBoxes={}
+let selected=null
 let sessionId=null
 
-const frame=document.getElementById("frame")
-const overlay=document.getElementById("overlay")
-const frameWrap=document.getElementById("frameWrap")
-
-analyze.onclick=async()=>{
+function analyze(){
   const fd=new FormData()
   fd.append("video",video.files[0])
   fd.append("face1",face1.files[0])
-  if(face2.files[0]) fd.append("face2",face2.files[0])
 
-  const res=await fetch("/analyze",{method:"POST",body:fd})
-  const data=await res.json()
+  fetch("/analyze",{method:"POST",body:fd})
+  .then(r=>r.json())
+  .then(data=>{
+    sessionId=data.session_id
+    faces=data.faces
 
-  sessionId=data.session_id
-  faces=data.faces
+    frame.src=data.first_frame_url
+    frameWrap.style.display="block"
 
-  frame.src=data.first_frame_url
-  frameWrap.style.display="block"
-
-  populate()
-  draw()
-}
-
-function populate(){
-  target1.innerHTML=""
-  target2.innerHTML=""
-
-  faces.forEach(f=>{
-    let o=document.createElement("option")
-    o.value=f.index
-    o.textContent="Face "+f.index
-    target1.appendChild(o)
-    target2.appendChild(o.cloneNode(true))
+    draw()
   })
-
-  selected1=faces[0]?.index
-  selected2=faces[1]?.index
 }
 
 function draw(){
   overlay.innerHTML=""
 
   faces.forEach(f=>{
+
+    let box = manualBoxes[f.index] || {
+      x:f.x,
+      y:f.y,
+      w:f.w,
+      h:f.h
+    }
+
     let div=document.createElement("div")
     div.className="faceBox"
 
-    div.style.left=f.x+"px"
-    div.style.top=f.y+"px"
-    div.style.width=f.w+"px"
-    div.style.height=f.h+"px"
+    div.style.left=box.x+"px"
+    div.style.top=box.y+"px"
+    div.style.width=box.w+"px"
+    div.style.height=box.h+"px"
 
-    let dragging=false,ox,oy
+    if(selected==f.index) div.classList.add("selected")
+
+    let dragging=false
+    let startX,startY,origX,origY
 
     div.onmousedown=(e)=>{
       e.preventDefault()
+
       dragging=true
-      ox=e.clientX-div.offsetLeft
-      oy=e.clientY-div.offsetTop
-    }
+      startX=e.clientX
+      startY=e.clientY
+      origX=box.x
+      origY=box.y
 
-    document.onmousemove=(e)=>{
-      if(!dragging)return
-      div.style.left=(e.clientX-ox)+"px"
-      div.style.top=(e.clientY-oy)+"px"
-    }
+      document.onmousemove=(ev)=>{
+        if(!dragging) return
 
-    document.onmouseup=()=>dragging=false
+        let nx=origX+(ev.clientX-startX)
+        let ny=origY+(ev.clientY-startY)
+
+        div.style.left=nx+"px"
+        div.style.top=ny+"px"
+
+        manualBoxes[f.index]={
+          x:nx,
+          y:ny,
+          w:box.w,
+          h:box.h
+        }
+      }
+
+      document.onmouseup=()=>{
+        dragging=false
+      }
+    }
 
     div.onclick=()=>{
-      selected1=f.index
+      selected=f.index
       draw()
     }
 
@@ -270,20 +199,21 @@ function draw(){
   })
 }
 
-generate.onclick=async()=>{
-  const res=await fetch("/generate",{
+function generate(){
+  fetch("/generate",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({
       session_id:sessionId,
-      target1:selected1,
-      target2:selected2
+      target1:selected
     })
   })
-
-  const data=await res.json()
-  result.src=data.output_url
+  .then(r=>r.json())
+  .then(d=>{
+    alert("done")
+  })
 }
+
 </script>
 
 </body>

@@ -112,7 +112,7 @@ button{
 <script>
 
 let faces=[]
-let manualBoxes={}
+let manualBoxes = {}
 let selected=null
 let sessionId=null
 
@@ -139,12 +139,14 @@ function draw(){
 
   faces.forEach(f=>{
 
-    let box = manualBoxes[f.index] || {
-      x:f.x,
-      y:f.y,
-      w:f.w,
-      h:f.h
-    }
+   if (!manualBoxes[f.index]) {
+  manualBoxes[f.index] = {
+    x: f.x,
+    y: f.y,
+    w: f.w,
+    h: f.h
+  }
+}
 
     let div=document.createElement("div")
     div.className="faceBox"

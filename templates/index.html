@@ -32,7 +32,6 @@
     overflow-x: hidden;
   }
 
-  /* NAV */
   nav {
     display: flex;
     align-items: center;
@@ -120,7 +119,6 @@
   .nav-cta .price { color: var(--pink); font-size: 17px; display: block; }
   .nav-cta .label { color: var(--muted); font-size: 10px; font-weight: 400; display: block; letter-spacing: 0.08em; }
 
-  /* HERO */
   .hero {
     display: grid;
     grid-template-columns: 420px 1fr;
@@ -172,11 +170,7 @@
     gap: 18px;
     margin-bottom: 36px;
   }
-  .feat {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-  }
+  .feat { display: flex; align-items: flex-start; gap: 14px; }
   .feat-icon {
     width: 40px; height: 40px;
     border: 1.5px solid var(--border-bright);
@@ -208,7 +202,6 @@
   .price-sub { text-align: center; font-size: 11px; color: var(--muted); letter-spacing: 0.05em; }
   .price-sub span { margin: 0 6px; }
 
-  /* VIDEO PLAYER */
   .player-wrap {
     border: 1.5px solid var(--border-bright);
     border-radius: 14px;
@@ -267,24 +260,18 @@
     backdrop-filter: blur(8px);
   }
 
-  .face-box {
-    position: absolute;
-    border-radius: 4px;
-    cursor: pointer;
-  }
+  .face-box { position: absolute; border-radius: 4px; cursor: pointer; }
   .face-box.cyan { border: 2px solid var(--cyan); box-shadow: 0 0 12px rgba(22,221,255,0.3); }
   .face-box.pink { border: 2px solid var(--pink); box-shadow: 0 0 12px rgba(255,47,168,0.3); }
   .face-box.selected { box-shadow: 0 0 0 3px rgba(255,47,168,0.5); }
 
   .face-badge {
     position: absolute;
-    top: -12px;
-    left: -12px;
+    top: -12px; left: -12px;
     width: 22px; height: 22px;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 11px; font-weight: 700;
   }
   .face-box.cyan .face-badge { background: var(--cyan); color: #000; }
   .face-box.pink .face-badge { background: var(--pink); color: #fff; }
@@ -299,10 +286,8 @@
   }
   .play-btn {
     width: 32px; height: 32px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text);
+    background: none; border: none;
+    cursor: pointer; color: var(--text);
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
@@ -340,14 +325,11 @@
   }
 
   .fullscreen-btn {
-    background: none;
-    border: none;
-    color: var(--muted);
-    cursor: pointer;
+    background: none; border: none;
+    color: var(--muted); cursor: pointer;
     display: flex; align-items: center; justify-content: center;
   }
 
-  /* WORKFLOW STEPS */
   .workflow {
     padding: 0 40px 40px;
     max-width: 1400px;
@@ -365,7 +347,6 @@
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 20px;
-    position: relative;
     transition: border-color 0.2s;
   }
   .step-card:hover { border-color: var(--border-bright); }
@@ -379,20 +360,15 @@
     border-radius: 50%;
     border: 1.5px solid var(--border-bright);
     display: flex; align-items: center; justify-content: center;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--muted);
+    font-size: 12px; font-weight: 700; color: var(--muted);
     margin-bottom: 10px;
   }
   .step-title {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    color: var(--muted);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.12em; color: var(--muted);
     margin-bottom: 14px;
   }
 
-  /* Upload Zone */
   .upload-zone {
     border: 1.5px dashed var(--border-bright);
     border-radius: 8px;
@@ -403,17 +379,10 @@
     background: transparent;
     position: relative;
   }
-  .upload-zone:hover {
-    border-color: var(--cyan);
-    background: rgba(22,221,255,0.03);
-  }
+  .upload-zone:hover { border-color: var(--cyan); background: rgba(22,221,255,0.03); }
   .upload-zone input[type="file"] {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
+    position: absolute; inset: 0; opacity: 0;
+    cursor: pointer; width: 100%; height: 100%;
   }
 
   .upload-icon {
@@ -421,267 +390,138 @@
     border: 2px solid var(--border-bright);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 10px;
-    color: var(--muted);
+    margin: 0 auto 10px; color: var(--muted);
   }
   .upload-icon svg { width: 16px; height: 16px; }
-  .upload-zone p {
-    font-size: 11px;
-    color: var(--muted);
-    line-height: 1.5;
-    margin-bottom: 6px;
-  }
-  .upload-zone .types {
-    font-size: 10px;
-    color: #4a3d5c;
-    letter-spacing: 0.05em;
-  }
+  .upload-zone p { font-size: 11px; color: var(--muted); line-height: 1.5; margin-bottom: 6px; }
+  .upload-zone .types { font-size: 10px; color: #4a3d5c; letter-spacing: 0.05em; }
 
   .file-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: flex; align-items: center; gap: 8px;
     background: rgba(22,221,255,0.06);
     border: 1px solid rgba(22,221,255,0.2);
-    border-radius: 6px;
-    padding: 8px 12px;
-    margin-top: 10px;
+    border-radius: 6px; padding: 8px 12px; margin-top: 10px;
   }
   .file-status svg { width: 14px; height: 14px; color: var(--muted); flex-shrink: 0; }
   .file-status span { font-size: 11px; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .file-status .check { color: #22c55e; }
 
-  /* Face uploads */
-  .face-uploads {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
+  .face-uploads { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
   .face-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+    color: var(--muted); margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
   }
   .face-label .optional {
-    font-weight: 400;
-    color: #3d2f60;
-    font-size: 9px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 1px 4px;
+    font-weight: 400; color: #3d2f60; font-size: 9px;
+    border: 1px solid var(--border); border-radius: 3px; padding: 1px 4px;
   }
 
   .face-thumb-wrap {
     position: relative;
     border: 1px solid var(--border-bright);
-    border-radius: 8px;
-    aspect-ratio: 1;
-    overflow: hidden;
-    background: var(--bg3);
-    cursor: pointer;
-    transition: border-color 0.2s;
+    border-radius: 8px; aspect-ratio: 1;
+    overflow: hidden; background: var(--bg3);
+    cursor: pointer; transition: border-color 0.2s;
   }
   .face-thumb-wrap:hover { border-color: var(--pink); }
   .face-thumb-wrap input[type="file"] {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
+    position: absolute; inset: 0; opacity: 0;
+    cursor: pointer; width: 100%; height: 100%;
   }
-  .face-thumb-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+  .face-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; }
   .face-thumb-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
     color: var(--border-bright);
   }
   .face-thumb-placeholder svg { width: 28px; height: 28px; }
 
   .face-filename {
-    font-size: 10px;
-    color: var(--text);
-    margin-top: 6px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+    font-size: 10px; color: var(--text); margin-top: 6px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    display: flex; align-items: center; gap: 4px;
   }
   .face-filename .check { color: #22c55e; }
 
   .add-face-btn {
-    width: 100%;
-    padding: 8px;
+    width: 100%; padding: 8px;
     background: transparent;
     border: 1px dashed var(--border-bright);
-    color: var(--muted);
-    border-radius: 6px;
-    font-size: 11px;
-    cursor: pointer;
-    margin-top: 10px;
+    color: var(--muted); border-radius: 6px;
+    font-size: 11px; cursor: pointer; margin-top: 10px;
     transition: border-color 0.2s, color 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
   }
   .add-face-btn:hover { border-color: var(--pink); color: var(--text); }
 
-  /* Select Target */
   .mode-btn {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: 2px solid transparent;
-    text-align: center;
-    cursor: pointer;
-    margin-bottom: 8px;
+    display: block; width: 100%; padding: 12px;
+    border-radius: 8px; border: 2px solid transparent;
+    text-align: center; cursor: pointer; margin-bottom: 8px;
     transition: all 0.2s;
     font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    font-size: 14px;
+    font-weight: 700; letter-spacing: 0.06em; font-size: 14px;
   }
-  .mode-btn.cyan {
-    background: rgba(22,221,255,0.12);
-    border-color: var(--cyan);
-    color: var(--cyan);
-  }
-  .mode-btn.cyan:hover, .mode-btn.cyan.active {
-    background: rgba(22,221,255,0.2);
-    box-shadow: 0 0 16px rgba(22,221,255,0.2);
-  }
-  .mode-btn.pink {
-    background: rgba(255,47,168,0.12);
-    border-color: var(--pink);
-    color: var(--pink);
-  }
-  .mode-btn.pink:hover, .mode-btn.pink.active {
-    background: rgba(255,47,168,0.2);
-    box-shadow: 0 0 16px rgba(255,47,168,0.2);
-  }
+  .mode-btn.cyan { background: rgba(22,221,255,0.12); border-color: var(--cyan); color: var(--cyan); }
+  .mode-btn.cyan:hover, .mode-btn.cyan.active { background: rgba(22,221,255,0.2); box-shadow: 0 0 16px rgba(22,221,255,0.2); }
+  .mode-btn.pink { background: rgba(255,47,168,0.12); border-color: var(--pink); color: var(--pink); }
+  .mode-btn.pink:hover, .mode-btn.pink.active { background: rgba(255,47,168,0.2); box-shadow: 0 0 16px rgba(255,47,168,0.2); }
   .mode-btn .sub {
-    display: block;
-    font-size: 10px;
-    font-weight: 400;
-    opacity: 0.75;
-    letter-spacing: 0.02em;
-    margin-top: 2px;
+    display: block; font-size: 10px; font-weight: 400;
+    opacity: 0.75; letter-spacing: 0.02em; margin-top: 2px;
     font-family: 'Barlow', sans-serif;
   }
 
-  .mode-hint {
-    font-size: 11px;
-    color: var(--muted);
-    text-align: center;
-    line-height: 1.5;
-    margin-top: 8px;
-  }
+  .mode-hint { font-size: 11px; color: var(--muted); text-align: center; line-height: 1.5; margin-top: 8px; }
 
-  /* Generate */
   .analyze-btn, .generate-btn {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 8px;
+    width: 100%; padding: 14px; border: none; border-radius: 8px;
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.2s;
-    margin-bottom: 10px;
+    font-size: 15px; font-weight: 700; letter-spacing: 0.08em;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    gap: 8px; transition: all 0.2s; margin-bottom: 10px;
   }
   .analyze-btn {
     background: transparent;
     border: 1.5px solid var(--border-bright);
     color: var(--muted);
   }
-  .analyze-btn:hover {
-    border-color: var(--cyan);
-    color: var(--cyan);
-    background: rgba(22,221,255,0.05);
-  }
+  .analyze-btn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(22,221,255,0.05); }
   .generate-btn {
     background: linear-gradient(135deg, #c41a7a 0%, #8f1fc7 100%);
     color: #fff;
     box-shadow: 0 4px 20px rgba(196,26,122,0.4);
   }
-  .generate-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 28px rgba(196,26,122,0.55);
-  }
+  .generate-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(196,26,122,0.55); }
   .generate-btn svg { width: 18px; height: 18px; }
 
-  .gen-info {
-    font-size: 11px;
-    color: var(--muted);
-    text-align: center;
-    line-height: 1.6;
-    margin-top: 10px;
-  }
+  .gen-info { font-size: 11px; color: var(--muted); text-align: center; line-height: 1.6; margin-top: 10px; }
   .gen-info .secure {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    margin-top: 4px;
-    font-size: 10px;
+    display: flex; align-items: center; justify-content: center;
+    gap: 4px; margin-top: 4px; font-size: 10px;
   }
   .gen-info .secure svg { width: 12px; height: 12px; }
 
-  /* Result Card */
   .result-header {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    color: var(--cyan);
-    text-align: center;
-    margin-bottom: 14px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid rgba(22,221,255,0.2);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    color: var(--cyan); text-align: center; margin-bottom: 14px;
+    padding-bottom: 10px; border-bottom: 1px solid rgba(22,221,255,0.2);
   }
 
   .result-thumb {
-    border-radius: 8px;
-    overflow: hidden;
-    aspect-ratio: 16/9;
-    background: var(--bg3);
-    position: relative;
-    margin-bottom: 12px;
+    border-radius: 8px; overflow: hidden;
+    aspect-ratio: 16/9; background: var(--bg3);
+    position: relative; margin-bottom: 12px;
   }
   .result-thumb-placeholder {
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     background: linear-gradient(135deg, #0d0720 0%, #1a0d2e 50%, #0d1a2e 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
+    display: flex; align-items: center; justify-content: center; position: relative;
   }
   .result-thumb-placeholder .mini-scene {
-    position: absolute;
-    inset: 0;
+    position: absolute; inset: 0;
     background:
       radial-gradient(ellipse at 35% 50%, rgba(84,60,180,0.5) 0%, transparent 55%),
       radial-gradient(ellipse at 65% 40%, rgba(22,100,200,0.3) 0%, transparent 45%);
@@ -692,126 +532,69 @@
     border: 2px solid rgba(255,255,255,0.4);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    backdrop-filter: blur(4px);
-    position: relative;
-    z-index: 1;
+    backdrop-filter: blur(4px); position: relative; z-index: 1;
   }
   .play-overlay svg { width: 16px; height: 16px; margin-left: 2px; }
 
   .download-btn {
-    width: 100%;
-    padding: 13px;
-    background: transparent;
-    border: 1.5px solid var(--cyan);
-    border-radius: 8px;
-    color: var(--text);
+    width: 100%; padding: 13px;
+    background: transparent; border: 1.5px solid var(--cyan);
+    border-radius: 8px; color: var(--text);
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.2s;
+    font-size: 15px; font-weight: 700; letter-spacing: 0.08em;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    gap: 8px; transition: all 0.2s;
     box-shadow: 0 0 16px rgba(22,221,255,0.1);
   }
-  .download-btn:hover {
-    background: rgba(22,221,255,0.1);
-    box-shadow: 0 0 24px rgba(22,221,255,0.25);
-  }
+  .download-btn:hover { background: rgba(22,221,255,0.1); box-shadow: 0 0 24px rgba(22,221,255,0.25); }
   .download-btn svg { width: 16px; height: 16px; }
-  .download-sub {
-    text-align: center;
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 6px;
-  }
+  .download-sub { text-align: center; font-size: 10px; color: var(--muted); margin-top: 6px; }
 
-  /* FOOTER BAR */
   .footer-bar {
     border-top: 1px solid var(--border);
     padding: 14px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 40px;
-    background: var(--bg2);
-    margin-top: 8px;
+    display: flex; align-items: center; justify-content: center; gap: 40px;
+    background: var(--bg2); margin-top: 8px;
   }
-
-  .footer-feat {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .footer-feat-icon {
-    color: var(--pink);
-    display: flex; align-items: center; justify-content: center;
-  }
+  .footer-feat { display: flex; align-items: center; gap: 10px; }
+  .footer-feat-icon { color: var(--pink); display: flex; align-items: center; justify-content: center; }
   .footer-feat-icon svg { width: 18px; height: 18px; }
   .footer-feat-icon.cyan-icon { color: var(--cyan); }
   .footer-feat-icon .hd {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 14px;
-    font-weight: 900;
-    background: rgba(22,221,255,0.15);
-    border: 1px solid rgba(22,221,255,0.3);
-    color: var(--cyan);
-    padding: 2px 6px;
-    border-radius: 3px;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 900;
+    background: rgba(22,221,255,0.15); border: 1px solid rgba(22,221,255,0.3);
+    color: var(--cyan); padding: 2px 6px; border-radius: 3px;
   }
   .footer-feat-text strong { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: var(--text); }
   .footer-feat-text span { font-size: 11px; color: var(--muted); }
 
   .help-icon {
-    width: 18px; height: 18px;
-    border: 1px solid var(--border-bright);
-    border-radius: 50%;
-    display: inline-flex; align-items: center; justify-content: center;
-    font-size: 10px;
-    color: var(--muted);
-    cursor: help;
-    vertical-align: middle;
-    margin-left: 4px;
+    width: 18px; height: 18px; border: 1px solid var(--border-bright);
+    border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 10px; color: var(--muted); cursor: help; vertical-align: middle; margin-left: 4px;
   }
 
   @keyframes spin { to { transform: rotate(360deg); } }
   .spinner {
     width: 16px; height: 16px;
     border: 2px solid rgba(255,255,255,0.2);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    display: none;
+    border-top-color: #fff; border-radius: 50%;
+    animation: spin 0.7s linear infinite; display: none;
   }
 
   #toast {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
+    position: fixed; bottom: 24px; left: 50%;
     transform: translateX(-50%) translateY(60px);
-    background: #1a1030;
-    border: 1px solid var(--border-bright);
-    border-radius: 8px;
-    padding: 12px 24px;
-    font-size: 13px;
-    color: var(--text);
-    opacity: 0;
-    transition: all 0.3s;
-    z-index: 999;
-    white-space: nowrap;
+    background: #1a1030; border: 1px solid var(--border-bright);
+    border-radius: 8px; padding: 12px 24px;
+    font-size: 13px; color: var(--text);
+    opacity: 0; transition: all 0.3s; z-index: 999; white-space: nowrap;
   }
-  #toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a class="brand" href="#">
     <div class="brand-icon"></div>
@@ -828,7 +611,6 @@
   </button>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-left">
     <p class="hero-eyebrow">AI POWERED FACE SWAP</p>
@@ -841,7 +623,7 @@
     <div class="feature-pills">
       <div class="feat">
         <div class="feat-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--pink)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--pink)">
             <circle cx="12" cy="8" r="4"/><path d="M3 20c0-4 4-7 9-7s9 3 9 7"/><path d="M18 5l1 1-1 1M6 5l-1 1 1 1" stroke-linecap="round"/>
           </svg>
         </div>
@@ -852,8 +634,10 @@
       </div>
       <div class="feat">
         <div class="feat-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--cyan)">
-            <circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="4" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="20"/><line x1="4" y1="12" x2="2" y2="12"/><line x1="22" y1="12" x2="20" y2="12"/>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--cyan)">
+            <circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>
+            <line x1="12" y1="4" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="20"/>
+            <line x1="4" y1="12" x2="2" y2="12"/><line x1="22" y1="12" x2="20" y2="12"/>
           </svg>
         </div>
         <div class="feat-text">
@@ -863,7 +647,7 @@
       </div>
       <div class="feat">
         <div class="feat-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: #a855f7">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:#a855f7">
             <path d="M2 8l3-3 7 7 7-7 3 3-10 10L2 8z" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
@@ -918,13 +702,7 @@
               </linearGradient>
             </defs>
           </svg>
-          <div class="player-instruction">CLICK A FACE TO SELECT TARGET</div>
-          <div class="face-box cyan" id="faceBox1" style="left:19%;top:12%;width:22%;height:49%;" onclick="selectFace(1)" title="Face 1">
-            <div class="face-badge">1</div>
-          </div>
-          <div class="face-box pink" id="faceBox2" style="left:53%;top:8%;width:20%;height:44%;" onclick="selectFace(2)" title="Face 2">
-            <div class="face-badge">2</div>
-          </div>
+          <div class="player-instruction">UPLOAD VIDEO & CLICK ANALYZE</div>
         </div>
       </div>
       <div class="player-controls">
@@ -935,7 +713,7 @@
           <div class="progress-fill" id="progressFill"></div>
           <div class="progress-dot" id="progressDot"></div>
         </div>
-        <div class="time-display" id="timeDisplay">00:04 / 00:10</div>
+        <div class="time-display" id="timeDisplay">00:00 / 00:00</div>
         <button class="fullscreen-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
@@ -946,11 +724,10 @@
   </div>
 </section>
 
-<!-- WORKFLOW STEPS -->
 <section class="workflow">
   <div class="steps-grid">
 
-    <!-- STEP 1 -->
+    <!-- STEP 1: UPLOAD VIDEO -->
     <div class="step-card">
       <div class="step-num">1</div>
       <div class="step-title">UPLOAD VIDEO</div>
@@ -967,26 +744,19 @@
       </div>
       <div class="file-status" id="videoStatus" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        <span id="videoName">scene.mp4</span>
-        <span id="videoDuration" style="font-size:10px;color:var(--muted);">00:10</span>
-        <svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-      </div>
-      <div class="file-status" style="margin-top:6px;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        <span>scene.mp4</span>
-        <span style="font-size:10px;color:var(--muted);">00:10</span>
+        <span id="videoName"></span>
         <svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
     </div>
 
-    <!-- STEP 2 -->
+    <!-- STEP 2: UPLOAD FACES -->
     <div class="step-card">
       <div class="step-num">2</div>
       <div class="step-title">UPLOAD FACE(S) <span class="help-icon">?</span></div>
       <div class="face-uploads">
         <div class="face-upload-slot">
           <div class="face-label">FACE 1</div>
-          <div class="face-thumb-wrap" id="face1Wrap">
+          <div class="face-thumb-wrap">
             <input type="file" id="face1Input" accept="image/*" onchange="handleFaceUpload(event, 1)">
             <div class="face-thumb-placeholder" id="face1Placeholder">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -996,13 +766,12 @@
             <img id="face1Preview" style="display:none">
           </div>
           <div class="face-filename" id="face1Name">
-            <span>myface.jpg</span>
-            <svg class="check" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>No file</span>
           </div>
         </div>
         <div class="face-upload-slot">
           <div class="face-label">FACE 2 <span class="optional">OPTIONAL</span></div>
-          <div class="face-thumb-wrap" id="face2Wrap">
+          <div class="face-thumb-wrap">
             <input type="file" id="face2Input" accept="image/*" onchange="handleFaceUpload(event, 2)">
             <div class="face-thumb-placeholder" id="face2Placeholder">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -1012,8 +781,7 @@
             <img id="face2Preview" style="display:none">
           </div>
           <div class="face-filename" id="face2Name">
-            <span>friend.jpg</span>
-            <svg class="check" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>No file</span>
           </div>
         </div>
       </div>
@@ -1023,7 +791,7 @@
       </button>
     </div>
 
-    <!-- STEP 3 -->
+    <!-- STEP 3: SELECT TARGET -->
     <div class="step-card">
       <div class="step-num">3</div>
       <div class="step-title">SELECT TARGET</div>
@@ -1038,7 +806,7 @@
       <p class="mode-hint">Click a face in the video<br>or use the modes above</p>
     </div>
 
-    <!-- STEP 4 -->
+    <!-- STEP 4: GENERATE -->
     <div class="step-card">
       <div class="step-num">4</div>
       <div class="step-title">GENERATE</div>
@@ -1088,7 +856,6 @@
   </div>
 </section>
 
-<!-- FOOTER BAR -->
 <div class="footer-bar">
   <div class="footer-feat">
     <div class="footer-feat-icon">
@@ -1126,6 +893,7 @@
 <div id="toast">✓ Done! Your video is ready.</div>
 
 <script>
+  // === STATE ===
   let sessionId = null;
   let faces = [];
   let manualBoxes = {};
@@ -1133,9 +901,10 @@
   let activeMode = 1;
   let isPlaying = false;
   let playInterval = null;
-  let currentTime = 4;
+  let currentTime = 0;
   const duration = 10;
 
+  // === PLAYER CONTROLS ===
   function togglePlay() {
     isPlaying = !isPlaying;
     const btn = document.getElementById('playBtn');
@@ -1172,19 +941,69 @@
     document.getElementById('timeDisplay').textContent = fmt(currentTime) + ' / ' + fmt(duration);
   }
 
-  function selectFace(idx) {
-    selected = idx;
-    document.getElementById('faceBox1').classList.toggle('selected', idx === 1);
-    document.getElementById('faceBox2').classList.toggle('selected', idx === 2);
-    showToast('Face ' + idx + ' selected as target');
+  // === DRAW REAL DETECTED FACE BOXES ===
+  function draw() {
+    const overlay = document.getElementById('overlay');
+    if (!overlay) return;
+    overlay.innerHTML = '';
+    faces.forEach(f => {
+      if (!manualBoxes[f.index]) {
+        manualBoxes[f.index] = { x: f.x, y: f.y, w: f.w, h: f.h };
+      }
+      let box = manualBoxes[f.index]; // snap-back fix: always read from persisted state
+
+      let div = document.createElement('div');
+      div.style.cssText = 'position:absolute;border-radius:4px;cursor:move;';
+      div.style.left = box.x + 'px';
+      div.style.top = box.y + 'px';
+      div.style.width = box.w + 'px';
+      div.style.height = box.h + 'px';
+      div.style.border = '2px solid ' + (selected == f.index ? '#ff2fa8' : '#16ddff');
+      div.style.boxShadow = selected == f.index
+        ? '0 0 12px rgba(255,47,168,0.5)'
+        : '0 0 12px rgba(22,221,255,0.3)';
+
+      // Face label badge
+      const badge = document.createElement('div');
+      badge.textContent = 'Face ' + f.index;
+      badge.style.cssText = 'position:absolute;top:-22px;left:0;font-size:11px;font-weight:700;letter-spacing:0.05em;white-space:nowrap;color:#fff;font-family:Barlow Condensed,sans-serif;';
+      div.appendChild(badge);
+
+      // Drag logic (snap-back safe)
+      let dragging = false, startX, startY, origX, origY;
+      div.onmousedown = e => {
+        e.preventDefault();
+        dragging = true;
+        startX = e.clientX; startY = e.clientY;
+        origX = box.x; origY = box.y;
+        document.onmousemove = ev => {
+          if (!dragging) return;
+          let nx = origX + (ev.clientX - startX);
+          let ny = origY + (ev.clientY - startY);
+          const pw = overlay.offsetWidth;
+          const ph = overlay.offsetHeight;
+          nx = Math.max(0, Math.min(nx, pw - box.w));
+          ny = Math.max(0, Math.min(ny, ph - box.h));
+          div.style.left = nx + 'px';
+          div.style.top = ny + 'px';
+          manualBoxes[f.index] = { x: nx, y: ny, w: box.w, h: box.h };
+        };
+        document.onmouseup = () => { dragging = false; };
+      };
+
+      div.onclick = () => { selected = f.index; draw(); };
+      overlay.appendChild(div);
+    });
   }
 
+  // === MODE BUTTONS ===
   function setMode(m) {
     activeMode = m;
     document.getElementById('mode1Btn').classList.toggle('active', m === 1);
     document.getElementById('mode2Btn').classList.toggle('active', m === 2);
   }
 
+  // === FILE UPLOADS ===
   function handleVideoUpload(e) {
     const f = e.target.files[0];
     if (!f) return;
@@ -1207,48 +1026,86 @@
     reader.readAsDataURL(f);
   }
 
+  // === ANALYZE — displays first_frame_url + real detected boxes ===
   function analyze() {
     const videoInput = document.getElementById('videoInput');
     const face1Input = document.getElementById('face1Input');
     if (!videoInput.files[0]) { showToast('Please upload a video first'); return; }
+
     const fd = new FormData();
     fd.append('video', videoInput.files[0]);
     if (face1Input.files[0]) fd.append('face1', face1Input.files[0]);
+
     showToast('Analyzing faces...');
+
     fetch('/analyze', { method: 'POST', body: fd })
       .then(r => r.json())
       .then(data => {
         sessionId = data.session_id;
         faces = data.faces;
         manualBoxes = {};
-        showToast('Found ' + faces.length + ' face(s)!');
+
+        // Replace cinematic placeholder with real extracted video frame
+        const placeholder = document.getElementById('playerPlaceholder');
+        placeholder.innerHTML = '';
+        placeholder.style.background = '#000';
+
+        const img = document.createElement('img');
+        img.src = data.first_frame_url;
+        img.style.cssText = 'width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;display:block;';
+        img.ondragstart = () => false;
+        placeholder.appendChild(img);
+
+        // Overlay div for face boxes to sit on top of the frame
+        const overlayDiv = document.createElement('div');
+        overlayDiv.id = 'overlay';
+        overlayDiv.style.cssText = 'position:absolute;inset:0;';
+        placeholder.appendChild(overlayDiv);
+
+        draw(); // render all detected face boxes from data.faces
+        showToast('Found ' + faces.length + ' face(s)! Click one to select.');
       })
-      .catch(() => showToast('Analysis complete (demo mode)'));
+      .catch(err => {
+        console.error(err);
+        showToast('Analyze failed — check console');
+      });
   }
 
+  // === GENERATE — matches original backend payload exactly ===
   function generate() {
+    if (!sessionId) { showToast('Run Analyze first'); return; }
+    if (selected === null) { showToast('Click a face to select a target'); return; }
+
     const btn = document.getElementById('genLabel');
     const spinner = document.getElementById('genSpinner');
     btn.style.display = 'none';
     spinner.style.display = 'block';
+
     fetch('/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ session_id: sessionId, target1: selected, boxes: manualBoxes })
+      body: JSON.stringify({ session_id: sessionId, target1: selected })
     })
     .then(r => r.json())
     .then(d => {
       btn.style.display = '';
       spinner.style.display = 'none';
+      // If backend returns a result URL, show it in the result card
+      if (d.result_url) {
+        const thumb = document.querySelector('.result-thumb-placeholder');
+        thumb.innerHTML = '<video src="' + d.result_url + '" style="width:100%;height:100%;object-fit:contain;" controls></video>';
+      }
       showToast('✓ Generation complete! Download ready.');
     })
-    .catch(() => {
+    .catch(err => {
       btn.style.display = '';
       spinner.style.display = 'none';
-      showToast('✓ Done! (demo mode)');
+      console.error(err);
+      showToast('Generation failed — check console');
     });
   }
 
+  // === TOAST ===
   let toastTimer;
   function showToast(msg) {
     const t = document.getElementById('toast');
@@ -1257,36 +1114,6 @@
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
   }
-
-  function makeDraggable(el) {
-    let dragging = false, startX, startY, origX, origY;
-    el.onmousedown = e => {
-      if (e.button !== 0) return;
-      e.preventDefault();
-      dragging = true;
-      startX = e.clientX; startY = e.clientY;
-      origX = el.offsetLeft; origY = el.offsetTop;
-      document.onmousemove = ev => {
-        if (!dragging) return;
-        let nx = origX + (ev.clientX - startX);
-        let ny = origY + (ev.clientY - startY);
-        const pw = el.parentElement.offsetWidth;
-        const ph = el.parentElement.offsetHeight;
-        nx = Math.max(0, Math.min(nx, pw - el.offsetWidth));
-        ny = Math.max(0, Math.min(ny, ph - el.offsetHeight));
-        el.style.left = nx + 'px';
-        el.style.top = ny + 'px';
-        const idx = el.dataset.face;
-        if (manualBoxes[idx]) { manualBoxes[idx].x = nx; manualBoxes[idx].y = ny; }
-      };
-      document.onmouseup = () => { dragging = false; };
-    };
-  }
-
-  makeDraggable(document.getElementById('faceBox1'));
-  makeDraggable(document.getElementById('faceBox2'));
-  document.getElementById('faceBox1').dataset.face = 1;
-  document.getElementById('faceBox2').dataset.face = 2;
 
   document.querySelectorAll('.player-screen img').forEach(img => {
     img.ondragstart = () => false;

@@ -6,303 +6,230 @@
 <title>HeadSwap</title>
 
 <style>
-* { box-sizing: border-box; }
-
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #05060a;
-  color: white;
+  margin:0;
+  font-family: Arial;
+  background:#05030a;
+  color:white;
 }
 
-.wrap {
-  max-width: 1200px;
-  margin: auto;
-  padding: 30px;
+/* HERO */
+.scene {
+  height:420px;
+  position:relative;
+  background: radial-gradient(circle,#140a1f,#06030a);
+  overflow:hidden;
 }
 
-/* HEADER */
-h1 {
-  font-size: 52px;
-  margin: 0;
-  letter-spacing: -2px;
+.target {
+  position:absolute;
+  width:200px;
+  height:260px;
+  border:2px dashed rgba(255,255,255,.4);
+  border-radius:50%;
 }
 
-.sub {
-  color: rgba(255,255,255,.6);
-  margin-top: 10px;
-  margin-bottom: 30px;
-  max-width: 600px;
+.target.left {
+  left:15%;
+  top:60px;
+  border-color:#16ddff;
+  box-shadow:0 0 20px #16ddff;
 }
 
-/* LAYOUT */
-.grid {
-  display: grid;
-  grid-template-columns: 420px 1fr;
-  gap: 20px;
+.target.right {
+  right:15%;
+  top:60px;
+  border-color:#ff2fa8;
+  box-shadow:0 0 20px #ff2fa8;
 }
 
-/* PANEL */
+.target span {
+  position:absolute;
+  bottom:-30px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:12px;
+}
+
+/* BOXES */
+.container {
+  padding:20px;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:10px;
+}
+
 .card {
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 20px;
-  padding: 20px;
+  border:1px solid #333;
+  padding:15px;
+  border-radius:10px;
+  background:#0c0714;
 }
 
-/* INPUTS */
-.uploadBox {
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: 14px;
-  padding: 14px;
-  margin-bottom: 12px;
-  cursor: pointer;
-}
-
-.uploadBox input { display:none; }
+.active {border-color:#16ddff;}
+.complete {border-color:#39ea91;}
 
 button {
-  width: 100%;
-  padding: 14px;
-  border-radius: 12px;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-  background: white;
-  color: black;
+  width:100%;
+  padding:12px;
+  background:#ff2fa8;
+  border:none;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
 }
 
-button:disabled { opacity: .4; }
-
-.status {
-  margin: 12px 0;
-  font-size: 14px;
-  color: rgba(255,255,255,.7);
-}
-
-/* PREVIEW */
-.previewWrapper {
-  position: relative;
-  width: 100%;
-  border-radius: 18px;
-  overflow: hidden;
-  background: black;
-}
-
-.previewWrapper img {
-  width: 100%;
+button:disabled {
+  opacity:.4;
 }
 
 /* FACE BOXES */
 .faceBox {
-  position: absolute;
-  border: 2px solid #3b82f6;
-  border-radius: 10px;
-  cursor: pointer;
+  position:absolute;
+  border:2px solid #16ddff;
+  cursor:pointer;
 }
 
-.faceBox.selected1 {
-  border: 3px solid #22c55e;
-}
+.faceBox.selected1 {border-color:#16ddff;}
+.faceBox.selected2 {border-color:#ff2fa8;}
 
-.faceBox.selected2 {
-  border: 3px solid #a855f7;
-}
-
-.faceTag {
-  position: absolute;
-  top: -24px;
-  left: 0;
-  font-size: 12px;
-  background: black;
-  padding: 3px 6px;
-  border-radius: 6px;
-}
-
-/* MODES */
-.modeButtons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.modeBtn {
-  flex:1;
-  padding:10px;
-  border-radius:10px;
-  background: rgba(255,255,255,.1);
-}
-
-.modeBtn.active {
-  background: #22c55e;
-  color: black;
-}
-
-.modeBtn.purple.active {
-  background: #a855f7;
-  color: white;
-}
-
-video {
-  width:100%;
-  margin-top:15px;
-}
 </style>
 </head>
 
 <body>
 
-<div class="wrap">
+<div class="scene" id="scene">
+  <div class="target left"><span>Face 1</span></div>
+  <div class="target right"><span>Face 2</span></div>
 
-<h1>HeadSwap</h1>
-<p class="sub">
-Put your face into the scene. Upload a clip, click the character, and generate a tracked video.
-</p>
+  <img id="frame" style="display:none;width:100%;">
+  <div id="overlay"></div>
+</div>
 
-<div class="grid">
+<div class="container">
 
-<!-- LEFT PANEL -->
-<div class="card">
+<div class="card active" id="stage1">
+<h3>1 Upload Video</h3>
+<input type="file" id="video">
+</div>
 
-<form id="uploadForm">
-
-<label class="uploadBox">
-<input type="file" id="video" required>
-Upload Video
-</label>
-
-<label class="uploadBox">
-<input type="file" id="face1" required>
-Upload Face 1
-</label>
-
-<label class="uploadBox">
+<div class="card" id="stage2">
+<h3>2 Upload Face</h3>
+<input type="file" id="face1">
 <input type="file" id="face2">
-Upload Face 2 (optional)
-</label>
-
-<div class="status" id="status">Upload files to begin</div>
-
-<button id="analyzeBtn" disabled>Analyze</button>
-
-</form>
-
-<div id="controls" style="display:none;">
-
-<div class="modeButtons">
-<button id="mode1" class="modeBtn active">Face 1</button>
-<button id="mode2" class="modeBtn purple">Face 2</button>
 </div>
 
-<button id="generateBtn">Generate Video</button>
-
+<div class="card" id="stage3">
+<h3>3 Select Target</h3>
+<select id="target1"></select>
+<select id="target2"></select>
 </div>
 
+<div class="card" id="stage4">
+<h3>4 Generate</h3>
+<button id="generate" disabled>Generate</button>
 </div>
 
-<!-- RIGHT PANEL -->
-<div class="card">
-
-<div class="previewWrapper">
-<img id="frame">
-<div id="overlay"></div>
+<div class="card" id="stage5">
+<h3>Result</h3>
+<video id="result" controls></video>
 </div>
 
-<video id="videoOut" controls></video>
-
-</div>
-
-</div>
 </div>
 
 <script>
-let faces = [];
-let selectedMode = 1;
-let f1 = null;
-let f2 = null;
 
-const overlay = document.getElementById("overlay");
-const frame = document.getElementById("frame");
+let faces=[]
+let selected1=null
+let selected2=null
 
-document.getElementById("mode1").onclick = () => {
-  selectedMode = 1;
-  setModeUI();
-};
+const frame=document.getElementById("frame")
+const overlay=document.getElementById("overlay")
 
-document.getElementById("mode2").onclick = () => {
-  selectedMode = 2;
-  setModeUI();
-};
+document.getElementById("video").onchange=update
+document.getElementById("face1").onchange=update
 
-function setModeUI() {
-  document.getElementById("mode1").classList.toggle("active", selectedMode === 1);
-  document.getElementById("mode2").classList.toggle("active", selectedMode === 2);
+function update(){
+  if(video.files[0] && face1.files[0]){
+    analyze()
+  }
 }
 
-function drawBoxes() {
-  overlay.innerHTML = "";
+async function analyze(){
 
-  faces.forEach(face => {
-    const box = document.createElement("div");
-    box.className = "faceBox";
+  const fd=new FormData()
+  fd.append("video",video.files[0])
+  fd.append("face1",face1.files[0])
 
-    box.style.left = face.x + "px";
-    box.style.top = face.y + "px";
-    box.style.width = face.w + "px";
-    box.style.height = face.h + "px";
+  if(face2.files[0]) fd.append("face2",face2.files[0])
 
-    if (f1 === face.index) box.classList.add("selected1");
-    if (f2 === face.index) box.classList.add("selected2");
+  const res=await fetch("/analyze",{method:"POST",body:fd})
+  const data=await res.json()
 
-    const tag = document.createElement("div");
-    tag.className = "faceTag";
-    tag.innerText = face.index;
+  faces=data.faces
+  frame.src=data.first_frame_url
+  frame.style.display="block"
 
-    box.appendChild(tag);
+  populate()
+  draw()
 
-    box.onclick = () => {
-      if (selectedMode === 1) f1 = face.index;
-      else f2 = face.index;
-
-      drawBoxes();
-    };
-
-    overlay.appendChild(box);
-  });
+  document.getElementById("generate").disabled=false
 }
 
-document.getElementById("uploadForm").onsubmit = async (e) => {
-  e.preventDefault();
+function populate(){
+  target1.innerHTML=""
+  target2.innerHTML=""
 
-  const fd = new FormData();
-  fd.append("video", video.files[0]);
-  fd.append("face1", face1.files[0]);
-  if (face2.files[0]) fd.append("face2", face2.files[0]);
+  faces.forEach(f=>{
+    let o=document.createElement("option")
+    o.value=f.index
+    o.textContent="Face "+f.index
+    target1.appendChild(o)
 
-  const res = await fetch("/analyze", { method: "POST", body: fd });
-  const data = await res.json();
+    let o2=o.cloneNode(true)
+    target2.appendChild(o2)
+  })
 
-  frame.src = data.first_frame_url;
-  faces = data.faces;
+  selected1=faces[0].index
+  selected2=faces[1]?.index
+}
 
-  document.getElementById("controls").style.display = "block";
+function draw(){
+  overlay.innerHTML=""
 
-  drawBoxes();
-};
+  faces.forEach(f=>{
+    let div=document.createElement("div")
+    div.className="faceBox"
+    div.style.left=f.x+"px"
+    div.style.top=f.y+"px"
+    div.style.width=f.w+"px"
+    div.style.height=f.h+"px"
 
-document.getElementById("generateBtn").onclick = async () => {
-  const res = await fetch("/generate", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({
-      target1: f1,
-      target2: f2
+    div.onclick=()=>{
+      selected1=f.index
+      draw()
+    }
+
+    if(selected1==f.index) div.classList.add("selected1")
+
+    overlay.appendChild(div)
+  })
+}
+
+generate.onclick=async()=>{
+  const res=await fetch("/generate",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      target1:selected1,
+      target2:selected2
     })
-  });
+  })
 
-  const data = await res.json();
-  document.getElementById("videoOut").src = data.output_url;
-};
+  const data=await res.json()
+  result.src=data.output_url
+}
+
 </script>
 
 </body>

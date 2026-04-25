@@ -33,115 +33,78 @@
   }
 
   nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 40px;
-    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 64px;
     border-bottom: 1px solid var(--border);
     background: rgba(5,3,10,0.95);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    position: sticky; top: 0; z-index: 100;
     backdrop-filter: blur(12px);
   }
 
   .brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    display: flex; align-items: center; gap: 10px;
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 24px;
-    font-weight: 900;
-    letter-spacing: 0.02em;
+    font-size: 24px; font-weight: 900; letter-spacing: 0.02em;
     text-decoration: none;
   }
   .brand-icon {
-    width: 36px; height: 36px;
-    border: 2px solid var(--pink);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-    flex-shrink: 0;
+    width: 36px; height: 36px; border: 2px solid var(--pink);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    position: relative; flex-shrink: 0;
   }
   .brand-icon::before {
-    content: '';
-    width: 14px; height: 14px;
-    border: 2px solid var(--cyan);
-    border-radius: 50%;
-    position: absolute;
-    top: 50%; left: 50%;
+    content: ''; width: 14px; height: 14px; border: 2px solid var(--cyan);
+    border-radius: 50%; position: absolute; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
   }
   .brand-icon::after {
-    content: '';
-    width: 6px; height: 6px;
-    background: var(--pink);
-    border-radius: 50%;
-    position: absolute;
-    top: 4px; right: 4px;
+    content: ''; width: 6px; height: 6px; background: var(--pink);
+    border-radius: 50%; position: absolute; top: 4px; right: 4px;
   }
   .brand .h { color: var(--pink); }
   .brand .s { color: var(--cyan); }
 
-  .nav-links {
-    display: flex; align-items: center; gap: 36px; list-style: none;
-  }
-  .nav-links a {
-    color: var(--muted); text-decoration: none; font-size: 14px;
-    font-weight: 500; transition: color 0.2s;
-  }
+  .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
   .nav-links a:hover { color: var(--text); }
 
   .nav-cta {
-    background: transparent; border: 1.5px solid var(--pink);
-    color: var(--text); padding: 8px 20px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 15px; font-weight: 700; letter-spacing: 0.05em;
-    cursor: pointer; border-radius: 6px;
-    transition: background 0.2s, box-shadow 0.2s;
+    background: transparent; border: 1.5px solid var(--pink); color: var(--text);
+    padding: 8px 20px; font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px; font-weight: 700; letter-spacing: 0.05em; cursor: pointer;
+    border-radius: 6px; transition: background 0.2s, box-shadow 0.2s;
     text-align: center; line-height: 1.2; flex-shrink: 0;
   }
   .nav-cta:hover { background: var(--pink-glow); box-shadow: 0 0 16px var(--pink-glow); }
   .nav-cta .price { color: var(--pink); font-size: 17px; display: block; }
   .nav-cta .label { color: var(--muted); font-size: 10px; font-weight: 400; display: block; letter-spacing: 0.08em; }
 
-  /* FIX: hero-right gets min-width:0 to prevent grid blowout */
   .hero {
-    display: grid;
-    grid-template-columns: 420px 1fr;
-    gap: 48px;
-    padding: 56px 40px 40px;
-    align-items: start;
-    max-width: 1400px;
-    margin: 0 auto;
+    display: grid; grid-template-columns: 420px 1fr; gap: 48px;
+    padding: 56px 40px 40px; align-items: start;
+    max-width: 1400px; margin: 0 auto;
   }
   .hero-left { min-width: 0; }
-  .hero-right { min-width: 0; }  /* KEY FIX: prevents 1fr from overflowing */
+  .hero-right { min-width: 0; }
 
   .hero-eyebrow {
     font-size: 12px; font-weight: 600; letter-spacing: 0.15em;
     color: transparent;
     background: linear-gradient(90deg, var(--pink), var(--cyan));
-    -webkit-background-clip: text; background-clip: text;
-    margin-bottom: 14px;
+    -webkit-background-clip: text; background-clip: text; margin-bottom: 14px;
   }
 
   .hero-title {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 76px; font-weight: 900;
-    line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 16px;
+    font-size: 76px; font-weight: 900; line-height: 0.92;
+    letter-spacing: -0.01em; margin-bottom: 16px;
   }
   .hero-title .line2 {
     background: linear-gradient(90deg, var(--pink) 0%, #c45aff 50%, var(--cyan) 100%);
-    -webkit-background-clip: text; background-clip: text;
-    color: transparent; display: block;
+    -webkit-background-clip: text; background-clip: text; color: transparent; display: block;
   }
 
-  .hero-desc {
-    font-size: 15px; color: var(--muted);
-    line-height: 1.65; margin-bottom: 32px; max-width: 360px;
-  }
+  .hero-desc { font-size: 15px; color: var(--muted); line-height: 1.65; margin-bottom: 32px; max-width: 360px; }
 
   .feature-pills { display: flex; flex-direction: column; gap: 18px; margin-bottom: 36px; }
   .feat { display: flex; align-items: flex-start; gap: 14px; }
@@ -156,33 +119,24 @@
 
   .price-banner {
     display: flex; align-items: center; justify-content: center;
-    padding: 18px 24px; border: 1.5px solid var(--pink);
-    border-radius: 8px; background: rgba(255,47,168,0.06);
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 22px; font-weight: 900; letter-spacing: 0.05em;
-    box-shadow: 0 0 24px rgba(255,47,168,0.15); margin-bottom: 6px;
+    padding: 18px 24px; border: 1.5px solid var(--pink); border-radius: 8px;
+    background: rgba(255,47,168,0.06);
+    font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 900;
+    letter-spacing: 0.05em; box-shadow: 0 0 24px rgba(255,47,168,0.15); margin-bottom: 6px;
   }
   .price-banner .amt { color: var(--pink); margin-right: 10px; }
   .price-sub { text-align: center; font-size: 11px; color: var(--muted); letter-spacing: 0.05em; }
   .price-sub span { margin: 0 6px; }
 
-  /* FIX: overflow:hidden on player-wrap prevents horizontal stretch */
   .player-wrap {
-    border: 1.5px solid var(--border-bright);
-    border-radius: 14px;
-    overflow: hidden;          /* KEY FIX */
-    background: #000;
+    border: 1.5px solid var(--border-bright); border-radius: 14px;
+    overflow: hidden; background: #000; width: 100%; max-width: 100%;
     box-shadow: 0 0 40px rgba(84,74,183,0.3), 0 0 80px rgba(22,221,255,0.08);
-    width: 100%;               /* KEY FIX: constrain to grid column */
-    max-width: 100%;
   }
 
   .player-screen {
-    position: relative;
-    background: #080510;
-    aspect-ratio: 16/9;
-    overflow: hidden;
-    width: 100%;
+    position: relative; background: #080510;
+    aspect-ratio: 16/9; overflow: hidden; width: 100%;
   }
 
   .player-placeholder {
@@ -201,13 +155,11 @@
   .bokeh { position: absolute; border-radius: 50%; filter: blur(3px); opacity: 0.6; }
 
   .player-instruction {
-    position: absolute; top: 16px; left: 50%;
-    transform: translateX(-50%);
+    position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
     background: rgba(0,0,0,0.7); border: 1px solid var(--border-bright);
     border-radius: 6px; padding: 6px 16px;
     font-size: 12px; font-weight: 600; letter-spacing: 0.1em;
-    color: var(--text); white-space: nowrap;
-    backdrop-filter: blur(8px); z-index: 10;
+    color: var(--text); white-space: nowrap; backdrop-filter: blur(8px); z-index: 10;
   }
 
   .player-controls {
@@ -216,25 +168,16 @@
     border-top: 1px solid var(--border);
   }
   .play-btn {
-    width: 32px; height: 32px; background: none; border: none;
-    cursor: pointer; color: var(--text);
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    width: 32px; height: 32px; background: none; border: none; cursor: pointer;
+    color: var(--text); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
   .play-btn svg { width: 20px; height: 20px; }
 
-  .progress-wrap {
-    flex: 1; position: relative; height: 4px;
-    background: #2a2240; border-radius: 2px; cursor: pointer;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--pink), var(--cyan));
-    border-radius: 2px; width: 0%;
-  }
+  .progress-wrap { flex: 1; position: relative; height: 4px; background: #2a2240; border-radius: 2px; cursor: pointer; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--pink), var(--cyan)); border-radius: 2px; width: 0%; }
   .progress-dot {
     width: 12px; height: 12px; background: #fff; border-radius: 50%;
-    position: absolute; top: 50%; left: 0%;
-    transform: translate(-50%, -50%);
+    position: absolute; top: 50%; left: 0%; transform: translate(-50%, -50%);
     box-shadow: 0 0 8px rgba(255,255,255,0.5);
   }
   .time-display { font-size: 12px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
@@ -245,15 +188,13 @@
 
   .step-card {
     background: var(--card); border: 1px solid var(--border);
-    border-radius: 12px; padding: 20px; transition: border-color 0.2s;
-    min-width: 0;
+    border-radius: 12px; padding: 20px; transition: border-color 0.2s; min-width: 0;
   }
   .step-card:hover { border-color: var(--border-bright); }
   .step-card.result-card { border-color: var(--cyan); box-shadow: 0 0 20px rgba(22,221,255,0.1); }
 
   .step-num {
-    width: 26px; height: 26px; border-radius: 50%;
-    border: 1.5px solid var(--border-bright);
+    width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--border-bright);
     display: flex; align-items: center; justify-content: center;
     font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 10px;
   }
@@ -262,15 +203,13 @@
   .upload-zone {
     border: 1.5px dashed var(--border-bright); border-radius: 8px;
     padding: 20px 12px; text-align: center; cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-    background: transparent; position: relative;
+    transition: border-color 0.2s, background 0.2s; background: transparent; position: relative;
   }
   .upload-zone:hover { border-color: var(--cyan); background: rgba(22,221,255,0.03); }
   .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
   .upload-icon {
-    width: 36px; height: 36px; border: 2px solid var(--border-bright);
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 10px; color: var(--muted);
+    width: 36px; height: 36px; border: 2px solid var(--border-bright); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: var(--muted);
   }
   .upload-icon svg { width: 16px; height: 16px; }
   .upload-zone p { font-size: 11px; color: var(--muted); line-height: 1.5; margin-bottom: 6px; }
@@ -290,9 +229,8 @@
   .face-label .optional { font-weight: 400; color: #3d2f60; font-size: 9px; border: 1px solid var(--border); border-radius: 3px; padding: 1px 4px; }
 
   .face-thumb-wrap {
-    position: relative; border: 1px solid var(--border-bright);
-    border-radius: 8px; aspect-ratio: 1; overflow: hidden;
-    background: var(--bg3); cursor: pointer; transition: border-color 0.2s;
+    position: relative; border: 1px solid var(--border-bright); border-radius: 8px;
+    aspect-ratio: 1; overflow: hidden; background: var(--bg3); cursor: pointer; transition: border-color 0.2s;
   }
   .face-thumb-wrap:hover { border-color: var(--pink); }
   .face-thumb-wrap input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
@@ -314,8 +252,7 @@
     display: block; width: 100%; padding: 10px; border-radius: 8px;
     border: 2px solid transparent; text-align: center; cursor: pointer;
     margin-bottom: 8px; transition: all 0.2s;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700; letter-spacing: 0.06em; font-size: 13px;
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.06em; font-size: 13px;
   }
   .mode-btn.cyan { background: rgba(22,221,255,0.12); border-color: var(--cyan); color: var(--cyan); }
   .mode-btn.cyan:hover, .mode-btn.cyan.active { background: rgba(22,221,255,0.2); box-shadow: 0 0 16px rgba(22,221,255,0.2); }
@@ -327,8 +264,7 @@
     display: block; width: 100%; padding: 10px; border-radius: 8px;
     border: 2px solid #ff8800; text-align: center; cursor: pointer;
     margin-bottom: 8px; transition: all 0.2s;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700; letter-spacing: 0.06em; font-size: 13px;
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.06em; font-size: 13px;
     background: rgba(255,136,0,0.1); color: #ff8800;
   }
   .manual-btn:hover { background: rgba(255,136,0,0.2); box-shadow: 0 0 16px rgba(255,136,0,0.25); }
@@ -339,8 +275,7 @@
     display: none; width: 100%; padding: 8px; border-radius: 6px;
     border: 1.5px solid #22c55e; text-align: center; cursor: pointer;
     margin-bottom: 8px; transition: all 0.2s;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700; letter-spacing: 0.06em; font-size: 12px;
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.06em; font-size: 12px;
     background: rgba(34,197,94,0.1); color: #22c55e;
   }
   .lock-btn:hover { background: rgba(34,197,94,0.2); }
@@ -428,10 +363,7 @@
 <section class="hero">
   <div class="hero-left">
     <p class="hero-eyebrow">AI POWERED FACE SWAP</p>
-    <h1 class="hero-title">
-      BECOME<br>
-      <span class="line2">THE CHARACTER</span>
-    </h1>
+    <h1 class="hero-title">BECOME<br><span class="line2">THE CHARACTER</span></h1>
     <p class="hero-desc">Upload a short video. Click the face you want to replace. Generate a perfectly tracked face swap in seconds.</p>
     <div class="feature-pills">
       <div class="feat">
@@ -586,7 +518,7 @@
         FACE 2 MODE<span class="sub">Replace with Face 2</span>
       </button>
       <button class="manual-btn" id="manualBoxBtn" onclick="toggleManualBox()">
-        ✛ MANUAL TARGET BOX<span class="sub">Draw your own target</span>
+        ✛ MANUAL TARGET BOX<span class="sub">Bypass AI — draw exact region</span>
       </button>
       <button class="lock-btn" id="lockBtn" onclick="toggleLock()">🔓 LOCK TARGET</button>
       <p class="mode-hint">Click a detected face or draw a manual box</p>
@@ -715,7 +647,6 @@
     if (!overlay) return;
     overlay.innerHTML = '';
 
-    // Render manual box on top if active
     if (manualBoxActive && manualBoxes['manual']) {
       renderManualBox(overlay);
     }
@@ -735,7 +666,6 @@
       div.style.height    = box.h + 'px';
       div.style.border    = '2px solid ' + (isSel ? '#ff2fa8' : '#16ddff');
       div.style.boxShadow = isSel ? '0 0 14px rgba(255,47,168,0.6)' : '0 0 6px rgba(22,221,255,0.15)';
-      // Fade detected boxes when manual mode is active
       div.style.opacity   = manualBoxActive ? '0.15' : (isSel ? '1' : '0.35');
       div.style.cursor    = (isSel && !manualBoxActive) ? 'move' : 'pointer';
       div.style.pointerEvents = manualBoxActive ? 'none' : 'auto';
@@ -750,12 +680,11 @@
         let dragging = false, startX, startY, origX, origY;
         div.onmousedown = e => {
           e.preventDefault(); dragging = true;
-          startX = e.clientX; startY = e.clientY;
-          origX = box.x; origY = box.y;
+          startX = e.clientX; startY = e.clientY; origX = box.x; origY = box.y;
           document.onmousemove = ev => {
             if (!dragging) return;
-            let nx = Math.max(0, Math.min(origX + (ev.clientX - startX), overlay.offsetWidth  - box.w));
-            let ny = Math.max(0, Math.min(origY + (ev.clientY - startY), overlay.offsetHeight - box.h));
+            const nx = Math.max(0, Math.min(origX + (ev.clientX - startX), overlay.offsetWidth  - box.w));
+            const ny = Math.max(0, Math.min(origY + (ev.clientY - startY), overlay.offsetHeight - box.h));
             div.style.left = nx + 'px'; div.style.top = ny + 'px';
             manualBoxes[f.index] = { x: nx, y: ny, w: box.w, h: box.h };
           };
@@ -784,7 +713,6 @@
       lock.classList.remove('locked');
       lock.textContent = '🔓 LOCK TARGET';
 
-      // Place box in center of overlay
       const ow = overlay.offsetWidth  || 400;
       const oh = overlay.offsetHeight || 225;
       const bw = Math.round(ow * 0.20);
@@ -795,10 +723,10 @@
         w: bw, h: bh
       };
       selected = null;
-      showToast('Drag the orange box over the target face');
+      showToast('Drag orange box over exact target face — resize with corner handles');
     } else {
       btn.classList.remove('active');
-      btn.innerHTML = '✛ MANUAL TARGET BOX<span class="sub">Draw your own target</span>';
+      btn.innerHTML = '✛ MANUAL TARGET BOX<span class="sub">Bypass AI — draw exact region</span>';
       lock.style.display = 'none';
       manualBoxLocked = false;
       delete manualBoxes['manual'];
@@ -812,12 +740,12 @@
     if (manualBoxLocked) {
       btn.classList.add('locked');
       btn.textContent = '🔒 TARGET LOCKED';
-      showToast('Target locked — position saved');
+      showToast('Target locked — position saved for generation');
     } else {
       btn.classList.remove('locked');
       btn.textContent = '🔓 LOCK TARGET';
     }
-    draw(); // re-render to update cursor/handle visibility
+    draw();
   }
 
   function renderManualBox(overlay) {
@@ -839,33 +767,69 @@
     badge.style.cssText = 'position:absolute;top:-22px;left:0;font-size:11px;font-weight:700;letter-spacing:0.05em;white-space:nowrap;color:#ff8800;font-family:Barlow Condensed,sans-serif;';
     div.appendChild(badge);
 
-    // Resize handle (bottom-right)
     if (!manualBoxLocked) {
-      const handle = document.createElement('div');
-      handle.style.cssText = 'position:absolute;bottom:-5px;right:-5px;width:14px;height:14px;background:#ff8800;border-radius:3px;cursor:se-resize;z-index:21;';
+      // === 4 CORNER RESIZE HANDLES ===
+      // Each handle: position, cursor, and which edges it moves
+      const corners = [
+        { pos: 'top-left',     style: 'top:-5px;left:-5px;',       cursor: 'nwse-resize', dx: -1, dy: -1 },
+        { pos: 'top-right',    style: 'top:-5px;right:-5px;',      cursor: 'nesw-resize', dx:  1, dy: -1 },
+        { pos: 'bottom-left',  style: 'bottom:-5px;left:-5px;',    cursor: 'nesw-resize', dx: -1, dy:  1 },
+        { pos: 'bottom-right', style: 'bottom:-5px;right:-5px;',   cursor: 'nwse-resize', dx:  1, dy:  1 },
+      ];
 
-      let resizing = false, rsX, rsY, rsW, rsH;
-      handle.onmousedown = e => {
-        e.preventDefault(); e.stopPropagation();
-        resizing = true; rsX = e.clientX; rsY = e.clientY;
-        rsW = box.w; rsH = box.h;
-        document.onmousemove = ev => {
-          if (!resizing) return;
-          const nw = Math.max(40, Math.min(rsW + (ev.clientX - rsX), overlay.offsetWidth  - box.x));
-          const nh = Math.max(40, Math.min(rsH + (ev.clientY - rsY), overlay.offsetHeight - box.y));
-          div.style.width  = nw + 'px';
-          div.style.height = nh + 'px';
-          manualBoxes['manual'].w = nw;
-          manualBoxes['manual'].h = nh;
+      corners.forEach(({ pos, style, cursor, dx, dy }) => {
+        const handle = document.createElement('div');
+        handle.style.cssText = `position:absolute;${style}width:14px;height:14px;background:#ff8800;border-radius:3px;cursor:${cursor};z-index:22;`;
+
+        let resizing = false, rsX, rsY, rsW, rsH, rsBoxX, rsBoxY;
+        handle.onmousedown = e => {
+          e.preventDefault(); e.stopPropagation();
+          resizing = true;
+          rsX = e.clientX; rsY = e.clientY;
+          rsW = box.w; rsH = box.h;
+          rsBoxX = box.x; rsBoxY = box.y;
+
+          document.onmousemove = ev => {
+            if (!resizing) return;
+            const ddx = ev.clientX - rsX;
+            const ddy = ev.clientY - rsY;
+
+            let nw = rsW, nh = rsH, nx = rsBoxX, ny = rsBoxY;
+
+            // dx=1 means right edge moves, dx=-1 means left edge moves
+            if (dx === 1) {
+              nw = Math.max(40, Math.min(rsW + ddx, overlay.offsetWidth  - rsBoxX));
+            } else {
+              nw = Math.max(40, rsW - ddx);
+              nx = Math.min(rsBoxX + ddx, rsBoxX + rsW - 40);
+              nx = Math.max(0, nx);
+              nw = rsBoxX + rsW - nx;
+            }
+
+            if (dy === 1) {
+              nh = Math.max(40, Math.min(rsH + ddy, overlay.offsetHeight - rsBoxY));
+            } else {
+              nh = Math.max(40, rsH - ddy);
+              ny = Math.min(rsBoxY + ddy, rsBoxY + rsH - 40);
+              ny = Math.max(0, ny);
+              nh = rsBoxY + rsH - ny;
+            }
+
+            div.style.left   = nx + 'px'; div.style.top    = ny + 'px';
+            div.style.width  = nw + 'px'; div.style.height = nh + 'px';
+            manualBoxes['manual'].x = nx; manualBoxes['manual'].y = ny;
+            manualBoxes['manual'].w = nw; manualBoxes['manual'].h = nh;
+          };
+          document.onmouseup = () => { resizing = false; };
         };
-        document.onmouseup = () => { resizing = false; };
-      };
-      div.appendChild(handle);
+        div.appendChild(handle);
+      });
 
-      // Drag logic
+      // Drag the whole box
       let dragging = false, dX, dY, dOX, dOY;
       div.onmousedown = e => {
-        if (e.target === handle) return;
+        // Only drag from the box body, not handles
+        if (e.target !== div && e.target !== badge) return;
         e.preventDefault(); dragging = true;
         dX = e.clientX; dY = e.clientY; dOX = box.x; dOY = box.y;
         document.onmousemove = ev => {
@@ -920,8 +884,6 @@
     const fd = new FormData();
     fd.append('video', videoInput.files[0]);
     fd.append('face1', face1Input.files[0]);
-
-    // Optional face 2
     const face2Input = document.getElementById('face2Input');
     if (face2Input.files[0]) fd.append('face2', face2Input.files[0]);
 
@@ -932,25 +894,26 @@
       .then(data => {
         if (data.error) { showToast('Error: ' + data.error); return; }
 
-        sessionId   = data.session_id;
-        faces       = data.faces;
-        manualBoxes = {};
-        selected    = null;
+        sessionId = data.session_id;
+        faces     = data.faces;
+        manualBoxes = {}; selected = null;
 
         // Reset manual box state
         manualBoxActive = false; manualBoxLocked = false;
         const mb = document.getElementById('manualBoxBtn');
         mb.classList.remove('active');
-        mb.innerHTML = '✛ MANUAL TARGET BOX<span class="sub">Draw your own target</span>';
+        mb.innerHTML = '✛ MANUAL TARGET BOX<span class="sub">Bypass AI — draw exact region</span>';
         document.getElementById('lockBtn').style.display = 'none';
 
         const placeholder = document.getElementById('playerPlaceholder');
-        placeholder.innerHTML        = '';
-        placeholder.style.background = '#000';
+        placeholder.innerHTML = ''; placeholder.style.background = '#000';
 
         const img = document.createElement('img');
-        img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;display:block;';
-        img.ondragstart = () => false;
+        // FIX: lock image completely — prevents Safari drag bug
+        img.style.cssText   = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;user-select:none;-webkit-user-drag:none;';
+        img.style.pointerEvents = 'none';   // FIX: no pointer events on image
+        img.draggable       = false;         // FIX: Safari explicit lock
+        img.ondragstart     = () => false;
         img.onerror = () => showToast('Frame failed to load: ' + img.src);
         img.onload  = () => showToast('Frame loaded: ' + img.naturalWidth + 'x' + img.naturalHeight);
         img.src = data.first_frame_url;
@@ -979,7 +942,7 @@
     const fA = frameW / frameH, dA = dispW / dispH;
     let rW, rH, oX, oY;
     if (fA > dA) { rW = dispW; rH = dispW / fA; oX = 0; oY = (dispH - rH) / 2; }
-    else         { rH = dispH; rW = dispH * fA; oX = (dispW - rW) / 2; oY = 0; }
+    else         { rH = dispH; rW = dispH * fA;  oX = (dispW - rW) / 2; oY = 0; }
 
     const sX = frameW / rW, sY = frameH / rH;
     const out = {};
@@ -995,12 +958,10 @@
   }
 
   // === GENERATE ===
-  // Bug fix: when manual box is active, send it as manual_box AND as boxes[0]
-  // so backend can use whichever key it reads first
   function generate() {
     const usingManual = manualBoxActive && manualBoxes['manual'];
-    if (!sessionId)                         { showToast('Run Analyze first'); return; }
-    if (!usingManual && selected === null)  { showToast('Click a face or use Manual Target Box'); return; }
+    if (!sessionId)                        { showToast('Run Analyze first'); return; }
+    if (!usingManual && selected === null) { showToast('Click a face or use Manual Target Box'); return; }
 
     const btn = document.getElementById('genLabel');
     const spinner = document.getElementById('genSpinner');
@@ -1008,19 +969,19 @@
 
     const coords = toFrameCoords();
 
-    // Build payload
     const payload = {
       session_id: sessionId,
-      target1:    usingManual ? (faces.length > 0 ? faces[0].index : 0) : selected,
-      boxes:      coords,
+      // FIX: manual mode sends target1=null so backend tracks region NOT identity
+      // This unlocks true manual tracking regardless of AI detection results
+      target1: usingManual ? null : selected,
+      boxes:   coords,
     };
 
-    // Send manual_box as a separate top-level key so backend can use it
-    // as a direct coordinate override regardless of which face index matched
     if (usingManual && coords['manual']) {
+      // Send explicit manual_box key for backend to read
       payload.manual_box = coords['manual'];
-      // Also inject as boxes[target1] so existing backend logic picks it up
-      payload.boxes[payload.target1] = coords['manual'];
+      // Also inject into boxes at index 0 as fallback for existing backend logic
+      payload.boxes['0'] = coords['manual'];
     }
 
     fetch('/generate', {
@@ -1049,8 +1010,7 @@
     })
     .catch(err => {
       btn.style.display = ''; spinner.style.display = 'none';
-      console.error(err);
-      showToast('Generation failed — check console');
+      console.error(err); showToast('Generation failed — check console');
     });
   }
 

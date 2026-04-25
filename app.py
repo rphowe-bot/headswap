@@ -3,15 +3,13 @@ import uuid
 import json
 import subprocess
 from pathlib import Path
-
 import cv2
 import numpy as np
 from flask import Flask, render_template, request, jsonify, send_from_directory, url_for
 from werkzeug.utils import secure_filename
-
 from tracker import analyze_first_frame, render_tracking_video
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR   = Path(__file__).resolve().parent
 UPLOAD_DIR = BASE_DIR / "static" / "uploads"
 OUTPUT_DIR = BASE_DIR / "static" / "outputs"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -29,9 +27,9 @@ def ext(filename):
 
 
 def save_file(file, prefix):
-    safe = secure_filename(file.filename)
+    safe     = secure_filename(file.filename)
     filename = f"{prefix}_{uuid.uuid4().hex}_{safe}"
-    path = UPLOAD_DIR / filename
+    path     = UPLOAD_DIR / filename
     file.save(path)
     return path
 
@@ -40,31 +38,27 @@ def save_file(file, prefix):
 def index():
     return render_template("index.html")
 
+
 @app.route("/frame", methods=["POST"])
 def get_frame():
-    data = request.get_json()
+    data      = request.get_json()
     video_path = data.get("video")
-    frame_num = int(data.get("frame"))
+    frame_num  = int(data.get("frame"))
 
-    import cv2
     cap = cv2.VideoCapture(video_path)
     cap.set(cv2.CAP_PROP_POS_FRAMES, frame_num)
-
     success, frame = cap.read()
     cap.release()
 
     if not success:
         return jsonify({"error": "Could not read frame"}), 400
 
-    import uuid
-    filename = f"frame_{uuid.uuid4().hex}.jpg"
+    filename    = f"frame_{uuid.uuid4().hex}.jpg"
     output_path = OUTPUT_DIR / filename
-
     cv2.imwrite(str(output_path), frame)
 
-    return jsonify({
-        "frame_url": url_for("static", filename=f"outputs/{filename}")
-    })
+    return jsonify({"frame_url": url_for("static", filename=f"outputs/{filename}")})
+
 
 @app.route("/analyze", methods=["POST"])
 def analyze():
@@ -74,10 +68,8 @@ def analyze():
 
     if not video or not face1:
         return jsonify({"error": "Video and Face 1 are required."}), 400
-
     if ext(video.filename) not in ALLOWED_VIDEO:
         return jsonify({"error": "Please upload MP4, MOV, or M4V video."}), 400
-
     if ext(face1.filename) not in ALLOWED_IMAGE:
         return jsonify({"error": "Face 1 must be JPG, PNG, WEBP, or HEIC."}), 400
 
@@ -91,37 +83,38 @@ def analyze():
         face2_path = save_file(face2, "face2")
 
     analysis = analyze_first_frame(str(video_path), str(OUTPUT_DIR))
-
     if "error" in analysis:
         return jsonify(analysis), 400
 
     session = {
-        "video": str(video_path),
-        "face1": str(face1_path),
-        "face2": str(face2_path) if face2_path else None,
+        "video":       str(video_path),
+        "face1":       str(face1_path),
+        "face2":       str(face2_path) if face2_path else None,
         "first_frame": analysis["first_frame"],
-        "faces": analysis["faces"],
+        "faces":       analysis["faces"],
     }
 
-    session_id = uuid.uuid4().hex
+    session_id   = uuid.uuid4().hex
     session_file = OUTPUT_DIR / f"{session_id}.json"
     session_file.write_text(json.dumps(session), encoding="utf-8")
 
     return jsonify({
-        "session_id": session_id,
+        "session_id":      session_id,
         "first_frame_url": url_for("static", filename=f"outputs/{Path(analysis['first_frame']).name}"),
-        "faces": analysis["faces"],
-        "video_path": str(video_path),
-        "has_face2": bool(face2_path),
+        "faces":           analysis["faces"],
+        "video_path":      str(video_path),
+        "has_face2":       bool(face2_path),
     })
 
 
 @app.route("/generate", methods=["POST"])
 def generate():
-    data = request.get_json(force=True)
+    data       = request.get_json(force=True)
     session_id = data.get("session_id")
-    target1 = data.get("target1")
-    target2 = data.get("target2")
+    target1    = data.get("target1")     # may be None in manual box mode
+    target2    = data.get("target2")
+    manual_box = data.get("manual_box")  # {x, y, w, h} in frame pixels, or None
+    boxes      = data.get("boxes", {})   # all dragged box overrides
 
     if not session_id:
         return jsonify({"error": "Missing session."}), 400
@@ -132,33 +125,80 @@ def generate():
 
     session = json.loads(session_file.read_text(encoding="utf-8"))
 
-    if target1 is None:
-        return jsonify({"error": "Choose a target face for Face 1."}), 400
+    # ── Determine targeting mode ──────────────────────────────────────────────
+
+    using_manual = (target1 is None) and (manual_box is not None)
+
+    if not using_manual and target1 is None:
+        # Neither manual box nor a face was selected
+        return jsonify({"error": "Choose a target face or draw a Manual Target Box."}), 400
+
+    if using_manual:
+        # Build a synthetic initial_faces entry from the manual box so
+        # tracker.py can use its existing match_faces_to_initial logic.
+        # We give it index=0 and the exact frame-pixel coordinates from the frontend.
+        synthetic_face = {
+            "index": 0,
+            "x":     int(manual_box["x"]),
+            "y":     int(manual_box["y"]),
+            "w":     int(manual_box["w"]),
+            "h":     int(manual_box["h"]),
+            "label": "Manual Target",
+            "score": 1.0,
+        }
+        initial_faces  = [synthetic_face]
+        target1_index  = 0
+        target2_index  = None   # manual mode only supports one target
+
+    else:
+        # Normal auto-detection mode — use session faces with optional box overrides
+        initial_faces = session["faces"]
+        target1_index = int(target1)
+        target2_index = (
+            int(target2)
+            if target2 is not None and session.get("face2")
+            else None
+        )
+
+        # Apply any dragged box overrides from the frontend
+        for idx_str, box in boxes.items():
+            try:
+                idx = int(idx_str)
+                for f in initial_faces:
+                    if f["index"] == idx:
+                        f["x"] = int(box["x"])
+                        f["y"] = int(box["y"])
+                        f["w"] = int(box["w"])
+                        f["h"] = int(box["h"])
+            except (ValueError, KeyError):
+                pass
+
+    # ── Render ────────────────────────────────────────────────────────────────
 
     output_name = f"headswap_output_{uuid.uuid4().hex}.mp4"
     output_path = OUTPUT_DIR / output_name
 
     try:
         render_tracking_video(
-            video_path=session["video"],
-            face1_path=session["face1"],
-            face2_path=session.get("face2"),
-            initial_faces=session["faces"],
-            target1_index=int(target1),
-            target2_index=int(target2) if target2 is not None and session.get("face2") else None,
-            output_path=str(output_path),
-            max_seconds=20,
+            video_path    = session["video"],
+            face1_path    = session["face1"],
+            face2_path    = session.get("face2"),
+            initial_faces = initial_faces,
+            target1_index = target1_index,
+            target2_index = target2_index,
+            output_path   = str(output_path),
+            manual_boxes  = None,   # box overrides already applied above
+            max_seconds   = 20,
         )
     except Exception as e:
         return jsonify({"error": f"Render failed: {str(e)}"}), 500
 
     return jsonify({
         "output_url": url_for("static", filename=f"outputs/{output_name}"),
-        "message": "Your tracked meme video is ready."
+        "message":    "Your tracked video is ready.",
     })
 
 
 if __name__ == "__main__":
-    import os
-port = int(os.environ.get("PORT", 5000))
-app.run(host="0.0.0.0", port=port)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)

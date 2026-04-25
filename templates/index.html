@@ -361,6 +361,31 @@
   .mode-btn .sub { display: block; font-size: 10px; font-weight: 400; opacity: 0.75; letter-spacing: 0.02em; margin-top: 2px; font-family: 'Barlow', sans-serif; }
   .mode-hint { font-size: 11px; color: var(--muted); text-align: center; line-height: 1.5; margin-top: 8px; }
 
+  /* Manual target button */
+  .manual-btn {
+    display: block; width: 100%; padding: 10px; border-radius: 8px;
+    border: 2px solid #ff8800; text-align: center; cursor: pointer;
+    margin-bottom: 8px; transition: all 0.2s;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; letter-spacing: 0.06em; font-size: 13px;
+    background: rgba(255,136,0,0.1); color: #ff8800;
+  }
+  .manual-btn:hover { background: rgba(255,136,0,0.2); box-shadow: 0 0 16px rgba(255,136,0,0.25); }
+  .manual-btn.active { background: rgba(255,136,0,0.25); box-shadow: 0 0 16px rgba(255,136,0,0.4); border-color: #ffaa33; color: #ffaa33; }
+  .manual-btn .sub { display: block; font-size: 10px; font-weight: 400; opacity: 0.75; letter-spacing: 0.02em; margin-top: 2px; font-family: 'Barlow', sans-serif; }
+
+  /* Lock target button */
+  .lock-btn {
+    display: none; width: 100%; padding: 8px; border-radius: 6px;
+    border: 1.5px solid #22c55e; text-align: center; cursor: pointer;
+    margin-bottom: 8px; transition: all 0.2s;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; letter-spacing: 0.06em; font-size: 12px;
+    background: rgba(34,197,94,0.1); color: #22c55e;
+  }
+  .lock-btn:hover { background: rgba(34,197,94,0.2); }
+  .lock-btn.locked { background: rgba(34,197,94,0.2); border-color: #16a34a; color: #4ade80; }
+
   .analyze-btn, .generate-btn {
     width: 100%; padding: 14px; border: none; border-radius: 8px;
     font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700;
@@ -608,6 +633,7 @@
     <div class="step-card">
       <div class="step-num">3</div>
       <div class="step-title">SELECT TARGET</div>
+
       <button class="mode-btn cyan active" id="mode1Btn" onclick="setMode(1)">
         FACE 1 MODE
         <span class="sub">Replace with Face 1</span>
@@ -616,7 +642,19 @@
         FACE 2 MODE
         <span class="sub">Replace with Face 2</span>
       </button>
-      <p class="mode-hint">Click a face in the video<br>or use the modes above</p>
+
+      <!-- Manual target box button -->
+      <button class="manual-btn" id="manualBoxBtn" onclick="toggleManualBox()">
+        ✛ MANUAL TARGET BOX
+        <span class="sub">Draw your own target</span>
+      </button>
+
+      <!-- Lock target button — shown after manual box is placed -->
+      <button class="lock-btn" id="lockBtn" onclick="toggleLock()">
+        🔓 LOCK TARGET
+      </button>
+
+      <p class="mode-hint" id="modeHint">Click a detected face or use Manual Target Box</p>
     </div>
 
     <div class="step-card">
@@ -695,16 +733,21 @@
 
 <script>
   // === STATE ===
-  let sessionId      = null;
-  let faces          = [];
-  let manualBoxes    = {};
-  let selected       = null;
-  let activeMode     = 1;
-  let resultVideoUrl = null;
-  let isPlaying      = false;
-  let playInterval   = null;
-  let currentTime    = 0;
-  const duration     = 10;
+  let sessionId        = null;
+  let faces            = [];
+  let manualBoxes      = {};
+  let selected         = null;
+  let activeMode       = 1;
+  let resultVideoUrl   = null;
+  let isPlaying        = false;
+  let playInterval     = null;
+  let currentTime      = 0;
+  const duration       = 10;
+
+  // Manual box state
+  let manualBoxActive  = false;   // manual box mode on/off
+  let manualBoxLocked  = false;   // locked = won't reset on redraw
+  let manualBoxEl      = null;    // the DOM element for the manual box
 
   // === PLAYER CONTROLS ===
   function togglePlay() {
@@ -749,12 +792,17 @@
     if (!overlay) return;
     overlay.innerHTML = '';
 
+    // Re-attach manual box if active
+    if (manualBoxActive && manualBoxes['manual']) {
+      renderManualBox(overlay);
+    }
+
     faces.forEach(f => {
       if (!manualBoxes[f.index]) {
         manualBoxes[f.index] = { x: f.x, y: f.y, w: f.w, h: f.h };
       }
       const box   = manualBoxes[f.index];
-      const isSel = selected == f.index;
+      const isSel = !manualBoxActive && selected == f.index;
 
       const div = document.createElement('div');
       div.style.cssText   = 'position:absolute;border-radius:4px;transition:opacity 0.2s,box-shadow 0.2s;';
@@ -764,8 +812,9 @@
       div.style.height    = box.h + 'px';
       div.style.border    = '2px solid ' + (isSel ? '#ff2fa8' : '#16ddff');
       div.style.boxShadow = isSel ? '0 0 14px rgba(255,47,168,0.6)' : '0 0 6px rgba(22,221,255,0.2)';
-      div.style.opacity   = isSel ? '1' : '0.35';
+      div.style.opacity   = manualBoxActive ? '0.2' : (isSel ? '1' : '0.35');
       div.style.cursor    = isSel ? 'move' : 'pointer';
+      div.style.pointerEvents = manualBoxActive ? 'none' : 'auto';
 
       const badge = document.createElement('div');
       badge.textContent   = 'Face ' + (f.index + 1);
@@ -773,7 +822,7 @@
       badge.style.opacity = isSel ? '1' : '0.4';
       div.appendChild(badge);
 
-      if (isSel) {
+      if (isSel && !manualBoxActive) {
         let dragging = false, startX, startY, origX, origY;
         div.onmousedown = e => {
           e.preventDefault();
@@ -794,9 +843,144 @@
         };
       }
 
-      div.onclick = () => { selected = f.index; draw(); };
+      div.onclick = () => {
+        if (manualBoxActive) return;
+        selected = f.index;
+        draw();
+      };
       overlay.appendChild(div);
     });
+  }
+
+  // === MANUAL TARGET BOX ===
+  function toggleManualBox() {
+    const overlay = document.getElementById('overlay');
+    if (!overlay) { showToast('Run Analyze first to load the frame'); return; }
+
+    manualBoxActive = !manualBoxActive;
+    const btn  = document.getElementById('manualBoxBtn');
+    const lock = document.getElementById('lockBtn');
+
+    if (manualBoxActive) {
+      btn.classList.add('active');
+      btn.textContent = '✕ REMOVE MANUAL BOX';
+      btn.innerHTML   = '✕ REMOVE MANUAL BOX<span class="sub">Back to auto detection</span>';
+      lock.style.display = 'block';
+      manualBoxLocked = false;
+      lock.classList.remove('locked');
+      lock.textContent = '🔓 LOCK TARGET';
+
+      // Default box: center of overlay, 20% width
+      const ow = overlay.offsetWidth  || 400;
+      const oh = overlay.offsetHeight || 225;
+      const bw = Math.round(ow * 0.20);
+      const bh = Math.round(bw * 1.2);
+      const bx = Math.round((ow - bw) / 2);
+      const by = Math.round((oh - bh) / 2);
+
+      manualBoxes['manual'] = { x: bx, y: by, w: bw, h: bh };
+      selected = null;
+      showToast('Drag the orange box over the face to swap');
+    } else {
+      btn.classList.remove('active');
+      btn.innerHTML   = '✛ MANUAL TARGET BOX<span class="sub">Draw your own target</span>';
+      lock.style.display = 'none';
+      manualBoxLocked = false;
+      delete manualBoxes['manual'];
+      manualBoxEl = null;
+    }
+
+    draw();
+  }
+
+  function toggleLock() {
+    manualBoxLocked = !manualBoxLocked;
+    const btn = document.getElementById('lockBtn');
+    if (manualBoxLocked) {
+      btn.classList.add('locked');
+      btn.textContent = '🔒 TARGET LOCKED';
+      showToast('Target locked — box will not reset');
+    } else {
+      btn.classList.remove('locked');
+      btn.textContent = '🔓 LOCK TARGET';
+      showToast('Target unlocked');
+    }
+  }
+
+  function renderManualBox(overlay) {
+    const box = manualBoxes['manual'];
+    if (!box) return;
+
+    const div = document.createElement('div');
+    div.id = 'manualBoxEl';
+    div.style.cssText = 'position:absolute;border-radius:4px;z-index:20;';
+    div.style.left    = box.x + 'px';
+    div.style.top     = box.y + 'px';
+    div.style.width   = box.w + 'px';
+    div.style.height  = box.h + 'px';
+    div.style.border  = '2px solid #ff8800';
+    div.style.boxShadow = '0 0 16px rgba(255,136,0,0.5)';
+    div.style.cursor  = manualBoxLocked ? 'default' : 'move';
+
+    // Label
+    const badge = document.createElement('div');
+    badge.textContent   = manualBoxLocked ? '🔒 TARGET' : 'MANUAL TARGET';
+    badge.style.cssText = 'position:absolute;top:-22px;left:0;font-size:11px;font-weight:700;letter-spacing:0.05em;white-space:nowrap;color:#ff8800;font-family:Barlow Condensed,sans-serif;';
+    div.appendChild(badge);
+
+    // Resize handle (bottom-right corner)
+    const handle = document.createElement('div');
+    handle.style.cssText = 'position:absolute;bottom:-4px;right:-4px;width:14px;height:14px;background:#ff8800;border-radius:3px;cursor:se-resize;z-index:21;';
+    div.appendChild(handle);
+
+    // Drag logic
+    if (!manualBoxLocked) {
+      let dragging = false, startX, startY, origX, origY;
+      div.onmousedown = e => {
+        if (e.target === handle) return; // handled separately
+        e.preventDefault();
+        dragging = true;
+        startX = e.clientX; startY = e.clientY;
+        origX  = box.x;     origY  = box.y;
+        document.onmousemove = ev => {
+          if (!dragging) return;
+          let nx = origX + (ev.clientX - startX);
+          let ny = origY + (ev.clientY - startY);
+          nx = Math.max(0, Math.min(nx, overlay.offsetWidth  - box.w));
+          ny = Math.max(0, Math.min(ny, overlay.offsetHeight - box.h));
+          div.style.left = nx + 'px';
+          div.style.top  = ny + 'px';
+          manualBoxes['manual'].x = nx;
+          manualBoxes['manual'].y = ny;
+        };
+        document.onmouseup = () => { dragging = false; };
+      };
+
+      // Resize logic
+      let resizing = false, resStartX, resStartY, resOrigW, resOrigH;
+      handle.onmousedown = e => {
+        e.preventDefault();
+        e.stopPropagation();
+        resizing = true;
+        resStartX = e.clientX; resStartY = e.clientY;
+        resOrigW  = box.w;     resOrigH  = box.h;
+        document.onmousemove = ev => {
+          if (!resizing) return;
+          let nw = Math.max(40, resOrigW + (ev.clientX - resStartX));
+          let nh = Math.max(40, resOrigH + (ev.clientY - resStartY));
+          nw = Math.min(nw, overlay.offsetWidth  - box.x);
+          nh = Math.min(nh, overlay.offsetHeight - box.y);
+          div.style.width  = nw + 'px';
+          div.style.height = nh + 'px';
+          manualBoxes['manual'].w = nw;
+          manualBoxes['manual'].h = nh;
+        };
+        document.onmouseup = () => { resizing = false; };
+      };
+    }
+
+    manualBoxEl = div;
+    overlay.appendChild(div);
   }
 
   // === MODE BUTTONS ===
@@ -830,20 +1014,12 @@
   }
 
   // === ANALYZE ===
-  // FIX: require both video and face1 before calling /analyze
-  // FIX: check data.error before trying to use data.first_frame_url
   function analyze() {
     const videoInput = document.getElementById('videoInput');
     const face1Input = document.getElementById('face1Input');
 
-    if (!videoInput.files[0]) {
-      showToast('Please upload a video first');
-      return;
-    }
-    if (!face1Input.files[0]) {
-      showToast('Please upload Face 1 first');
-      return;
-    }
+    if (!videoInput.files[0]) { showToast('Please upload a video first'); return; }
+    if (!face1Input.files[0]) { showToast('Please upload Face 1 first'); return; }
 
     const fd = new FormData();
     fd.append('video', videoInput.files[0]);
@@ -854,16 +1030,20 @@
     fetch('/analyze', { method: 'POST', body: fd })
       .then(r => r.json())
       .then(data => {
-        // FIX: surface backend errors instead of trying to load undefined
-        if (data.error) {
-          showToast('Error: ' + data.error);
-          return;
-        }
+        if (data.error) { showToast('Error: ' + data.error); return; }
 
         sessionId   = data.session_id;
         faces       = data.faces;
         manualBoxes = {};
         selected    = null;
+
+        // Reset manual box state on new analyze
+        manualBoxActive = false;
+        manualBoxLocked = false;
+        manualBoxEl     = null;
+        document.getElementById('manualBoxBtn').classList.remove('active');
+        document.getElementById('manualBoxBtn').innerHTML = '✛ MANUAL TARGET BOX<span class="sub">Draw your own target</span>';
+        document.getElementById('lockBtn').style.display = 'none';
 
         const placeholder = document.getElementById('playerPlaceholder');
         placeholder.innerHTML        = '';
@@ -872,11 +1052,8 @@
         const img         = document.createElement('img');
         img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;display:block;';
         img.ondragstart   = () => false;
-
-        // Diagnostic lines — tells us if URL is reachable and what size renders
         img.onerror = () => showToast('Frame failed to load: ' + img.src);
         img.onload  = () => showToast('Frame loaded: ' + img.naturalWidth + 'x' + img.naturalHeight);
-
         img.src = data.first_frame_url;
         placeholder.appendChild(img);
 
@@ -886,7 +1063,7 @@
         placeholder.appendChild(overlayDiv);
 
         draw();
-        showToast('Found ' + faces.length + ' face(s)! Click one to select.');
+        showToast('Found ' + faces.length + ' face(s)! Click one or use Manual Target Box.');
       })
       .catch(err => {
         console.error(err);
@@ -895,7 +1072,6 @@
   }
 
   // === COORDINATE CONVERSION ===
-  // Converts CSS/display pixel coordinates → original video frame pixel coordinates
   function toFrameCoords() {
     const img = document.querySelector('#playerPlaceholder img');
     if (!img) return manualBoxes;
@@ -941,22 +1117,36 @@
 
   // === GENERATE ===
   function generate() {
-    if (!sessionId)        { showToast('Run Analyze first'); return; }
-    if (selected === null) { showToast('Click a face to select a target'); return; }
+    // Determine effective target
+    const usingManual = manualBoxActive && manualBoxes['manual'];
+
+    if (!sessionId)                        { showToast('Run Analyze first'); return; }
+    if (!usingManual && selected === null) { showToast('Click a face or use Manual Target Box'); return; }
 
     const btn     = document.getElementById('genLabel');
     const spinner = document.getElementById('genSpinner');
     btn.style.display     = 'none';
     spinner.style.display = 'block';
 
+    const coords = toFrameCoords();
+
+    // If manual box mode, send it as target index 0 override
+    // Backend receives: target1 = selected (or 0 for manual), boxes = converted coords
+    const payload = {
+      session_id: sessionId,
+      target1:    usingManual ? 0 : selected,
+      boxes:      coords
+    };
+
+    // If using manual box, also send it as the explicit override for index 0
+    if (usingManual) {
+      payload.manual_box = coords['manual'] || manualBoxes['manual'];
+    }
+
     fetch('/generate', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        session_id: sessionId,
-        target1:    selected,
-        boxes:      toFrameCoords()
-      })
+      body: JSON.stringify(payload)
     })
     .then(r => r.json())
     .then(d => {

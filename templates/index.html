@@ -6,12 +6,22 @@
 <title>HeadSwap</title>
 
 <style>
+* { box-sizing: border-box; }
+
 body {
   margin:0;
   font-family: Arial;
   background:#05030a;
   color:white;
 }
+
+.brand {
+  padding:20px;
+  font-size:26px;
+  font-weight:900;
+}
+.brand span:nth-child(1){color:#ff2fa8;}
+.brand span:nth-child(2){color:#16ddff;}
 
 /* HERO */
 .scene {
@@ -43,15 +53,28 @@ body {
   box-shadow:0 0 20px #ff2fa8;
 }
 
-.target span {
+.frameWrap {
   position:absolute;
-  bottom:-30px;
-  left:50%;
-  transform:translateX(-50%);
-  font-size:12px;
+  inset:0;
+  display:none;
 }
 
-/* BOXES */
+#frame {
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  user-select:none;
+  -webkit-user-drag:none;
+  pointer-events:none;
+}
+
+#overlay {
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+/* UI */
 .container {
   padding:20px;
   display:grid;
@@ -60,14 +83,14 @@ body {
 }
 
 .card {
-  border:1px solid #333;
+  background:#0c0714;
   padding:15px;
   border-radius:10px;
-  background:#0c0714;
+  border:1px solid #333;
 }
 
-.active {border-color:#16ddff;}
-.complete {border-color:#39ea91;}
+.active { border-color:#16ddff; }
+.complete { border-color:#39ea91; }
 
 button {
   width:100%;
@@ -79,58 +102,85 @@ button {
   cursor:pointer;
 }
 
-button:disabled {
-  opacity:.4;
+button:disabled { opacity:.4; }
+
+#status {
+  padding:10px 20px;
+  color:#aaa;
 }
 
-/* FACE BOXES */
+/* FACE BOX */
 .faceBox {
   position:absolute;
   border:2px solid #16ddff;
-  cursor:pointer;
+  cursor:move;
+  pointer-events:auto;
+  user-select:none;
 }
 
-.faceBox.selected1 {border-color:#16ddff;}
-.faceBox.selected2 {border-color:#ff2fa8;}
+.faceBox.selected1 { border-color:#16ddff; }
+.faceBox.selected2 { border-color:#ff2fa8; }
 
+.faceTag {
+  position:absolute;
+  top:-10px;
+  left:-10px;
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  background:#16ddff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+}
 </style>
 </head>
 
 <body>
 
-<div class="scene" id="scene">
-  <div class="target left"><span>Face 1</span></div>
-  <div class="target right"><span>Face 2</span></div>
-
-  <img id="frame" style="display:none;width:100%;">
-  <div id="overlay"></div>
+<div class="brand">
+  <span>HEAD</span><span>SWAP</span>
 </div>
+
+<div class="scene">
+  <div class="target left"></div>
+  <div class="target right"></div>
+
+  <div class="frameWrap" id="frameWrap">
+    <img id="frame">
+    <div id="overlay"></div>
+  </div>
+</div>
+
+<div id="status">Upload video + face</div>
 
 <div class="container">
 
-<div class="card active" id="stage1">
+<div class="card active">
 <h3>1 Upload Video</h3>
 <input type="file" id="video">
 </div>
 
-<div class="card" id="stage2">
+<div class="card">
 <h3>2 Upload Face</h3>
 <input type="file" id="face1">
 <input type="file" id="face2">
 </div>
 
-<div class="card" id="stage3">
-<h3>3 Select Target</h3>
+<div class="card">
+<h3>3 Select</h3>
 <select id="target1"></select>
 <select id="target2"></select>
 </div>
 
-<div class="card" id="stage4">
+<div class="card">
 <h3>4 Generate</h3>
-<button id="generate" disabled>Generate</button>
+<button id="analyze">Analyze</button>
+<button id="generate">Generate</button>
 </div>
 
-<div class="card" id="stage5">
+<div class="card">
 <h3>Result</h3>
 <video id="result" controls></video>
 </div>
@@ -138,42 +188,32 @@ button:disabled {
 </div>
 
 <script>
-
 let faces=[]
 let selected1=null
 let selected2=null
+let sessionId=null
 
 const frame=document.getElementById("frame")
 const overlay=document.getElementById("overlay")
+const frameWrap=document.getElementById("frameWrap")
 
-document.getElementById("video").onchange=update
-document.getElementById("face1").onchange=update
-
-function update(){
-  if(video.files[0] && face1.files[0]){
-    analyze()
-  }
-}
-
-async function analyze(){
-
+analyze.onclick=async()=>{
   const fd=new FormData()
   fd.append("video",video.files[0])
   fd.append("face1",face1.files[0])
-
   if(face2.files[0]) fd.append("face2",face2.files[0])
 
   const res=await fetch("/analyze",{method:"POST",body:fd})
   const data=await res.json()
 
+  sessionId=data.session_id
   faces=data.faces
+
   frame.src=data.first_frame_url
-  frame.style.display="block"
+  frameWrap.style.display="block"
 
   populate()
   draw()
-
-  document.getElementById("generate").disabled=false
 }
 
 function populate(){
@@ -185,12 +225,10 @@ function populate(){
     o.value=f.index
     o.textContent="Face "+f.index
     target1.appendChild(o)
-
-    let o2=o.cloneNode(true)
-    target2.appendChild(o2)
+    target2.appendChild(o.cloneNode(true))
   })
 
-  selected1=faces[0].index
+  selected1=faces[0]?.index
   selected2=faces[1]?.index
 }
 
@@ -200,17 +238,33 @@ function draw(){
   faces.forEach(f=>{
     let div=document.createElement("div")
     div.className="faceBox"
+
     div.style.left=f.x+"px"
     div.style.top=f.y+"px"
     div.style.width=f.w+"px"
     div.style.height=f.h+"px"
 
+    let dragging=false,ox,oy
+
+    div.onmousedown=(e)=>{
+      e.preventDefault()
+      dragging=true
+      ox=e.clientX-div.offsetLeft
+      oy=e.clientY-div.offsetTop
+    }
+
+    document.onmousemove=(e)=>{
+      if(!dragging)return
+      div.style.left=(e.clientX-ox)+"px"
+      div.style.top=(e.clientY-oy)+"px"
+    }
+
+    document.onmouseup=()=>dragging=false
+
     div.onclick=()=>{
       selected1=f.index
       draw()
     }
-
-    if(selected1==f.index) div.classList.add("selected1")
 
     overlay.appendChild(div)
   })
@@ -221,6 +275,7 @@ generate.onclick=async()=>{
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({
+      session_id:sessionId,
       target1:selected1,
       target2:selected2
     })
@@ -229,17 +284,7 @@ generate.onclick=async()=>{
   const data=await res.json()
   result.src=data.output_url
 }
-
 </script>
 
 </body>
-  <div style="
-  padding:20px;
-  font-size:24px;
-  font-weight:bold;
-  color:#ff2fa8;
-  letter-spacing:1px;
-">
-  HEAD<span style="color:#16ddff;">SWAP</span>
-</div>
 </html>

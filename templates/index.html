@@ -526,7 +526,7 @@
               </linearGradient>
             </defs>
           </svg>
-          <div class="player-instruction">UPLOAD VIDEO &amp; CLICK ANALYZE</div>
+          <div class="player-instruction">UPLOAD VIDEO + FACE 1, THEN ANALYZE</div>
         </div>
       </div>
       <div class="player-controls">
@@ -744,8 +744,6 @@
   }
 
   // === DRAW DETECTED FACE BOXES ===
-  // Labels: f.index+1 for display (Face 1, Face 2), backend uses f.index
-  // Unselected boxes faded; only selected is draggable
   function draw() {
     const overlay = document.getElementById('overlay');
     if (!overlay) return;
@@ -823,8 +821,8 @@
     if (!f) return;
     const reader = new FileReader();
     reader.onload = ev => {
-      document.getElementById('face' + slot + 'Preview').src              = ev.target.result;
-      document.getElementById('face' + slot + 'Preview').style.display    = 'block';
+      document.getElementById('face' + slot + 'Preview').src               = ev.target.result;
+      document.getElementById('face' + slot + 'Preview').style.display     = 'block';
       document.getElementById('face' + slot + 'Placeholder').style.display = 'none';
       document.getElementById('face' + slot + 'Name').querySelector('span').textContent = f.name;
     };
@@ -832,20 +830,36 @@
   }
 
   // === ANALYZE ===
+  // FIX: require both video and face1 before calling /analyze
+  // FIX: check data.error before trying to use data.first_frame_url
   function analyze() {
     const videoInput = document.getElementById('videoInput');
     const face1Input = document.getElementById('face1Input');
-    if (!videoInput.files[0]) { showToast('Please upload a video first'); return; }
+
+    if (!videoInput.files[0]) {
+      showToast('Please upload a video first');
+      return;
+    }
+    if (!face1Input.files[0]) {
+      showToast('Please upload Face 1 first');
+      return;
+    }
 
     const fd = new FormData();
     fd.append('video', videoInput.files[0]);
-    if (face1Input.files[0]) fd.append('face1', face1Input.files[0]);
+    fd.append('face1', face1Input.files[0]);
 
     showToast('Analyzing faces...');
 
     fetch('/analyze', { method: 'POST', body: fd })
       .then(r => r.json())
       .then(data => {
+        // FIX: surface backend errors instead of trying to load undefined
+        if (data.error) {
+          showToast('Error: ' + data.error);
+          return;
+        }
+
         sessionId   = data.session_id;
         faces       = data.faces;
         manualBoxes = {};
@@ -859,7 +873,7 @@
         img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;display:block;';
         img.ondragstart   = () => false;
 
-        // Diagnostic: tells us if the image URL is reachable and what size it renders
+        // Diagnostic lines — tells us if URL is reachable and what size renders
         img.onerror = () => showToast('Frame failed to load: ' + img.src);
         img.onload  = () => showToast('Frame loaded: ' + img.naturalWidth + 'x' + img.naturalHeight);
 
@@ -882,7 +896,6 @@
 
   // === COORDINATE CONVERSION ===
   // Converts CSS/display pixel coordinates → original video frame pixel coordinates
-  // Needed because the frame image is scaled via object-fit:contain inside the player
   function toFrameCoords() {
     const img = document.querySelector('#playerPlaceholder img');
     if (!img) return manualBoxes;
@@ -900,13 +913,11 @@
     let renderedW, renderedH, offsetX, offsetY;
 
     if (frameAspect > displayAspect) {
-      // Pillarboxed — bars top and bottom
       renderedW = displayW;
       renderedH = displayW / frameAspect;
       offsetX   = 0;
       offsetY   = (displayH - renderedH) / 2;
     } else {
-      // Letterboxed — bars left and right
       renderedH = displayH;
       renderedW = displayH * frameAspect;
       offsetX   = (displayW - renderedW) / 2;
@@ -929,8 +940,6 @@
   }
 
   // === GENERATE ===
-  // Result video plays in big hero player; result card becomes download-only
-  // Sends toFrameCoords() so dragged boxes are in real frame pixel coordinates
   function generate() {
     if (!sessionId)        { showToast('Run Analyze first'); return; }
     if (selected === null) { showToast('Click a face to select a target'); return; }
@@ -946,7 +955,7 @@
       body: JSON.stringify({
         session_id: sessionId,
         target1:    selected,
-        boxes:      toFrameCoords()   // converted display px → frame px
+        boxes:      toFrameCoords()
       })
     })
     .then(r => r.json())
@@ -958,11 +967,9 @@
       if (videoUrl) {
         resultVideoUrl = videoUrl;
 
-        // Play result in big hero player
-        const placeholder    = document.getElementById('playerPlaceholder');
+        const placeholder     = document.getElementById('playerPlaceholder');
         placeholder.innerHTML = '<video src="' + videoUrl + '" style="width:100%;height:100%;object-fit:contain;" autoplay controls></video>';
 
-        // Result card becomes READY download indicator
         document.getElementById('resultThumb').innerHTML =
           '<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">' +
             '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16ddff" stroke-width="1.5"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>' +

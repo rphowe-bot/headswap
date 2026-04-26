@@ -181,13 +181,11 @@
   .time-display { font-size: 12px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
   .fullscreen-btn { background: none; border: none; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-  /* WORKFLOW — fixed grid that never collapses */
   .workflow { padding: 0 40px 40px; max-width: 1400px; margin: 0 auto; }
   .steps-grid {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 12px;
-    min-width: 0;
+    gap: 12px; min-width: 0;
   }
 
   .step-card {
@@ -201,12 +199,10 @@
   .step-num {
     width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border-bright);
     display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 8px;
-    flex-shrink: 0;
+    font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 8px; flex-shrink: 0;
   }
   .step-title { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  /* Upload zone */
   .upload-zone {
     border: 1.5px dashed var(--border-bright); border-radius: 8px;
     padding: 16px 8px; text-align: center; cursor: pointer;
@@ -237,57 +233,23 @@
   .file-status svg { width: 12px; height: 12px; color: var(--green); flex-shrink: 0; }
   .file-status span { font-size: 10px; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-  /* Face uploads */
   .face-uploads { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .face-label { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 6px; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
   .face-label .optional { font-weight: 400; color: #3d2f60; font-size: 8px; border: 1px solid var(--border); border-radius: 3px; padding: 1px 3px; }
 
-  /* Face thumb — key fix: explicit positioning layers */
   .face-thumb-wrap {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1;
-    border: 2px solid var(--border-bright);
-    border-radius: 8px;
-    overflow: hidden;
-    background: var(--bg3);
-    cursor: pointer;
+    position: relative; width: 100%; aspect-ratio: 1;
+    border: 2px solid var(--border-bright); border-radius: 8px;
+    overflow: hidden; background: var(--bg3); cursor: pointer;
     transition: border-color 0.3s, box-shadow 0.3s;
   }
   .face-thumb-wrap:hover { border-color: var(--pink); }
-  .face-thumb-wrap.loaded {
-    border-color: var(--green) !important;
-    box-shadow: 0 0 12px rgba(34,197,94,0.3) !important;
-  }
-  /* File input on top of everything */
-  .face-thumb-wrap input[type="file"] {
-    position: absolute; inset: 0;
-    opacity: 0; cursor: pointer;
-    width: 100%; height: 100%;
-    z-index: 10;
-  }
-  /* Preview image fills the box — hidden until loaded */
-  .face-preview {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    object-fit: cover;
-    display: none;
-    z-index: 2;
-  }
-  /* Placeholder icon sits behind preview */
-  .face-thumb-placeholder {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--border-bright);
-    z-index: 1;
-  }
+  .face-thumb-wrap.loaded { border-color: var(--green) !important; box-shadow: 0 0 12px rgba(34,197,94,0.3) !important; }
+  .face-thumb-wrap input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 10; }
+  .face-preview { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; z-index: 2; }
+  .face-thumb-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--border-bright); z-index: 1; }
   .face-thumb-placeholder svg { width: 24px; height: 24px; }
-
-  .face-filename {
-    font-size: 9px; color: var(--muted); margin-top: 4px;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    display: flex; align-items: center; gap: 3px;
-  }
+  .face-filename { font-size: 9px; color: var(--muted); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 3px; }
 
   .add-face-btn {
     width: 100%; padding: 6px; background: transparent;
@@ -298,39 +260,39 @@
   }
   .add-face-btn:hover { border-color: var(--pink); color: var(--text); }
 
-  /* Mode buttons — compact */
-  .mode-btn {
-    display: block; width: 100%; padding: 8px 6px; border-radius: 8px;
-    border: 2px solid transparent; text-align: center; cursor: pointer;
-    margin-bottom: 6px; transition: all 0.2s;
-    font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.04em; font-size: 12px;
+  /* Target box status indicators in step 3 */
+  .target-status {
+    display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px;
   }
-  .mode-btn.cyan { background: rgba(22,221,255,0.12); border-color: var(--cyan); color: var(--cyan); }
-  .mode-btn.cyan:hover, .mode-btn.cyan.active { background: rgba(22,221,255,0.2); box-shadow: 0 0 12px rgba(22,221,255,0.2); }
-  .mode-btn.pink { background: rgba(255,47,168,0.12); border-color: var(--pink); color: var(--pink); }
-  .mode-btn.pink:hover, .mode-btn.pink.active { background: rgba(255,47,168,0.2); box-shadow: 0 0 12px rgba(255,47,168,0.2); }
-  .mode-btn .sub { display: block; font-size: 9px; font-weight: 400; opacity: 0.75; letter-spacing: 0.02em; margin-top: 1px; font-family: 'Barlow', sans-serif; }
-
-  .manual-btn {
-    display: block; width: 100%; padding: 8px 6px; border-radius: 8px;
-    border: 2px solid #ff8800; text-align: center; cursor: pointer;
-    margin-bottom: 6px; transition: all 0.2s;
-    font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.04em; font-size: 11px;
-    background: rgba(255,136,0,0.1); color: #ff8800;
+  .target-indicator {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; border-radius: 8px; border: 1.5px solid;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.05em;
   }
-  .manual-btn:hover { background: rgba(255,136,0,0.2); }
-  .manual-btn.active { background: rgba(255,136,0,0.25); box-shadow: 0 0 12px rgba(255,136,0,0.3); border-color: #ffaa33; color: #ffaa33; }
-  .manual-btn .sub { display: block; font-size: 9px; font-weight: 400; opacity: 0.75; margin-top: 1px; font-family: 'Barlow', sans-serif; }
+  .target-indicator.cyan-target {
+    border-color: var(--cyan); background: rgba(22,221,255,0.08); color: var(--cyan);
+  }
+  .target-indicator.pink-target {
+    border-color: var(--pink); background: rgba(255,47,168,0.08); color: var(--pink);
+    display: none; /* shown only when face2 is uploaded */
+  }
+  .target-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .cyan-target .target-dot { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+  .pink-target .target-dot  { background: var(--pink); box-shadow: 0 0 6px var(--pink); }
+  .target-indicator .sub { display: block; font-size: 9px; font-weight: 400; opacity: 0.7; margin-top: 1px; font-family: 'Barlow', sans-serif; }
 
   .lock-btn {
-    display: none; width: 100%; padding: 6px; border-radius: 6px;
+    width: 100%; padding: 7px; border-radius: 6px;
     border: 1.5px solid var(--green); text-align: center; cursor: pointer;
     margin-bottom: 6px; transition: all 0.2s;
     font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.04em; font-size: 11px;
     background: rgba(34,197,94,0.1); color: var(--green);
   }
   .lock-btn:hover { background: rgba(34,197,94,0.2); }
-  .lock-btn.locked { background: rgba(34,197,94,0.2); border-color: #16a34a; color: #4ade80; }
+  .lock-btn.locked { background: rgba(34,197,94,0.25); border-color: #16a34a; color: #4ade80; }
 
   .mode-hint { font-size: 9px; color: var(--muted); text-align: center; line-height: 1.4; margin-top: 4px; }
 
@@ -352,7 +314,6 @@
   .gen-info .secure svg { width: 10px; height: 10px; }
 
   .result-header { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; color: var(--cyan); text-align: center; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(22,221,255,0.2); }
-
   .result-thumb { border-radius: 8px; overflow: hidden; aspect-ratio: 16/9; background: var(--bg3); position: relative; margin-bottom: 10px; }
   .result-thumb-placeholder {
     width: 100%; height: 100%;
@@ -505,6 +466,7 @@
 <section class="workflow">
   <div class="steps-grid">
 
+    <!-- STEP 1 -->
     <div class="step-card">
       <div class="step-num">1</div>
       <div class="step-title">UPLOAD VIDEO</div>
@@ -525,6 +487,7 @@
       </div>
     </div>
 
+    <!-- STEP 2 -->
     <div class="step-card">
       <div class="step-num">2</div>
       <div class="step-title">UPLOAD FACE(S) <span class="help-icon">?</span></div>
@@ -558,22 +521,34 @@
       </button>
     </div>
 
+    <!-- STEP 3 -->
     <div class="step-card">
       <div class="step-num">3</div>
-      <div class="step-title">SELECT TARGET</div>
-      <button class="mode-btn cyan active" id="mode1Btn" onclick="setMode(1)">
-        FACE 1 MODE<span class="sub">Replace with Face 1</span>
-      </button>
-      <button class="mode-btn pink" id="mode2Btn" onclick="setMode(2)">
-        FACE 2 MODE<span class="sub">Replace with Face 2</span>
-      </button>
-      <button class="manual-btn" id="manualBoxBtn" onclick="toggleManualBox()">
-        ✛ MANUAL BOX<span class="sub">Draw exact region</span>
-      </button>
-      <button class="lock-btn" id="lockBtn" onclick="toggleLock()">🔓 LOCK TARGET</button>
-      <p class="mode-hint" id="modeHint">Analyze first, then select</p>
+      <div class="step-title">POSITION TARGETS</div>
+
+      <!-- Status indicators showing which boxes are active -->
+      <div class="target-status">
+        <div class="target-indicator cyan-target" id="cyanIndicator">
+          <div class="target-dot"></div>
+          <div>
+            FACE 1 TARGET
+            <span class="sub">Drag cyan box on frame</span>
+          </div>
+        </div>
+        <div class="target-indicator pink-target" id="pinkIndicator">
+          <div class="target-dot"></div>
+          <div>
+            FACE 2 TARGET
+            <span class="sub">Drag pink box on frame</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="lock-btn" id="lockBtn" onclick="toggleLock()">🔓 LOCK TARGETS</button>
+      <p class="mode-hint" id="modeHint">Analyze first, then drag boxes to target faces</p>
     </div>
 
+    <!-- STEP 4 -->
     <div class="step-card">
       <div class="step-num">4</div>
       <div class="step-title">GENERATE</div>
@@ -595,6 +570,7 @@
       </div>
     </div>
 
+    <!-- RESULT -->
     <div class="step-card result-card">
       <div class="result-header">YOUR RESULT</div>
       <div class="result-thumb">
@@ -640,27 +616,33 @@
 <div id="toast"></div>
 
 <script>
-  let sessionId       = null;
-  let faces           = [];
-  let manualBoxes     = {};
-  let selected        = null;
-  let activeMode      = 1;
-  let resultVideoUrl  = null;
-  let isPlaying       = false;
-  let playInterval    = null;
-  let currentTime     = 0;
-  const duration      = 10;
-  let manualBoxActive = false;
-  let manualBoxLocked = false;
+  // === STATE ===
+  let sessionId      = null;
+  let faces          = [];
+  let boxState       = {};   // { 0: {x,y,w,h}, 1: {x,y,w,h} } — one per face slot
+  let locked         = false;
+  let resultVideoUrl = null;
+  let isPlaying      = false;
+  let playInterval   = null;
+  let currentTime    = 0;
+  const duration     = 10;
+  let hasFace2       = false;
+
+  // Box colors per slot
+  const BOX_COLORS = {
+    0: { border: '#16ddff', shadow: 'rgba(22,221,255,0.5)',  label: 'FACE 1 TARGET' },
+    1: { border: '#ff2fa8', shadow: 'rgba(255,47,168,0.5)',  label: 'FACE 2 TARGET' },
+  };
 
   function setInstruction(text, color) {
     const el = document.getElementById('playerInstruction');
     if (!el) return;
-    el.textContent       = text;
+    el.textContent = text;
     el.style.borderColor = color || 'var(--border-bright)';
     el.style.background  = color ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.75)';
   }
 
+  // === PLAYER ===
   function togglePlay() {
     isPlaying = !isPlaying;
     const btn = document.getElementById('playBtn');
@@ -695,159 +677,111 @@
     document.getElementById('timeDisplay').textContent = fmt(currentTime) + ' / ' + fmt(duration);
   }
 
+  // === DRAW TARGET BOXES ===
+  // Each face slot gets one colored box — draggable + 4-corner resizable
   function draw() {
     const overlay = document.getElementById('overlay');
     if (!overlay) return;
     overlay.innerHTML = '';
-    if (manualBoxActive && manualBoxes['manual']) { renderManualBox(overlay); return; }
-    faces.forEach(f => {
-      if (!manualBoxes[f.index]) manualBoxes[f.index] = { x: f.x, y: f.y, w: f.w, h: f.h };
-      const box = manualBoxes[f.index];
-      const isSel = selected == f.index;
-      const opacity = selected === null ? '0.5' : (isSel ? '1' : '0.15');
+
+    const slots = hasFace2 ? [0, 1] : [0];
+
+    slots.forEach(slot => {
+      if (!boxState[slot]) return;
+      const box   = boxState[slot];
+      const cfg   = BOX_COLORS[slot];
+
       const div = document.createElement('div');
-      div.style.cssText   = 'position:absolute;border-radius:4px;transition:opacity 0.25s;';
-      div.style.left      = box.x + 'px'; div.style.top = box.y + 'px';
-      div.style.width     = box.w + 'px'; div.style.height = box.h + 'px';
-      div.style.border    = '2px solid ' + (isSel ? '#ff2fa8' : '#16ddff');
-      div.style.boxShadow = isSel ? '0 0 14px rgba(255,47,168,0.6)' : '0 0 6px rgba(22,221,255,0.15)';
-      div.style.opacity   = opacity;
-      div.style.cursor    = isSel ? 'move' : 'pointer';
+      div.style.cssText   = 'position:absolute;border-radius:4px;transition:box-shadow 0.2s;';
+      div.style.left      = box.x + 'px';
+      div.style.top       = box.y + 'px';
+      div.style.width     = box.w + 'px';
+      div.style.height    = box.h + 'px';
+      div.style.border    = '2px solid ' + cfg.border;
+      div.style.boxShadow = '0 0 14px ' + cfg.shadow;
+      div.style.cursor    = locked ? 'default' : 'move';
+      div.style.zIndex    = '20';
+
+      // Label badge
       const badge = document.createElement('div');
-      badge.textContent   = 'Face ' + (f.index + 1);
-      badge.style.cssText = 'position:absolute;top:-20px;left:0;font-size:10px;font-weight:700;letter-spacing:0.05em;white-space:nowrap;color:#fff;font-family:Barlow Condensed,sans-serif;';
-      badge.style.opacity = isSel ? '1' : (selected === null ? '0.6' : '0.2');
+      badge.textContent   = cfg.label;
+      badge.style.cssText = 'position:absolute;top:-20px;left:0;font-size:10px;font-weight:700;letter-spacing:0.05em;white-space:nowrap;font-family:Barlow Condensed,sans-serif;';
+      badge.style.color   = cfg.border;
       div.appendChild(badge);
-      if (isSel) {
-        let dragging = false, startX, startY, origX, origY;
-        div.onmousedown = e => {
-          e.preventDefault(); dragging = true;
-          startX = e.clientX; startY = e.clientY; origX = box.x; origY = box.y;
-          document.onmousemove = ev => {
-            if (!dragging) return;
-            const nx = Math.max(0, Math.min(origX + (ev.clientX - startX), overlay.offsetWidth  - box.w));
-            const ny = Math.max(0, Math.min(origY + (ev.clientY - startY), overlay.offsetHeight - box.h));
-            div.style.left = nx + 'px'; div.style.top = ny + 'px';
-            manualBoxes[f.index] = { x: nx, y: ny, w: box.w, h: box.h };
+
+      if (!locked) {
+        // 4 corner resize handles
+        const corners = [
+          { s: 'top:-5px;left:-5px;',     c: 'nwse-resize', dx: -1, dy: -1 },
+          { s: 'top:-5px;right:-5px;',    c: 'nesw-resize', dx:  1, dy: -1 },
+          { s: 'bottom:-5px;left:-5px;',  c: 'nesw-resize', dx: -1, dy:  1 },
+          { s: 'bottom:-5px;right:-5px;', c: 'nwse-resize', dx:  1, dy:  1 },
+        ];
+        corners.forEach(({ s, c, dx, dy }) => {
+          const h = document.createElement('div');
+          h.style.cssText = `position:absolute;${s}width:12px;height:12px;border-radius:3px;cursor:${c};z-index:22;`;
+          h.style.background = cfg.border;
+          let r = false, rX, rY, rW, rH, rBX, rBY;
+          h.onmousedown = e => {
+            e.preventDefault(); e.stopPropagation(); r = true;
+            rX = e.clientX; rY = e.clientY;
+            rW = box.w; rH = box.h; rBX = box.x; rBY = box.y;
+            document.onmousemove = ev => {
+              if (!r) return;
+              const ddx = ev.clientX - rX, ddy = ev.clientY - rY;
+              let nw = rW, nh = rH, nx = rBX, ny = rBY;
+              if (dx === 1)  { nw = Math.max(40, Math.min(rW + ddx, overlay.offsetWidth  - rBX)); }
+              else           { nw = Math.max(40, rW - ddx); nx = Math.max(0, Math.min(rBX + ddx, rBX + rW - 40)); nw = rBX + rW - nx; }
+              if (dy === 1)  { nh = Math.max(40, Math.min(rH + ddy, overlay.offsetHeight - rBY)); }
+              else           { nh = Math.max(40, rH - ddy); ny = Math.max(0, Math.min(rBY + ddy, rBY + rH - 40)); nh = rBY + rH - ny; }
+              div.style.left = nx+'px'; div.style.top = ny+'px';
+              div.style.width = nw+'px'; div.style.height = nh+'px';
+              boxState[slot] = { x: nx, y: ny, w: nw, h: nh };
+            };
+            document.onmouseup = () => { r = false; };
           };
-          document.onmouseup = () => { dragging = false; };
+          div.appendChild(h);
+        });
+
+        // Drag whole box
+        let d = false, dX, dY, dOX, dOY;
+        div.onmousedown = e => {
+          if (e.target !== div && e.target !== badge) return;
+          e.preventDefault(); d = true;
+          dX = e.clientX; dY = e.clientY; dOX = box.x; dOY = box.y;
+          document.onmousemove = ev => {
+            if (!d) return;
+            const nx = Math.max(0, Math.min(dOX + (ev.clientX - dX), overlay.offsetWidth  - box.w));
+            const ny = Math.max(0, Math.min(dOY + (ev.clientY - dY), overlay.offsetHeight - box.h));
+            div.style.left = nx+'px'; div.style.top = ny+'px';
+            boxState[slot] = { x: nx, y: ny, w: box.w, h: box.h };
+          };
+          document.onmouseup = () => { d = false; };
         };
       }
-      div.onclick = () => {
-        selected = f.index;
-        setInstruction('✓ FACE ' + (f.index + 1) + ' SELECTED — CLICK GENERATE', '#ff2fa8');
-        document.getElementById('modeHint').textContent = 'Face ' + (f.index + 1) + ' selected';
-        draw();
-      };
+
       overlay.appendChild(div);
     });
   }
 
-  function toggleManualBox() {
-    const overlay = document.getElementById('overlay');
-    if (!overlay) { showToast('Run Analyze first'); return; }
-    manualBoxActive = !manualBoxActive;
-    const btn = document.getElementById('manualBoxBtn');
-    const lock = document.getElementById('lockBtn');
-    if (manualBoxActive) {
-      btn.classList.add('active');
-      btn.innerHTML = '✕ REMOVE BOX<span class="sub">Back to auto</span>';
-      lock.style.display = 'block'; manualBoxLocked = false;
-      lock.classList.remove('locked'); lock.textContent = '🔓 LOCK TARGET';
-      const ow = overlay.offsetWidth || 400, oh = overlay.offsetHeight || 225;
-      const bw = Math.round(ow * 0.20), bh = Math.round(bw * 1.2);
-      manualBoxes['manual'] = { x: Math.round((ow-bw)/2), y: Math.round((oh-bh)/2), w: bw, h: bh };
-      selected = null;
-      setInstruction('DRAG ORANGE BOX OVER TARGET FACE', '#ff8800');
-      document.getElementById('modeHint').textContent = 'Position box then Generate';
-    } else {
-      btn.classList.remove('active');
-      btn.innerHTML = '✛ MANUAL BOX<span class="sub">Draw exact region</span>';
-      lock.style.display = 'none'; manualBoxLocked = false; delete manualBoxes['manual'];
-      setInstruction(selected !== null ? '✓ FACE ' + (selected+1) + ' SELECTED — CLICK GENERATE' : 'CLICK A FACE TO SELECT TARGET', selected !== null ? '#ff2fa8' : '#16ddff');
-    }
-    draw();
-  }
-
+  // === LOCK ===
   function toggleLock() {
-    manualBoxLocked = !manualBoxLocked;
+    locked = !locked;
     const btn = document.getElementById('lockBtn');
-    if (manualBoxLocked) {
-      btn.classList.add('locked'); btn.textContent = '🔒 TARGET LOCKED';
-      setInstruction('🔒 TARGET LOCKED — CLICK GENERATE', '#22c55e');
-      showToast('Target locked');
+    if (locked) {
+      btn.classList.add('locked');
+      btn.textContent = '🔒 TARGETS LOCKED';
+      setInstruction('🔒 TARGETS LOCKED — CLICK GENERATE', '#22c55e');
+      showToast('Targets locked — ready to generate');
     } else {
-      btn.classList.remove('locked'); btn.textContent = '🔓 LOCK TARGET';
-      setInstruction('DRAG ORANGE BOX OVER TARGET FACE', '#ff8800');
+      btn.classList.remove('locked');
+      btn.textContent = '🔓 LOCK TARGETS';
+      setInstruction('DRAG BOXES OVER TARGET FACES', '#16ddff');
     }
     draw();
   }
 
-  function renderManualBox(overlay) {
-    const box = manualBoxes['manual']; if (!box) return;
-    const div = document.createElement('div');
-    div.style.cssText  = 'position:absolute;border-radius:4px;z-index:20;';
-    div.style.left = box.x+'px'; div.style.top = box.y+'px';
-    div.style.width = box.w+'px'; div.style.height = box.h+'px';
-    div.style.border = '2px solid #ff8800';
-    div.style.boxShadow = '0 0 18px rgba(255,136,0,0.55)';
-    div.style.cursor = manualBoxLocked ? 'default' : 'move';
-    const badge = document.createElement('div');
-    badge.textContent = manualBoxLocked ? '🔒 LOCKED' : '⊹ MANUAL TARGET';
-    badge.style.cssText = 'position:absolute;top:-20px;left:0;font-size:10px;font-weight:700;white-space:nowrap;color:#ff8800;font-family:Barlow Condensed,sans-serif;';
-    div.appendChild(badge);
-    if (!manualBoxLocked) {
-      const corners = [
-        {style:'top:-5px;left:-5px;', cursor:'nwse-resize', dx:-1, dy:-1},
-        {style:'top:-5px;right:-5px;', cursor:'nesw-resize', dx:1, dy:-1},
-        {style:'bottom:-5px;left:-5px;', cursor:'nesw-resize', dx:-1, dy:1},
-        {style:'bottom:-5px;right:-5px;', cursor:'nwse-resize', dx:1, dy:1},
-      ];
-      corners.forEach(({style, cursor, dx, dy}) => {
-        const h = document.createElement('div');
-        h.style.cssText = `position:absolute;${style}width:12px;height:12px;background:#ff8800;border-radius:3px;cursor:${cursor};z-index:22;`;
-        let r=false, rX, rY, rW, rH, rBX, rBY;
-        h.onmousedown = e => {
-          e.preventDefault(); e.stopPropagation(); r=true;
-          rX=e.clientX; rY=e.clientY; rW=box.w; rH=box.h; rBX=box.x; rBY=box.y;
-          document.onmousemove = ev => {
-            if (!r) return;
-            const ddx=ev.clientX-rX, ddy=ev.clientY-rY;
-            let nw=rW, nh=rH, nx=rBX, ny=rBY;
-            if (dx===1) nw=Math.max(40,Math.min(rW+ddx,overlay.offsetWidth-rBX));
-            else { nw=Math.max(40,rW-ddx); nx=Math.max(0,Math.min(rBX+ddx,rBX+rW-40)); nw=rBX+rW-nx; }
-            if (dy===1) nh=Math.max(40,Math.min(rH+ddy,overlay.offsetHeight-rBY));
-            else { nh=Math.max(40,rH-ddy); ny=Math.max(0,Math.min(rBY+ddy,rBY+rH-40)); nh=rBY+rH-ny; }
-            div.style.left=nx+'px'; div.style.top=ny+'px'; div.style.width=nw+'px'; div.style.height=nh+'px';
-            manualBoxes['manual'].x=nx; manualBoxes['manual'].y=ny; manualBoxes['manual'].w=nw; manualBoxes['manual'].h=nh;
-          };
-          document.onmouseup = () => { r=false; };
-        };
-        div.appendChild(h);
-      });
-      let d=false, dX, dY, dOX, dOY;
-      div.onmousedown = e => {
-        if (e.target!==div && e.target!==badge) return;
-        e.preventDefault(); d=true; dX=e.clientX; dY=e.clientY; dOX=box.x; dOY=box.y;
-        document.onmousemove = ev => {
-          if (!d) return;
-          const nx=Math.max(0,Math.min(dOX+(ev.clientX-dX),overlay.offsetWidth-box.w));
-          const ny=Math.max(0,Math.min(dOY+(ev.clientY-dY),overlay.offsetHeight-box.h));
-          div.style.left=nx+'px'; div.style.top=ny+'px';
-          manualBoxes['manual'].x=nx; manualBoxes['manual'].y=ny;
-        };
-        document.onmouseup = () => { d=false; };
-      };
-    }
-    overlay.appendChild(div);
-  }
-
-  function setMode(m) {
-    activeMode = m;
-    document.getElementById('mode1Btn').classList.toggle('active', m===1);
-    document.getElementById('mode2Btn').classList.toggle('active', m===2);
-  }
-
+  // === FILE UPLOADS ===
   function handleVideoUpload(e) {
     const f = e.target.files[0]; if (!f) return;
     const zone = document.getElementById('videoZone');
@@ -865,131 +799,185 @@
     const reader = new FileReader();
     reader.onload = ev => {
       const img = document.getElementById('face' + slot + 'Img');
-      img.src = ev.target.result;
-      img.style.display = 'block';
+      img.src = ev.target.result; img.style.display = 'block';
       document.getElementById('face' + slot + 'Placeholder').style.display = 'none';
       document.getElementById('face' + slot + 'Wrap').classList.add('loaded');
       document.getElementById('face' + slot + 'Name').innerHTML =
         '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" style="flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>' +
         '<span style="color:#22c55e;font-size:9px;">' + f.name + '</span>';
+
+      // Show Face 2 target indicator if face2 loaded
+      if (slot === 2) {
+        hasFace2 = true;
+        document.getElementById('pinkIndicator').style.display = 'flex';
+        // Add second box if overlay exists
+        const overlay = document.getElementById('overlay');
+        if (overlay && !boxState[1]) {
+          const ow = overlay.offsetWidth || 400, oh = overlay.offsetHeight || 225;
+          const bw = Math.round(ow * 0.18), bh = Math.round(bw * 1.2);
+          // Offset to not overlap box 0
+          boxState[1] = { x: Math.round(ow * 0.55), y: Math.round((oh - bh) / 2), w: bw, h: bh };
+          draw();
+        }
+      }
       showToast('✓ Face ' + slot + ' loaded');
     };
     reader.onerror = () => showToast('Could not read image');
     reader.readAsDataURL(f);
   }
 
+  // === ANALYZE ===
   function analyze() {
     const videoInput = document.getElementById('videoInput');
     const face1Input = document.getElementById('face1Input');
     if (!videoInput.files[0]) { showToast('Please upload a video first'); return; }
     if (!face1Input.files[0]) { showToast('Please upload Face 1 first'); return; }
+
     const fd = new FormData();
     fd.append('video', videoInput.files[0]);
     fd.append('face1', face1Input.files[0]);
     const face2Input = document.getElementById('face2Input');
     if (face2Input.files[0]) fd.append('face2', face2Input.files[0]);
-    showToast('Analyzing faces...');
+
+    showToast('Analyzing...');
     setInstruction('ANALYZING...', '#16ddff');
+
     fetch('/analyze', { method: 'POST', body: fd })
       .then(r => r.json())
       .then(data => {
         if (data.error) { showToast('Error: ' + data.error); setInstruction('UPLOAD VIDEO + FACE 1, THEN ANALYZE'); return; }
-        sessionId = data.session_id; faces = data.faces; manualBoxes = {}; selected = null;
-        manualBoxActive = false; manualBoxLocked = false;
-        const mb = document.getElementById('manualBoxBtn');
-        mb.classList.remove('active');
-        mb.innerHTML = '✛ MANUAL BOX<span class="sub">Draw exact region</span>';
-        document.getElementById('lockBtn').style.display = 'none';
+
+        sessionId = data.session_id;
+        faces     = data.faces;
+        boxState  = {};
+        locked    = false;
+        document.getElementById('lockBtn').classList.remove('locked');
+        document.getElementById('lockBtn').textContent = '🔓 LOCK TARGETS';
+
         const placeholder = document.getElementById('playerPlaceholder');
         placeholder.innerHTML = ''; placeholder.style.background = '#000';
+
         const img = document.createElement('img');
-        img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;user-select:none;-webkit-user-drag:none;';
-        img.style.pointerEvents = 'none'; img.draggable = false; img.ondragstart = () => false;
+        img.style.cssText       = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;user-select:none;-webkit-user-drag:none;';
+        img.style.pointerEvents = 'none';
+        img.draggable           = false;
+        img.ondragstart         = () => false;
         img.onerror = () => showToast('Frame failed to load');
         img.onload  = () => {
-          setInstruction('CLICK A FACE TO SELECT TARGET', '#16ddff');
-          document.getElementById('modeHint').textContent = 'Click a face or draw a manual box';
+          // Place box 0 on first detected face, or center if none
+          const ow = img.clientWidth  || 400;
+          const oh = img.clientHeight || 225;
+
+          if (faces.length > 0) {
+            // Use detected face position for box 0
+            boxState[0] = { x: faces[0].x, y: faces[0].y, w: faces[0].w, h: faces[0].h };
+            // If face2 uploaded and second face detected, use that for box 1
+            if (hasFace2 && faces.length > 1) {
+              boxState[1] = { x: faces[1].x, y: faces[1].y, w: faces[1].w, h: faces[1].h };
+            } else if (hasFace2) {
+              // Place box 1 offset from box 0
+              const bw = Math.round(ow * 0.18), bh = Math.round(bw * 1.2);
+              boxState[1] = { x: Math.round(ow * 0.55), y: Math.round((oh - bh) / 2), w: bw, h: bh };
+            }
+          } else {
+            // No faces detected — place default boxes
+            const bw = Math.round(ow * 0.18), bh = Math.round(bw * 1.2);
+            boxState[0] = { x: Math.round(ow * 0.25), y: Math.round((oh - bh) / 2), w: bw, h: bh };
+            if (hasFace2) {
+              boxState[1] = { x: Math.round(ow * 0.55), y: Math.round((oh - bh) / 2), w: bw, h: bh };
+            }
+          }
+
+          draw();
+          setInstruction('DRAG BOXES OVER TARGET FACES', '#16ddff');
+          document.getElementById('modeHint').textContent = 'Drag & resize each colored box over its target';
         };
         img.src = data.first_frame_url;
         placeholder.appendChild(img);
+
         const overlayDiv = document.createElement('div');
-        overlayDiv.id = 'overlay'; overlayDiv.style.cssText = 'position:absolute;inset:0;';
+        overlayDiv.id            = 'overlay';
+        overlayDiv.style.cssText = 'position:absolute;inset:0;';
         placeholder.appendChild(overlayDiv);
-        draw();
-        showToast('Found ' + faces.length + ' face(s) — click one');
+
+        showToast('Frame loaded — position the boxes');
       })
       .catch(err => { console.error(err); showToast('Analyze failed'); setInstruction('UPLOAD VIDEO + FACE 1, THEN ANALYZE'); });
   }
 
+  // === COORDINATE CONVERSION ===
   function toFrameCoords() {
     const img = document.querySelector('#playerPlaceholder img');
-    if (!img) return manualBoxes;
-    const frameW=img.naturalWidth, frameH=img.naturalHeight;
-    const dispW=img.clientWidth, dispH=img.clientHeight;
-    if (!frameW||!frameH||!dispW||!dispH) return manualBoxes;
-    const fA=frameW/frameH, dA=dispW/dispH;
-    let rW,rH,oX,oY;
-    if (fA>dA) { rW=dispW; rH=dispW/fA; oX=0; oY=(dispH-rH)/2; }
-    else       { rH=dispH; rW=dispH*fA; oX=(dispW-rW)/2; oY=0; }
-    const sX=frameW/rW, sY=frameH/rH;
-    const out={};
-    for (const [k,b] of Object.entries(manualBoxes)) {
-      out[k]={ x:Math.round((b.x-oX)*sX), y:Math.round((b.y-oY)*sY), w:Math.round(b.w*sX), h:Math.round(b.h*sY) };
+    if (!img) return boxState;
+    const frameW = img.naturalWidth, frameH = img.naturalHeight;
+    const dispW  = img.clientWidth,  dispH  = img.clientHeight;
+    if (!frameW || !frameH || !dispW || !dispH) return boxState;
+    const fA = frameW / frameH, dA = dispW / dispH;
+    let rW, rH, oX, oY;
+    if (fA > dA) { rW = dispW; rH = dispW / fA; oX = 0; oY = (dispH - rH) / 2; }
+    else         { rH = dispH; rW = dispH * fA;  oX = (dispW - rW) / 2; oY = 0; }
+    const sX = frameW / rW, sY = frameH / rH;
+    const out = {};
+    for (const [k, b] of Object.entries(boxState)) {
+      out[k] = {
+        x: Math.round((b.x - oX) * sX),
+        y: Math.round((b.y - oY) * sY),
+        w: Math.round(b.w * sX),
+        h: Math.round(b.h * sY),
+      };
     }
     return out;
   }
 
+  // === GENERATE ===
   function generate() {
-    const usingManual = manualBoxActive && manualBoxes['manual'];
-    if (!sessionId)                       { showToast('Run Analyze first'); return; }
-    if (!usingManual && selected===null)  { showToast('Click a face or use Manual Box'); return; }
-    const btn=document.getElementById('genLabel'), spinner=document.getElementById('genSpinner');
-    btn.style.display='none'; spinner.style.display='block';
+    if (!sessionId)       { showToast('Run Analyze first'); return; }
+    if (!boxState[0])     { showToast('No target box found — run Analyze first'); return; }
+
+    const btn     = document.getElementById('genLabel');
+    const spinner = document.getElementById('genSpinner');
+    btn.style.display = 'none'; spinner.style.display = 'block';
     setInstruction('GENERATING...', '#a855f7');
+
     const coords = toFrameCoords();
-    const payload = { session_id:sessionId, target1:usingManual?null:selected, boxes:coords };
-    if (usingManual && coords['manual']) { payload.manual_box=coords['manual']; payload.boxes['0']=coords['manual']; }
-    fetch('/generate', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) })
-      .then(r => r.json())
-      .then(d => {
-        btn.style.display=''; spinner.style.display='none';
-        const videoUrl = d.output_url || d.result_url;
-        if (videoUrl) {
-          resultVideoUrl = videoUrl;
-          document.getElementById('playerPlaceholder').innerHTML =
-            '<video src="'+videoUrl+'" style="width:100%;height:100%;object-fit:contain;" autoplay controls></video>';
-          document.getElementById('resultThumb').innerHTML =
-            '<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">' +
-            '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>' +
-            '<span style="font-size:10px;color:#22c55e;font-weight:700;font-family:Barlow Condensed,sans-serif;">READY</span></div>';
-          const dlBtn=document.getElementById('downloadBtn');
-          if (dlBtn) { dlBtn.style.opacity='1'; dlBtn.style.pointerEvents='auto'; }
-          setInstruction('✓ DONE — SCROLL DOWN TO DOWNLOAD', '#22c55e');
-          showToast('✓ Done!');
-        } else if (d.error) {
-          setInstruction('ERROR — TRY AGAIN', '#ff2fa8');
-          showToast('Error: ' + d.error);
-        }
-      })
-      .catch(err => {
-        btn.style.display=''; spinner.style.display='none';
-        console.error(err); showToast('Generation failed');
+
+    // Build payload — box 0 = face1 target, box 1 = face2 target (if present)
+    const payload = {
+      session_id: sessionId,
+      target1:    null,        // always null — using manual boxes
+      target2:    hasFace2 && boxState[1] ? null : undefined,
+      boxes:      coords,
+      manual_box:  coords[0],
+      manual_box2: hasFace2 && coords[1] ? coords[1] : undefined,
+    };
+
+    fetch('/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(r => r.json())
+    .then(d => {
+      btn.style.display = ''; spinner.style.display = 'none';
+      const videoUrl = d.output_url || d.result_url;
+      if (videoUrl) {
+        resultVideoUrl = videoUrl;
+        document.getElementById('playerPlaceholder').innerHTML =
+          '<video src="' + videoUrl + '" style="width:100%;height:100%;object-fit:contain;" autoplay controls></video>';
+        document.getElementById('resultThumb').innerHTML =
+          '<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">' +
+          '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>' +
+          '<span style="font-size:10px;color:#22c55e;font-weight:700;font-family:Barlow Condensed,sans-serif;">READY</span></div>';
+        const dlBtn = document.getElementById('downloadBtn');
+        if (dlBtn) { dlBtn.style.opacity = '1'; dlBtn.style.pointerEvents = 'auto'; }
+        setInstruction('✓ DONE — SCROLL DOWN TO DOWNLOAD', '#22c55e');
+        showToast('✓ Done!');
+      } else if (d.error) {
         setInstruction('ERROR — TRY AGAIN', '#ff2fa8');
-      });
-  }
-
-  function downloadResult() {
-    if (!resultVideoUrl) return;
-    const a=document.createElement('a'); a.href=resultVideoUrl; a.download='headswap_result.mp4'; a.click();
-  }
-
-  let toastTimer;
-  function showToast(msg) {
-    const t=document.getElementById('toast');
-    t.textContent=msg; t.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
-  }
-</script>
-</body>
-</html>
+        showToast('Error: ' + d.error);
+      }
+    })
+    .catch(err => {
+      btn.style.display = ''; spinner.style.display = 'none';
+      console.error(err); showToast('Generation failed');
+      setInstructio

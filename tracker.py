@@ -202,6 +202,7 @@ def analyze_first_frame(video_path, output_dir):
 
 # ── face sticker preparation ──────────────────────────────────────────────────
 
+# CHANGE 3: softer feathering — larger blur kernels on both mask types
 def make_mesh_mask(w, h, mesh_pts):
     mask = np.zeros((h, w), dtype=np.uint8)
     try:
@@ -209,14 +210,16 @@ def make_mesh_mask(w, h, mesh_pts):
         cv2.fillPoly(mask, [pts], 255)
     except Exception:
         cv2.ellipse(mask, (w // 2, h // 2), (int(w * 0.42), int(h * 0.50)), 0, 0, 360, 255, -1)
-    mask = cv2.GaussianBlur(mask, (21, 21), 0)
+    # CHANGE 3: was (21,21), now (41,41) for softer edge feathering
+    mask = cv2.GaussianBlur(mask, (41, 41), 0)
     return mask
 
 
 def make_soft_oval_mask(w, h):
     mask = np.zeros((h, w), dtype=np.uint8)
     cv2.ellipse(mask, (w // 2, h // 2), (int(w * 0.42), int(h * 0.50)), 0, 0, 360, 255, -1)
-    mask = cv2.GaussianBlur(mask, (31, 31), 0)
+    # CHANGE 3: was (31,31), now (51,51) for softer edge feathering
+    mask = cv2.GaussianBlur(mask, (51, 51), 0)
     return mask
 
 
@@ -240,11 +243,11 @@ def auto_crop_face_from_upload(face_bgr):
     h, w = bgr.shape[:2]
 
     if len(detected) > 0:
-        detected   = sorted(detected, key=lambda r: r[2] * r[3], reverse=True)
+        detected     = sorted(detected, key=lambda r: r[2] * r[3], reverse=True)
         x, y, fw, fh = detected[0]
-        pad_x      = int(fw * 0.34)
-        pad_top    = int(fh * 0.46)
-        pad_bottom = int(fh * 0.36)
+        pad_x        = int(fw * 0.34)
+        pad_top      = int(fh * 0.46)
+        pad_bottom   = int(fh * 0.36)
         x1 = max(0, x - pad_x)
         y1 = max(0, y - pad_top)
         x2 = min(w, x + fw + pad_x)
@@ -411,6 +414,7 @@ def overlay_rgba_poisson(frame, sticker, cx, cy):
     return _alpha_composite(frame, sticker, cx, cy)
 
 
+# CHANGE 1: LAB color space transfer for perceptual skin tone matching
 def _alpha_composite(frame, sticker, cx, cy):
     h, w   = frame.shape[:2]
     sh, sw = sticker.shape[:2]
@@ -434,21 +438,40 @@ def _alpha_composite(frame, sticker, cx, cy):
     if crop.size == 0:
         return frame
 
-    fg_rgb = crop[:, :, :3].astype(np.float32)
+    fg_bgr = crop[:, :, :3].astype(np.uint8)
     alpha  = crop[:, :, 3].astype(np.float32) / 255.0
     alpha  = cv2.GaussianBlur(alpha, (11, 11), 0)[:, :, None]
-    roi    = frame[fy0:fy1, fx0:fx1].astype(np.float32)
+    roi    = frame[fy0:fy1, fx0:fx1].astype(np.uint8)
 
-    fg_mean = np.mean(fg_rgb, axis=(0, 1))
-    bg_mean = np.mean(roi,    axis=(0, 1))
-    fg_std  = np.std(fg_rgb,  axis=(0, 1))
-    bg_std  = np.std(roi,     axis=(0, 1))
-    fg_std  = np.where(fg_std < 1, 1, fg_std)
+    # CHANGE 1: LAB color transfer — matches perceptual lighting and skin tone
+    # far more accurately than BGR mean/std normalization
+    try:
+        roi_lab = cv2.cvtColor(roi,    cv2.COLOR_BGR2LAB).astype(np.float32)
+        fg_lab  = cv2.cvtColor(fg_bgr, cv2.COLOR_BGR2LAB).astype(np.float32)
 
-    fg_rgb  = (fg_rgb - fg_mean) / fg_std * bg_std + bg_mean
-    fg_rgb  = np.clip(fg_rgb, 0, 255)
+        # Transfer each LAB channel independently
+        for c in range(3):
+            fg_mean = np.mean(fg_lab[:, :, c])
+            fg_std  = max(np.std(fg_lab[:, :, c]), 1.0)
+            bg_mean = np.mean(roi_lab[:, :, c])
+            bg_std  = np.std(roi_lab[:, :, c])
+            fg_lab[:, :, c] = (fg_lab[:, :, c] - fg_mean) / fg_std * bg_std + bg_mean
 
-    blended = roi * (1 - alpha) + fg_rgb * alpha
+        fg_lab  = np.clip(fg_lab, 0, 255).astype(np.uint8)
+        fg_matched = cv2.cvtColor(fg_lab, cv2.COLOR_LAB2BGR).astype(np.float32)
+    except Exception:
+        # fallback to original BGR normalization if LAB fails
+        fg_matched = fg_bgr.astype(np.float32)
+        fg_mean    = np.mean(fg_matched, axis=(0, 1))
+        bg_mean    = np.mean(roi.astype(np.float32), axis=(0, 1))
+        fg_std     = np.std(fg_matched,  axis=(0, 1))
+        bg_std     = np.std(roi.astype(np.float32), axis=(0, 1))
+        fg_std     = np.where(fg_std < 1, 1, fg_std)
+        fg_matched = (fg_matched - fg_mean) / fg_std * bg_std + bg_mean
+        fg_matched = np.clip(fg_matched, 0, 255)
+
+    roi_f   = roi.astype(np.float32)
+    blended = roi_f * (1 - alpha) + fg_matched * alpha
     frame[fy0:fy1, fx0:fx1] = blended.astype(np.uint8)
     return frame
 
@@ -529,9 +552,6 @@ def render_tracking_video(
                for f in initial_faces]
 
     # ── Detect manual mode ────────────────────────────────────────────────────
-    # Manual mode: single synthetic face with label "Manual Target"
-    # Uses OpenCV CSRT tracker — locks onto the spatial region the user drew,
-    # completely bypassing AI face detection and identity matching
     is_manual_mode = (
         len(initial_faces) == 1 and
         initial_faces[0].get("label") == "Manual Target"
@@ -548,7 +568,6 @@ def render_tracking_video(
         mf   = initial_faces[0]
         bbox = (int(mf["x"]), int(mf["y"]), int(mf["w"]), int(mf["h"]))
 
-        # CSRT gives best accuracy for face-sized regions
         try:
             cv_tracker = cv2.TrackerCSRT_create()
         except AttributeError:
@@ -556,21 +575,53 @@ def render_tracking_video(
 
         cv_tracker.init(first_frame, bbox)
 
+        # CHANGE 2: run MediaPipe on the manual box crop to get mesh landmarks
+        # so we use a tight face-shaped mask instead of the oval fallback
+        mesh_pts_for_sticker = None
+        try:
+            y1c = max(0, bbox[1])
+            y2c = min(first_frame.shape[0], bbox[1] + bbox[3])
+            x1c = max(0, bbox[0])
+            x2c = min(first_frame.shape[1], bbox[0] + bbox[2])
+            crop_for_mesh = first_frame[y1c:y2c, x1c:x2c]
+
+            if crop_for_mesh.size > 0:
+                mesh_result = get_face_mesh_landmarks(crop_for_mesh)
+                if mesh_result:
+                    # Offset landmarks back to full-frame coordinates
+                    raw_pts = mesh_result[0]["mesh"]
+                    mesh_pts_for_sticker = [
+                        (p[0] + bbox[0], p[1] + bbox[1]) for p in raw_pts
+                    ]
+        except Exception:
+            pass
+
         manual_face = {
             "index": 0,
             "x": bbox[0], "y": bbox[1], "w": bbox[2], "h": bbox[3],
             "cx": bbox[0] + bbox[2] / 2,
             "cy": bbox[1] + bbox[3] / 2,
             "score": 1.0,
+            "mesh": mesh_pts_for_sticker,
         }
 
-        # Render face onto first frame immediately
+        # Render face onto first frame
         f = manual_face
         smooth_cx, smooth_cy, smooth_w, smooth_h = smooth_face(f)
-        scale   = adaptive_scale_for_face(f)
-        sticker, _ = prepare_face_sticker(face1_path, smooth_w * scale, smooth_h * (scale + 0.08))
-        sticker = rotate_rgba(sticker, estimate_roll(f))
-        first_frame = overlay_rgba_poisson(first_frame, sticker, smooth_cx, smooth_cy + smooth_h * 0.12)
+        scale = adaptive_scale_for_face(f)
+        # CHANGE 2: use mesh sticker if landmarks found, oval fallback otherwise
+        if f.get("mesh"):
+            sticker, _ = prepare_face_sticker_with_mesh(
+                face1_path, smooth_w * scale, smooth_h * (scale + 0.08), f["mesh"]
+            )
+        else:
+            sticker, _ = prepare_face_sticker(
+                face1_path, smooth_w * scale, smooth_h * (scale + 0.08)
+            )
+        sticker     = rotate_rgba(sticker, estimate_roll(f))
+        first_frame = overlay_rgba_poisson(
+            first_frame, sticker, smooth_cx, smooth_cy + smooth_h * 0.12
+        )
         writer.write(first_frame)
         frame_idx = 1
 
@@ -587,7 +638,6 @@ def render_tracking_video(
             break
 
         if is_manual_mode:
-            # CSRT tracker update — follows the region, not the identity
             success, bbox = cv_tracker.update(frame)
 
             if success:
@@ -599,18 +649,25 @@ def render_tracking_video(
                     "x": x, "y": y, "w": w, "h": h,
                     "cx": x + w / 2, "cy": y + h / 2,
                     "score": 1.0,
+                    # Keep the mesh from frame 1 — better than no mesh
+                    "mesh": manual_face.get("mesh") if manual_face else None,
                 }
-            # If lost, hold last known position
 
             if manual_face:
                 f = manual_face
                 smooth_cx, smooth_cy, smooth_w, smooth_h = smooth_face(f)
-                scale   = adaptive_scale_for_face(f)
-                sticker, _ = prepare_face_sticker(
-                    face1_path, smooth_w * scale, smooth_h * (scale + 0.08)
-                )
+                scale = adaptive_scale_for_face(f)
+                # CHANGE 2: use mesh sticker throughout if available
+                if f.get("mesh"):
+                    sticker, _ = prepare_face_sticker_with_mesh(
+                        face1_path, smooth_w * scale, smooth_h * (scale + 0.08), f["mesh"]
+                    )
+                else:
+                    sticker, _ = prepare_face_sticker(
+                        face1_path, smooth_w * scale, smooth_h * (scale + 0.08)
+                    )
                 sticker = rotate_rgba(sticker, estimate_roll(f))
-                frame = overlay_rgba_poisson(
+                frame   = overlay_rgba_poisson(
                     frame, sticker, smooth_cx, smooth_cy + smooth_h * 0.12
                 )
 
@@ -656,7 +713,7 @@ def render_tracking_video(
                         face1_path, smooth_w * scale, smooth_h * (scale + 0.08)
                     )
                 sticker = rotate_rgba(sticker, estimate_roll(f))
-                frame = overlay_rgba_poisson(
+                frame   = overlay_rgba_poisson(
                     frame, sticker, smooth_cx, smooth_cy + smooth_h * 0.12
                 )
 
@@ -674,7 +731,7 @@ def render_tracking_video(
                         face2_path, smooth_w * scale, smooth_h * (scale + 0.08)
                     )
                 sticker = rotate_rgba(sticker, estimate_roll(f))
-                frame = overlay_rgba_poisson(
+                frame   = overlay_rgba_poisson(
                     frame, sticker, smooth_cx, smooth_cy + smooth_h * 0.12
                 )
 

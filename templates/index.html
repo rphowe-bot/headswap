@@ -20,7 +20,6 @@
     --text: #ffffff;
     --muted: #8b7aa8;
     --pink-glow: rgba(255,47,168,0.25);
-    --cyan-glow: rgba(22,221,255,0.2);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,7 +40,6 @@
     position: sticky; top: 0; z-index: 100;
     backdrop-filter: blur(12px);
   }
-
   .brand {
     display: flex; align-items: center; gap: 10px;
     font-family: 'Barlow Condensed', sans-serif;
@@ -56,7 +54,7 @@
   .brand-icon::before {
     content: ''; width: 14px; height: 14px; border: 2px solid var(--cyan);
     border-radius: 50%; position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%,-50%);
   }
   .brand-icon::after {
     content: ''; width: 6px; height: 6px; background: var(--pink);
@@ -64,11 +62,9 @@
   }
   .brand .h { color: var(--pink); }
   .brand .s { color: var(--cyan); }
-
   .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
   .nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
   .nav-links a:hover { color: var(--text); }
-
   .nav-cta {
     background: transparent; border: 1.5px solid var(--pink); color: var(--text);
     padding: 8px 20px; font-family: 'Barlow Condensed', sans-serif;
@@ -94,7 +90,6 @@
     background: linear-gradient(90deg, var(--pink), var(--cyan));
     -webkit-background-clip: text; background-clip: text; margin-bottom: 14px;
   }
-
   .hero-title {
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 76px; font-weight: 900; line-height: 0.92;
@@ -104,7 +99,6 @@
     background: linear-gradient(90deg, var(--pink) 0%, #c45aff 50%, var(--cyan) 100%);
     -webkit-background-clip: text; background-clip: text; color: transparent; display: block;
   }
-
   .hero-desc { font-size: 15px; color: var(--muted); line-height: 1.65; margin-bottom: 32px; max-width: 360px; }
 
   .feature-pills { display: flex; flex-direction: column; gap: 18px; margin-bottom: 36px; }
@@ -158,7 +152,7 @@
     border-radius: 6px; padding: 6px 16px;
     font-size: 12px; font-weight: 600; letter-spacing: 0.1em;
     color: var(--text); white-space: nowrap; backdrop-filter: blur(8px); z-index: 10;
-    transition: all 0.3s;
+    transition: border-color 0.3s, background 0.3s;
   }
 
   .player-controls {
@@ -175,7 +169,7 @@
   .progress-fill { height: 100%; background: linear-gradient(90deg, var(--pink), var(--cyan)); border-radius: 2px; width: 0%; }
   .progress-dot {
     width: 12px; height: 12px; background: #fff; border-radius: 50%;
-    position: absolute; top: 50%; left: 0%; transform: translate(-50%, -50%);
+    position: absolute; top: 50%; left: 0%; transform: translate(-50%,-50%);
     box-shadow: 0 0 8px rgba(255,255,255,0.5);
   }
   .time-display { font-size: 12px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
@@ -184,10 +178,9 @@
   .workflow { padding: 0 40px 40px; max-width: 1400px; margin: 0 auto; }
   .steps-grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0,1fr));
     gap: 12px; min-width: 0;
   }
-
   .step-card {
     background: var(--card); border: 1px solid var(--border);
     border-radius: 12px; padding: 16px;
@@ -195,7 +188,6 @@
   }
   .step-card:hover { border-color: var(--border-bright); }
   .step-card.result-card { border-color: var(--cyan); box-shadow: 0 0 20px rgba(22,221,255,0.1); }
-
   .step-num {
     width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border-bright);
     display: flex; align-items: center; justify-content: center;
@@ -206,31 +198,28 @@
   .upload-zone {
     border: 1.5px dashed var(--border-bright); border-radius: 8px;
     padding: 16px 8px; text-align: center; cursor: pointer;
-    transition: border-color 0.3s, background 0.3s; background: transparent; position: relative;
+    background: transparent; position: relative;
+    transition: border-color 0.3s, background 0.3s;
   }
   .upload-zone:hover { border-color: var(--cyan); background: rgba(22,221,255,0.03); }
-  .upload-zone.accepted {
-    border-color: var(--green) !important; border-style: solid !important;
-    background: rgba(34,197,94,0.06) !important;
+  .upload-zone input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 2;
   }
-  .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
   .upload-icon {
     width: 32px; height: 32px; border: 2px solid var(--border-bright); border-radius: 50%;
     display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; color: var(--muted);
-    transition: border-color 0.3s, color 0.3s;
+    transition: border-color 0.3s, color 0.3s; pointer-events: none;
   }
-  .upload-zone.accepted .upload-icon { border-color: var(--green); color: var(--green); }
   .upload-icon svg { width: 14px; height: 14px; }
-  .upload-zone p { font-size: 10px; color: var(--muted); line-height: 1.4; margin-bottom: 4px; }
-  .upload-zone.accepted p { color: var(--green); font-weight: 600; }
-  .upload-zone .types { font-size: 9px; color: #4a3d5c; }
+  .upload-zone p { font-size: 10px; color: var(--muted); line-height: 1.4; margin-bottom: 4px; pointer-events: none; }
+  .upload-zone .types { font-size: 9px; color: #4a3d5c; pointer-events: none; }
 
   .file-status {
     display: flex; align-items: center; gap: 6px;
     background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.3);
     border-radius: 6px; padding: 6px 10px; margin-top: 8px;
   }
-  .file-status svg { width: 12px; height: 12px; color: var(--green); flex-shrink: 0; }
+  .file-status svg { width: 12px; height: 12px; flex-shrink: 0; }
   .file-status span { font-size: 10px; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   .face-uploads { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -244,12 +233,27 @@
     transition: border-color 0.3s, box-shadow 0.3s;
   }
   .face-thumb-wrap:hover { border-color: var(--pink); }
-  .face-thumb-wrap.loaded { border-color: var(--green) !important; box-shadow: 0 0 12px rgba(34,197,94,0.3) !important; }
-  .face-thumb-wrap input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 10; }
-  .face-preview { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; z-index: 2; }
-  .face-thumb-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--border-bright); z-index: 1; }
+  .face-thumb-wrap input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer;
+    width: 100%; height: 100%; z-index: 30;
+  }
+  .face-preview {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; opacity: 0;
+    transition: opacity 0.3s; z-index: 10;
+  }
+  .face-thumb-placeholder {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--border-bright); z-index: 1; transition: opacity 0.3s;
+  }
   .face-thumb-placeholder svg { width: 24px; height: 24px; }
-  .face-filename { font-size: 9px; color: var(--muted); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 3px; }
+  .face-filename {
+    font-size: 9px; color: var(--muted); margin-top: 4px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    display: flex; align-items: center; gap: 3px;
+  }
 
   .add-face-btn {
     width: 100%; padding: 6px; background: transparent;
@@ -260,26 +264,15 @@
   }
   .add-face-btn:hover { border-color: var(--pink); color: var(--text); }
 
-  /* Target box status indicators in step 3 */
-  .target-status {
-    display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px;
-  }
+  .target-status { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
   .target-indicator {
     display: flex; align-items: center; gap: 8px;
     padding: 8px 10px; border-radius: 8px; border: 1.5px solid;
-    font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700;
-    letter-spacing: 0.05em;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.05em;
   }
-  .target-indicator.cyan-target {
-    border-color: var(--cyan); background: rgba(22,221,255,0.08); color: var(--cyan);
-  }
-  .target-indicator.pink-target {
-    border-color: var(--pink); background: rgba(255,47,168,0.08); color: var(--pink);
-    display: none; /* shown only when face2 is uploaded */
-  }
-  .target-dot {
-    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-  }
+  .target-indicator.cyan-target { border-color: var(--cyan); background: rgba(22,221,255,0.08); color: var(--cyan); }
+  .target-indicator.pink-target { border-color: var(--pink); background: rgba(255,47,168,0.08); color: var(--pink); display: none; }
+  .target-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .cyan-target .target-dot { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
   .pink-target .target-dot  { background: var(--pink); box-shadow: 0 0 6px var(--pink); }
   .target-indicator .sub { display: block; font-size: 9px; font-weight: 400; opacity: 0.7; margin-top: 1px; font-family: 'Barlow', sans-serif; }
@@ -293,19 +286,29 @@
   }
   .lock-btn:hover { background: rgba(34,197,94,0.2); }
   .lock-btn.locked { background: rgba(34,197,94,0.25); border-color: #16a34a; color: #4ade80; }
-
   .mode-hint { font-size: 9px; color: var(--muted); text-align: center; line-height: 1.4; margin-top: 4px; }
 
-  .analyze-btn, .generate-btn {
+  .analyze-btn {
+    width: 100%; padding: 11px 6px; border-radius: 8px;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700;
+    letter-spacing: 0.06em; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; transition: all 0.2s; margin-bottom: 8px;
+    background: transparent; border: 1.5px solid var(--border-bright); color: var(--muted);
+  }
+  .analyze-btn:hover:not(:disabled) { border-color: var(--cyan); color: var(--cyan); background: rgba(22,221,255,0.05); }
+  .analyze-btn.analyzing { border-color: var(--cyan) !important; color: var(--cyan) !important; background: rgba(22,221,255,0.08) !important; cursor: wait; }
+  .analyze-btn.done { border-color: var(--green) !important; color: var(--green) !important; background: rgba(34,197,94,0.08) !important; }
+
+  .generate-btn {
     width: 100%; padding: 11px 6px; border: none; border-radius: 8px;
     font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700;
     letter-spacing: 0.06em; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     gap: 6px; transition: all 0.2s; margin-bottom: 8px;
+    background: linear-gradient(135deg, #c41a7a 0%, #8f1fc7 100%); color: #fff;
+    box-shadow: 0 4px 16px rgba(196,26,122,0.4);
   }
-  .analyze-btn { background: transparent; border: 1.5px solid var(--border-bright); color: var(--muted); }
-  .analyze-btn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(22,221,255,0.05); }
-  .generate-btn { background: linear-gradient(135deg, #c41a7a 0%, #8f1fc7 100%); color: #fff; box-shadow: 0 4px 16px rgba(196,26,122,0.4); }
   .generate-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(196,26,122,0.55); }
   .generate-btn svg { width: 16px; height: 16px; }
 
@@ -348,9 +351,16 @@
   .help-icon { width: 16px; height: 16px; border: 1px solid var(--border-bright); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; color: var(--muted); cursor: help; vertical-align: middle; margin-left: 3px; }
 
   @keyframes spin { to { transform: rotate(360deg); } }
-  .spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.2); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+  .spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.25); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+  .analyze-spinner { width: 12px; height: 12px; border: 2px solid rgba(22,221,255,0.3); border-top-color: var(--cyan); border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
 
-  #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px); background: #1a1030; border: 1px solid var(--border-bright); border-radius: 8px; padding: 12px 24px; font-size: 13px; color: var(--text); opacity: 0; transition: all 0.3s; z-index: 999; white-space: nowrap; }
+  #toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(60px);
+    background: #1a1030; border: 1px solid var(--border-bright);
+    border-radius: 8px; padding: 12px 24px; font-size: 13px; color: var(--text);
+    opacity: 0; transition: all 0.3s; z-index: 999; white-space: nowrap;
+  }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
@@ -376,7 +386,7 @@
   <div class="hero-left">
     <p class="hero-eyebrow">AI POWERED FACE SWAP</p>
     <h1 class="hero-title">BECOME<br><span class="line2">THE CHARACTER</span></h1>
-    <p class="hero-desc">Upload a short video. Click the face you want to replace. Generate a perfectly tracked face swap in seconds.</p>
+    <p class="hero-desc">Upload a short video. Position the target box over the face you want to replace. Generate a perfectly tracked face swap in seconds.</p>
     <div class="feature-pills">
       <div class="feat">
         <div class="feat-icon">
@@ -466,7 +476,6 @@
 <section class="workflow">
   <div class="steps-grid">
 
-    <!-- STEP 1 -->
     <div class="step-card">
       <div class="step-num">1</div>
       <div class="step-title">UPLOAD VIDEO</div>
@@ -482,12 +491,11 @@
         <div class="types">MP4, MOV up to 200MB</div>
       </div>
       <div class="file-status" id="videoStatus" style="display:none">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
         <span id="videoName"></span>
       </div>
     </div>
 
-    <!-- STEP 2 -->
     <div class="step-card">
       <div class="step-num">2</div>
       <div class="step-title">UPLOAD FACE(S) <span class="help-icon">?</span></div>
@@ -521,40 +529,29 @@
       </button>
     </div>
 
-    <!-- STEP 3 -->
     <div class="step-card">
       <div class="step-num">3</div>
       <div class="step-title">POSITION TARGETS</div>
-
-      <!-- Status indicators showing which boxes are active -->
       <div class="target-status">
         <div class="target-indicator cyan-target" id="cyanIndicator">
           <div class="target-dot"></div>
-          <div>
-            FACE 1 TARGET
-            <span class="sub">Drag cyan box on frame</span>
-          </div>
+          <div>FACE 1 TARGET<span class="sub">Drag cyan box on frame</span></div>
         </div>
         <div class="target-indicator pink-target" id="pinkIndicator">
           <div class="target-dot"></div>
-          <div>
-            FACE 2 TARGET
-            <span class="sub">Drag pink box on frame</span>
-          </div>
+          <div>FACE 2 TARGET<span class="sub">Drag pink box on frame</span></div>
         </div>
       </div>
-
       <button class="lock-btn" id="lockBtn" onclick="toggleLock()">🔓 LOCK TARGETS</button>
-      <p class="mode-hint" id="modeHint">Analyze first, then drag boxes to target faces</p>
+      <p class="mode-hint" id="modeHint">Analyze first, then drag & resize boxes</p>
     </div>
 
-    <!-- STEP 4 -->
     <div class="step-card">
       <div class="step-num">4</div>
       <div class="step-title">GENERATE</div>
-      <button class="analyze-btn" onclick="analyze()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        ANALYZE FACES
+      <button class="analyze-btn" id="analyzeBtn" onclick="analyze()">
+        <div class="analyze-spinner" id="analyzeSpinner"></div>
+        <span id="analyzeLabel">ANALYZE FACES</span>
       </button>
       <button class="generate-btn" onclick="generate()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
@@ -570,7 +567,6 @@
       </div>
     </div>
 
-    <!-- RESULT -->
     <div class="step-card result-card">
       <div class="result-header">YOUR RESULT</div>
       <div class="result-thumb">
@@ -616,10 +612,9 @@
 <div id="toast"></div>
 
 <script>
-  // === STATE ===
   let sessionId      = null;
   let faces          = [];
-  let boxState       = {};   // { 0: {x,y,w,h}, 1: {x,y,w,h} } — one per face slot
+  let boxState       = {};
   let locked         = false;
   let resultVideoUrl = null;
   let isPlaying      = false;
@@ -628,7 +623,6 @@
   const duration     = 10;
   let hasFace2       = false;
 
-  // Box colors per slot
   const BOX_COLORS = {
     0: { border: '#16ddff', shadow: 'rgba(22,221,255,0.5)',  label: 'FACE 1 TARGET' },
     1: { border: '#ff2fa8', shadow: 'rgba(255,47,168,0.5)',  label: 'FACE 2 TARGET' },
@@ -637,12 +631,11 @@
   function setInstruction(text, color) {
     const el = document.getElementById('playerInstruction');
     if (!el) return;
-    el.textContent = text;
+    el.textContent       = text;
     el.style.borderColor = color || 'var(--border-bright)';
-    el.style.background  = color ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.75)';
+    el.style.background  = color ? 'rgba(0,0,0,0.88)' : 'rgba(0,0,0,0.75)';
   }
 
-  // === PLAYER ===
   function togglePlay() {
     isPlaying = !isPlaying;
     const btn = document.getElementById('playBtn');
@@ -677,22 +670,18 @@
     document.getElementById('timeDisplay').textContent = fmt(currentTime) + ' / ' + fmt(duration);
   }
 
-  // === DRAW TARGET BOXES ===
-  // Each face slot gets one colored box — draggable + 4-corner resizable
   function draw() {
     const overlay = document.getElementById('overlay');
     if (!overlay) return;
     overlay.innerHTML = '';
-
     const slots = hasFace2 ? [0, 1] : [0];
-
     slots.forEach(slot => {
       if (!boxState[slot]) return;
-      const box   = boxState[slot];
-      const cfg   = BOX_COLORS[slot];
+      const box = boxState[slot];
+      const cfg = BOX_COLORS[slot];
 
       const div = document.createElement('div');
-      div.style.cssText   = 'position:absolute;border-radius:4px;transition:box-shadow 0.2s;';
+      div.style.cssText   = 'position:absolute;border-radius:4px;';
       div.style.left      = box.x + 'px';
       div.style.top       = box.y + 'px';
       div.style.width     = box.w + 'px';
@@ -702,131 +691,128 @@
       div.style.cursor    = locked ? 'default' : 'move';
       div.style.zIndex    = '20';
 
-      // Label badge
       const badge = document.createElement('div');
       badge.textContent   = cfg.label;
-      badge.style.cssText = 'position:absolute;top:-20px;left:0;font-size:10px;font-weight:700;letter-spacing:0.05em;white-space:nowrap;font-family:Barlow Condensed,sans-serif;';
+      badge.style.cssText = 'position:absolute;top:-20px;left:0;font-size:10px;font-weight:700;letter-spacing:0.05em;white-space:nowrap;font-family:Barlow Condensed,sans-serif;pointer-events:none;';
       badge.style.color   = cfg.border;
       div.appendChild(badge);
 
       if (!locked) {
-        // 4 corner resize handles
         const corners = [
-          { s: 'top:-5px;left:-5px;',     c: 'nwse-resize', dx: -1, dy: -1 },
-          { s: 'top:-5px;right:-5px;',    c: 'nesw-resize', dx:  1, dy: -1 },
-          { s: 'bottom:-5px;left:-5px;',  c: 'nesw-resize', dx: -1, dy:  1 },
-          { s: 'bottom:-5px;right:-5px;', c: 'nwse-resize', dx:  1, dy:  1 },
+          { s:'top:-5px;left:-5px;',     c:'nwse-resize', dx:-1, dy:-1 },
+          { s:'top:-5px;right:-5px;',    c:'nesw-resize', dx: 1, dy:-1 },
+          { s:'bottom:-5px;left:-5px;',  c:'nesw-resize', dx:-1, dy: 1 },
+          { s:'bottom:-5px;right:-5px;', c:'nwse-resize', dx: 1, dy: 1 },
         ];
         corners.forEach(({ s, c, dx, dy }) => {
           const h = document.createElement('div');
-          h.style.cssText = `position:absolute;${s}width:12px;height:12px;border-radius:3px;cursor:${c};z-index:22;`;
+          h.style.cssText    = `position:absolute;${s}width:12px;height:12px;border-radius:3px;cursor:${c};z-index:22;`;
           h.style.background = cfg.border;
-          let r = false, rX, rY, rW, rH, rBX, rBY;
+          let r=false, rX, rY, rW, rH, rBX, rBY;
           h.onmousedown = e => {
-            e.preventDefault(); e.stopPropagation(); r = true;
-            rX = e.clientX; rY = e.clientY;
-            rW = box.w; rH = box.h; rBX = box.x; rBY = box.y;
+            e.preventDefault(); e.stopPropagation(); r=true;
+            rX=e.clientX; rY=e.clientY; rW=box.w; rH=box.h; rBX=box.x; rBY=box.y;
             document.onmousemove = ev => {
               if (!r) return;
-              const ddx = ev.clientX - rX, ddy = ev.clientY - rY;
-              let nw = rW, nh = rH, nx = rBX, ny = rBY;
-              if (dx === 1)  { nw = Math.max(40, Math.min(rW + ddx, overlay.offsetWidth  - rBX)); }
-              else           { nw = Math.max(40, rW - ddx); nx = Math.max(0, Math.min(rBX + ddx, rBX + rW - 40)); nw = rBX + rW - nx; }
-              if (dy === 1)  { nh = Math.max(40, Math.min(rH + ddy, overlay.offsetHeight - rBY)); }
-              else           { nh = Math.max(40, rH - ddy); ny = Math.max(0, Math.min(rBY + ddy, rBY + rH - 40)); nh = rBY + rH - ny; }
-              div.style.left = nx+'px'; div.style.top = ny+'px';
-              div.style.width = nw+'px'; div.style.height = nh+'px';
-              boxState[slot] = { x: nx, y: ny, w: nw, h: nh };
+              const ddx=ev.clientX-rX, ddy=ev.clientY-rY;
+              let nw=rW, nh=rH, nx=rBX, ny=rBY;
+              if (dx===1)  { nw=Math.max(40,Math.min(rW+ddx,overlay.offsetWidth-rBX)); }
+              else         { nw=Math.max(40,rW-ddx); nx=Math.max(0,Math.min(rBX+ddx,rBX+rW-40)); nw=rBX+rW-nx; }
+              if (dy===1)  { nh=Math.max(40,Math.min(rH+ddy,overlay.offsetHeight-rBY)); }
+              else         { nh=Math.max(40,rH-ddy); ny=Math.max(0,Math.min(rBY+ddy,rBY+rH-40)); nh=rBY+rH-ny; }
+              div.style.left=nx+'px'; div.style.top=ny+'px';
+              div.style.width=nw+'px'; div.style.height=nh+'px';
+              boxState[slot]={x:nx,y:ny,w:nw,h:nh};
             };
-            document.onmouseup = () => { r = false; };
+            document.onmouseup = () => { r=false; };
           };
           div.appendChild(h);
         });
 
-        // Drag whole box
-        let d = false, dX, dY, dOX, dOY;
+        let d=false, dX, dY, dOX, dOY;
         div.onmousedown = e => {
           if (e.target !== div && e.target !== badge) return;
-          e.preventDefault(); d = true;
-          dX = e.clientX; dY = e.clientY; dOX = box.x; dOY = box.y;
+          e.preventDefault(); d=true;
+          dX=e.clientX; dY=e.clientY; dOX=box.x; dOY=box.y;
           document.onmousemove = ev => {
             if (!d) return;
-            const nx = Math.max(0, Math.min(dOX + (ev.clientX - dX), overlay.offsetWidth  - box.w));
-            const ny = Math.max(0, Math.min(dOY + (ev.clientY - dY), overlay.offsetHeight - box.h));
-            div.style.left = nx+'px'; div.style.top = ny+'px';
-            boxState[slot] = { x: nx, y: ny, w: box.w, h: box.h };
+            const nx=Math.max(0,Math.min(dOX+(ev.clientX-dX),overlay.offsetWidth-box.w));
+            const ny=Math.max(0,Math.min(dOY+(ev.clientY-dY),overlay.offsetHeight-box.h));
+            div.style.left=nx+'px'; div.style.top=ny+'px';
+            boxState[slot]={x:nx,y:ny,w:box.w,h:box.h};
           };
-          document.onmouseup = () => { d = false; };
+          document.onmouseup = () => { d=false; };
         };
       }
-
       overlay.appendChild(div);
     });
   }
 
-  // === LOCK ===
   function toggleLock() {
     locked = !locked;
     const btn = document.getElementById('lockBtn');
     if (locked) {
-      btn.classList.add('locked');
-      btn.textContent = '🔒 TARGETS LOCKED';
+      btn.classList.add('locked'); btn.textContent = '🔒 TARGETS LOCKED';
       setInstruction('🔒 TARGETS LOCKED — CLICK GENERATE', '#22c55e');
       showToast('Targets locked — ready to generate');
     } else {
-      btn.classList.remove('locked');
-      btn.textContent = '🔓 LOCK TARGETS';
+      btn.classList.remove('locked'); btn.textContent = '🔓 LOCK TARGETS';
       setInstruction('DRAG BOXES OVER TARGET FACES', '#16ddff');
     }
     draw();
   }
 
-  // === FILE UPLOADS ===
   function handleVideoUpload(e) {
     const f = e.target.files[0]; if (!f) return;
     const zone = document.getElementById('videoZone');
-    zone.classList.add('accepted');
+    zone.style.border     = '2px solid #22c55e';
+    zone.style.background = 'rgba(34,197,94,0.07)';
+    zone.style.boxShadow  = '0 0 14px rgba(34,197,94,0.2)';
     document.getElementById('videoIcon').innerHTML =
-      '<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
-    document.getElementById('videoZoneText').innerHTML = '<strong style="color:#22c55e;font-size:10px;">' + f.name + '</strong>';
+      '<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" style="width:14px;height:14px"><polyline points="20 6 9 17 4 12"/></svg>';
+    document.getElementById('videoIcon').style.borderColor = '#22c55e';
+    const txt = document.getElementById('videoZoneText');
+    txt.textContent = f.name; txt.style.color = '#22c55e';
+    txt.style.fontWeight = '600'; txt.style.fontSize = '9px';
     document.getElementById('videoStatus').style.display = 'flex';
     document.getElementById('videoName').textContent = f.name;
-    showToast('✓ Video ready');
+    showToast('✓ Video ready: ' + f.name);
   }
 
   function handleFaceUpload(e, slot) {
     const f = e.target.files[0]; if (!f) return;
     const reader = new FileReader();
     reader.onload = ev => {
-      const img = document.getElementById('face' + slot + 'Img');
-      img.src = ev.target.result; img.style.display = 'block';
-      document.getElementById('face' + slot + 'Placeholder').style.display = 'none';
-      document.getElementById('face' + slot + 'Wrap').classList.add('loaded');
-      document.getElementById('face' + slot + 'Name').innerHTML =
+      const img         = document.getElementById('face' + slot + 'Img');
+      const placeholder = document.getElementById('face' + slot + 'Placeholder');
+      const wrap        = document.getElementById('face' + slot + 'Wrap');
+      const nameEl      = document.getElementById('face' + slot + 'Name');
+      img.src = ev.target.result;
+      img.style.opacity         = '1';
+      placeholder.style.opacity = '0';
+      wrap.style.border    = '2px solid #22c55e';
+      wrap.style.boxShadow = '0 0 14px rgba(34,197,94,0.35)';
+      nameEl.innerHTML =
         '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" style="flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>' +
-        '<span style="color:#22c55e;font-size:9px;">' + f.name + '</span>';
-
-      // Show Face 2 target indicator if face2 loaded
+        '<span style="color:#22c55e;font-size:9px;overflow:hidden;text-overflow:ellipsis;">' + f.name + '</span>';
       if (slot === 2) {
         hasFace2 = true;
         document.getElementById('pinkIndicator').style.display = 'flex';
-        // Add second box if overlay exists
         const overlay = document.getElementById('overlay');
         if (overlay && !boxState[1]) {
-          const ow = overlay.offsetWidth || 400, oh = overlay.offsetHeight || 225;
+          const ow = overlay.offsetWidth || 400;
+          const oh = overlay.offsetHeight || 225;
           const bw = Math.round(ow * 0.18), bh = Math.round(bw * 1.2);
-          // Offset to not overlap box 0
           boxState[1] = { x: Math.round(ow * 0.55), y: Math.round((oh - bh) / 2), w: bw, h: bh };
           draw();
         }
       }
       showToast('✓ Face ' + slot + ' loaded');
     };
-    reader.onerror = () => showToast('Could not read image');
+    reader.onerror = () => showToast('Could not read image — try JPG or PNG');
     reader.readAsDataURL(f);
   }
 
-  // === ANALYZE ===
   function analyze() {
     const videoInput = document.getElementById('videoInput');
     const face1Input = document.getElementById('face1Input');
@@ -839,13 +825,33 @@
     const face2Input = document.getElementById('face2Input');
     if (face2Input.files[0]) fd.append('face2', face2Input.files[0]);
 
-    showToast('Analyzing...');
-    setInstruction('ANALYZING...', '#16ddff');
+    const analyzeBtn     = document.getElementById('analyzeBtn');
+    const analyzeSpinner = document.getElementById('analyzeSpinner');
+    const analyzeLabel   = document.getElementById('analyzeLabel');
+    analyzeBtn.classList.add('analyzing');
+    analyzeBtn.disabled          = true;
+    analyzeSpinner.style.display = 'block';
+    analyzeLabel.textContent     = 'ANALYZING...';
+    setInstruction('ANALYZING FACES...', '#16ddff');
+    showToast('Analyzing video...');
 
     fetch('/analyze', { method: 'POST', body: fd })
       .then(r => r.json())
       .then(data => {
-        if (data.error) { showToast('Error: ' + data.error); setInstruction('UPLOAD VIDEO + FACE 1, THEN ANALYZE'); return; }
+        analyzeSpinner.style.display = 'none';
+        analyzeBtn.disabled = false;
+
+        if (data.error) {
+          analyzeBtn.classList.remove('analyzing');
+          analyzeLabel.textContent = 'ANALYZE FACES';
+          showToast('Error: ' + data.error);
+          setInstruction('UPLOAD VIDEO + FACE 1, THEN ANALYZE');
+          return;
+        }
+
+        analyzeBtn.classList.remove('analyzing');
+        analyzeBtn.classList.add('done');
+        analyzeLabel.textContent = '✓ ANALYZED';
 
         sessionId = data.session_id;
         faces     = data.faces;
@@ -862,36 +868,53 @@
         img.style.pointerEvents = 'none';
         img.draggable           = false;
         img.ondragstart         = () => false;
-        img.onerror = () => showToast('Frame failed to load');
-        img.onload  = () => {
-          // Place box 0 on first detected face, or center if none
+        img.onerror = () => { showToast('Frame failed to load'); setInstruction('ERROR — TRY AGAIN', '#ff2fa8'); };
+
+        img.onload = () => {
           const ow = img.clientWidth  || 400;
           const oh = img.clientHeight || 225;
 
+          // KEY FIX: convert frame pixel coords → display pixel coords
+          // accounting for letterbox offset from object-fit:contain
+          const frameW = img.naturalWidth  || ow;
+          const frameH = img.naturalHeight || oh;
+          const fA = frameW / frameH, dA = ow / oh;
+          let rW, rH, oX, oY;
+          if (fA > dA) { rW = ow; rH = ow / fA; oX = 0;          oY = (oh - rH) / 2; }
+          else         { rH = oh; rW = oh * fA;  oX = (ow-rW)/2; oY = 0; }
+          const sX = rW / frameW, sY = rH / frameH;
+
+          function toDisplay(b) {
+            return {
+              x: Math.round(b.x * sX + oX),
+              y: Math.round(b.y * sY + oY),
+              w: Math.round(b.w * sX),
+              h: Math.round(b.h * sY),
+            };
+          }
+
           if (faces.length > 0) {
-            // Use detected face position for box 0
-            boxState[0] = { x: faces[0].x, y: faces[0].y, w: faces[0].w, h: faces[0].h };
-            // If face2 uploaded and second face detected, use that for box 1
+            boxState[0] = toDisplay(faces[0]);
             if (hasFace2 && faces.length > 1) {
-              boxState[1] = { x: faces[1].x, y: faces[1].y, w: faces[1].w, h: faces[1].h };
+              boxState[1] = toDisplay(faces[1]);
             } else if (hasFace2) {
-              // Place box 1 offset from box 0
-              const bw = Math.round(ow * 0.18), bh = Math.round(bw * 1.2);
-              boxState[1] = { x: Math.round(ow * 0.55), y: Math.round((oh - bh) / 2), w: bw, h: bh };
+              const bw = Math.round(rW * 0.18), bh = Math.round(bw * 1.2);
+              boxState[1] = { x: Math.round(oX + rW * 0.55), y: Math.round(oY + (rH-bh)/2), w: bw, h: bh };
             }
           } else {
-            // No faces detected — place default boxes
-            const bw = Math.round(ow * 0.18), bh = Math.round(bw * 1.2);
-            boxState[0] = { x: Math.round(ow * 0.25), y: Math.round((oh - bh) / 2), w: bw, h: bh };
+            const bw = Math.round(rW * 0.18), bh = Math.round(bw * 1.2);
+            boxState[0] = { x: Math.round(oX + rW * 0.25), y: Math.round(oY + (rH-bh)/2), w: bw, h: bh };
             if (hasFace2) {
-              boxState[1] = { x: Math.round(ow * 0.55), y: Math.round((oh - bh) / 2), w: bw, h: bh };
+              boxState[1] = { x: Math.round(oX + rW * 0.55), y: Math.round(oY + (rH-bh)/2), w: bw, h: bh };
             }
           }
 
           draw();
-          setInstruction('DRAG BOXES OVER TARGET FACES', '#16ddff');
-          document.getElementById('modeHint').textContent = 'Drag & resize each colored box over its target';
+          setInstruction('DRAG & RESIZE BOXES OVER TARGET FACES', '#16ddff');
+          document.getElementById('modeHint').textContent = 'Drag & resize each colored box over its face';
+          showToast('✓ Ready — position the boxes');
         };
+
         img.src = data.first_frame_url;
         placeholder.appendChild(img);
 
@@ -899,40 +922,42 @@
         overlayDiv.id            = 'overlay';
         overlayDiv.style.cssText = 'position:absolute;inset:0;';
         placeholder.appendChild(overlayDiv);
-
-        showToast('Frame loaded — position the boxes');
       })
-      .catch(err => { console.error(err); showToast('Analyze failed'); setInstruction('UPLOAD VIDEO + FACE 1, THEN ANALYZE'); });
+      .catch(err => {
+        console.error(err);
+        analyzeBtn.classList.remove('analyzing');
+        analyzeBtn.disabled          = false;
+        analyzeLabel.textContent     = 'ANALYZE FACES';
+        analyzeSpinner.style.display = 'none';
+        showToast('Analyze failed — check console');
+        setInstruction('UPLOAD VIDEO + FACE 1, THEN ANALYZE');
+      });
   }
 
-  // === COORDINATE CONVERSION ===
   function toFrameCoords() {
     const img = document.querySelector('#playerPlaceholder img');
     if (!img) return boxState;
-    const frameW = img.naturalWidth, frameH = img.naturalHeight;
-    const dispW  = img.clientWidth,  dispH  = img.clientHeight;
-    if (!frameW || !frameH || !dispW || !dispH) return boxState;
-    const fA = frameW / frameH, dA = dispW / dispH;
+    const frameW=img.naturalWidth,  frameH=img.naturalHeight;
+    const dispW=img.clientWidth,    dispH=img.clientHeight;
+    if (!frameW||!frameH||!dispW||!dispH) return boxState;
+    const fA=frameW/frameH, dA=dispW/dispH;
     let rW, rH, oX, oY;
-    if (fA > dA) { rW = dispW; rH = dispW / fA; oX = 0; oY = (dispH - rH) / 2; }
-    else         { rH = dispH; rW = dispH * fA;  oX = (dispW - rW) / 2; oY = 0; }
-    const sX = frameW / rW, sY = frameH / rH;
-    const out = {};
-    for (const [k, b] of Object.entries(boxState)) {
-      out[k] = {
-        x: Math.round((b.x - oX) * sX),
-        y: Math.round((b.y - oY) * sY),
-        w: Math.round(b.w * sX),
-        h: Math.round(b.h * sY),
+    if (fA>dA) { rW=dispW; rH=dispW/fA; oX=0;          oY=(dispH-rH)/2; }
+    else       { rH=dispH; rW=dispH*fA; oX=(dispW-rW)/2; oY=0; }
+    const sX=frameW/rW, sY=frameH/rH;
+    const out={};
+    for (const [k,b] of Object.entries(boxState)) {
+      out[k]={
+        x:Math.round((b.x-oX)*sX), y:Math.round((b.y-oY)*sY),
+        w:Math.round(b.w*sX),       h:Math.round(b.h*sY),
       };
     }
     return out;
   }
 
-  // === GENERATE ===
   function generate() {
-    if (!sessionId)       { showToast('Run Analyze first'); return; }
-    if (!boxState[0])     { showToast('No target box found — run Analyze first'); return; }
+    if (!sessionId)   { showToast('Run Analyze first'); return; }
+    if (!boxState[0]) { showToast('No target box — run Analyze first'); return; }
 
     const btn     = document.getElementById('genLabel');
     const spinner = document.getElementById('genSpinner');
@@ -940,15 +965,12 @@
     setInstruction('GENERATING...', '#a855f7');
 
     const coords = toFrameCoords();
-
-    // Build payload — box 0 = face1 target, box 1 = face2 target (if present)
     const payload = {
-      session_id: sessionId,
-      target1:    null,        // always null — using manual boxes
-      target2:    hasFace2 && boxState[1] ? null : undefined,
-      boxes:      coords,
-      manual_box:  coords[0],
-      manual_box2: hasFace2 && coords[1] ? coords[1] : undefined,
+      session_id:  sessionId,
+      target1:     null,
+      boxes:       coords,
+      manual_box:  coords[0] || null,
+      manual_box2: hasFace2 && coords[1] ? coords[1] : null,
     };
 
     fetch('/generate', {
@@ -958,18 +980,18 @@
     })
     .then(r => r.json())
     .then(d => {
-      btn.style.display = ''; spinner.style.display = 'none';
+      btn.style.display=''; spinner.style.display='none';
       const videoUrl = d.output_url || d.result_url;
       if (videoUrl) {
         resultVideoUrl = videoUrl;
         document.getElementById('playerPlaceholder').innerHTML =
-          '<video src="' + videoUrl + '" style="width:100%;height:100%;object-fit:contain;" autoplay controls></video>';
+          '<video src="'+videoUrl+'" style="width:100%;height:100%;object-fit:contain;" autoplay controls></video>';
         document.getElementById('resultThumb').innerHTML =
           '<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">' +
           '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>' +
           '<span style="font-size:10px;color:#22c55e;font-weight:700;font-family:Barlow Condensed,sans-serif;">READY</span></div>';
         const dlBtn = document.getElementById('downloadBtn');
-        if (dlBtn) { dlBtn.style.opacity = '1'; dlBtn.style.pointerEvents = 'auto'; }
+        if (dlBtn) { dlBtn.style.opacity='1'; dlBtn.style.pointerEvents='auto'; }
         setInstruction('✓ DONE — SCROLL DOWN TO DOWNLOAD', '#22c55e');
         showToast('✓ Done!');
       } else if (d.error) {
@@ -978,6 +1000,25 @@
       }
     })
     .catch(err => {
-      btn.style.display = ''; spinner.style.display = 'none';
+      btn.style.display=''; spinner.style.display='none';
       console.error(err); showToast('Generation failed');
-      setInstructio
+      setInstruction('ERROR — TRY AGAIN', '#ff2fa8');
+    });
+  }
+
+  function downloadResult() {
+    if (!resultVideoUrl) return;
+    const a = document.createElement('a');
+    a.href=resultVideoUrl; a.download='headswap_result.mp4'; a.click();
+  }
+
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent=msg; t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+  }
+</script>
+</body>
+</html>
